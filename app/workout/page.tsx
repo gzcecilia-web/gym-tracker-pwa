@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui';
 import { findCombinedGroupLabel, getCombinedGroupsForDay } from '@/lib/combined';
 import { getProfileTheme } from '@/lib/profileTheme';
@@ -25,7 +25,6 @@ type IndexedExercise = {
 
 export default function WorkoutPage() {
   const router = useRouter();
-  const params = useSearchParams();
   const routine = useMemo<RoutineDB>(() => getRoutineFromBundle(), []);
 
   const [slot, setSlot] = useState<SelectedSlot>(() => defaultSlot(routine));
@@ -38,6 +37,7 @@ export default function WorkoutPage() {
     migrateIfNeeded();
     const fallback = defaultSlot(routine);
     const selected = loadSelection(fallback);
+    const params = new URLSearchParams(window.location.search);
 
     const weekParam = Number(params.get('week'));
     const dayParam = Number(params.get('day'));
@@ -57,7 +57,7 @@ export default function WorkoutPage() {
       );
       setChecks(draft.checks ?? {});
     }
-  }, [params, routine]);
+  }, [routine]);
 
   const exercises = useMemo(
     () => getDayExercises(routine, slot.profileId, slot.planId, slot.week, slot.day),
