@@ -1,0 +1,7 @@
+node_modules
+.next
+.env
+.env.local
+tmp_gabriel_text.txt
+tsconfig.tsbuildinfo
+.DS_Store

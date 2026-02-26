@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ceci y Gabriel 💘</title>
+    <style>
+      :root {
+        --bg1: #ffd6e8;
+        --bg2: #ffeabf;
+        --card: #fff8fc;
+        --primary: #ff4d88;
+        --primary-dark: #e03370;
+        --secondary: #4fbe9f;
+        --text: #503046;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: "Trebuchet MS", "Comic Sans MS", sans-serif;
+        color: var(--text);
+        background: radial-gradient(circle at 15% 20%, #fff7cc 0 18%, transparent 19%),
+          radial-gradient(circle at 85% 15%, #ffd9ec 0 16%, transparent 17%),
+          radial-gradient(circle at 25% 85%, #ffc1dd 0 14%, transparent 15%),
+          linear-gradient(135deg, var(--bg1), var(--bg2));
+        overflow: hidden;
+        padding: 20px;
+      }
+
+      .hearts {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .heart {
+        position: absolute;
+        bottom: -30px;
+        font-size: 20px;
+        opacity: 0.6;
+        animation: floatUp linear infinite;
+      }
+
+      @keyframes floatUp {
+        from {
+          transform: translateY(0) scale(0.8);
+          opacity: 0;
+        }
+        20% {
+          opacity: 0.6;
+        }
+        to {
+          transform: translateY(-120vh) scale(1.2);
+          opacity: 0;
+        }
+      }
+
+      .card {
+        width: min(92vw, 560px);
+        background: var(--card);
+        border: 3px solid #ffb0cf;
+        border-radius: 28px;
+        box-shadow: 0 18px 40px rgba(160, 43, 95, 0.25);
+        padding: 26px 18px 24px;
+        text-align: center;
+        position: relative;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: clamp(1.5rem, 4.4vw, 2.4rem);
+        line-height: 1.15;
+      }
+
+      .subtitle {
+        margin: 0 auto 24px;
+        max-width: 34ch;
+        font-size: clamp(1rem, 3vw, 1.2rem);
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        min-height: 120px;
+        position: relative;
+      }
+
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 14px 28px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      button:active {
+        transform: scale(0.96);
+      }
+
+      #yesBtn {
+        background: var(--primary);
+        color: #fff;
+        box-shadow: 0 10px 18px rgba(224, 51, 112, 0.35);
+      }
+
+      #yesBtn:hover {
+        background: var(--primary-dark);
+      }
+
+      #noBtn {
+        background: #ffffff;
+        color: var(--secondary);
+        border: 2px solid var(--secondary);
+        position: absolute;
+        left: 60%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        touch-action: none;
+      }
+
+      .message {
+        margin-top: 18px;
+        padding: 14px;
+        border-radius: 16px;
+        background: #ffe7f2;
+        border: 2px dashed #ff99c2;
+        font-weight: 700;
+        font-size: clamp(1rem, 2.8vw, 1.15rem);
+        display: none;
+      }
+
+      .message-gif {
+        width: min(100%, 320px);
+        margin-top: 12px;
+        border-radius: 12px;
+        border: 2px solid #ff99c2;
+      }
+
+      .message.show {
+        display: block;
+        animation: pop 0.35s ease;
+      }
+
+      @keyframes pop {
+        from {
+          transform: scale(0.92);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .card {
+          border-radius: 22px;
+          padding: 22px 14px;
+        }
+
+        button {
+          padding: 12px 20px;
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hearts" id="hearts"></div>
+
+    <main class="card">
+      <h1>Gabriel, ¿quieres ser mi cita de San Valentín? 💘</h1>
+      <p class="subtitle">Soy Ceci, y prometo risas, abrazos, y una noche increíble juntitos.</p>
+
+      <section class="buttons" id="buttonArea">
+        <button id="yesBtn" type="button">Sí</button>
+        <button id="noBtn" type="button" aria-label="No">No</button>
+      </section>
+
+      <div id="loveMessage" class="message" role="status" aria-live="polite">
+        ¡Siiiii! 💕 Entonces saldremos a cenar el 20 de febrero. Preparate porque quiero que estés
+        súper lindo para nuestra ocasión especial. ✨
+        <img
+          class="message-gif"
+          src="https://media.giphy.com/media/MZocLC5dJprPTcrm65/giphy.gif"
+          alt="Meme de festejo con varios personajes de The Office"
+        />
+      </div>
+    </main>
+
+    <script>
+      const yesBtn = document.getElementById("yesBtn");
+      const noBtn = document.getElementById("noBtn");
+      const area = document.getElementById("buttonArea");
+      const message = document.getElementById("loveMessage");
+      const hearts = document.getElementById("hearts");
+
+      const heartIcons = ["💗", "💖", "💕", "💓", "💘"];
+      for (let i = 0; i < 22; i++) {
+        const h = document.createElement("span");
+        h.className = "heart";
+        h.textContent = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+        h.style.left = `${Math.random() * 100}%`;
+        h.style.animationDuration = `${7 + Math.random() * 7}s`;
+        h.style.animationDelay = `${Math.random() * 8}s`;
+        hearts.appendChild(h);
+      }
+
+      function moveNoButton() {
+        const areaRect = area.getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+        const maxX = areaRect.width - btnRect.width;
+        const maxY = areaRect.height - btnRect.height;
+        const x = Math.max(0, Math.random() * maxX);
+        const y = Math.max(0, Math.random() * maxY);
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+        noBtn.style.transform = "translate(0, 0)";
+      }
+
+      function dodge() {
+        moveNoButton();
+      }
+
+      ["mouseenter", "mouseover", "pointerenter", "touchstart", "click"].forEach((evt) => {
+        noBtn.addEventListener(evt, dodge, { passive: true });
+      });
+
+      area.addEventListener("pointermove", (e) => {
+        const btnRect = noBtn.getBoundingClientRect();
+        const dx = e.clientX - (btnRect.left + btnRect.width / 2);
+        const dy = e.clientY - (btnRect.top + btnRect.height / 2);
+        const distance = Math.hypot(dx, dy);
+
+        if (distance < 110) {
+          moveNoButton();
+        }
+      });
+
+      yesBtn.addEventListener("click", () => {
+        message.classList.add("show");
+      });
+    </script>
+  </body>
+</html>
