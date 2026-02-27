@@ -10,6 +10,7 @@
     "import:plans": "ts-node scripts/importPlansFromPdf.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
     "next": "14.2.32",
     "pdf-parse": "^1.1.1",
     "react": "18.3.1",
