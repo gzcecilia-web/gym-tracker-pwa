@@ -75,6 +75,24 @@ export function AuthBar() {
     setStatus('Te enviamos un link al mail.');
   };
 
+  const onForgotPassword = async () => {
+    if (!email.trim()) {
+      setStatus('Ingresá tu email para recuperar contraseña.');
+      return;
+    }
+    setIsLoading(true);
+    setStatus('');
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
+    });
+    setIsLoading(false);
+    if (error) {
+      setStatus(`Error recovery: ${error.message}`);
+      return;
+    }
+    setStatus('Te enviamos un email para restablecer tu contraseña.');
+  };
+
   const onLogout = async () => {
     await supabase.auth.signOut();
     setStatus('Sesión cerrada.');
@@ -148,6 +166,16 @@ export function AuthBar() {
               className="rounded-lg border border-neutral-200 px-3 py-1.5 text-xs font-semibold text-neutral-700 disabled:opacity-50"
             >
               Link
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={onForgotPassword}
+              className="text-xs font-medium text-neutral-600 underline underline-offset-2 disabled:opacity-50"
+            >
+              Olvidé mi contraseña
             </button>
           </div>
         </div>
