@@ -2,6 +2,7 @@
 
 import { cloudLoadHistory, cloudUpsertWorkout, isCloudEnabled } from '@/lib/cloud';
 import { makeCreatedAtISO } from '@/lib/date';
+import { applyProfileAccent } from '@/lib/profileTheme';
 import { getRoutineFromBundle } from '@/lib/routine';
 import type { RoutineDB, SelectedSlot, WorkoutDraft, WorkoutRecord } from '@/lib/types';
 
@@ -85,6 +86,7 @@ export function loadSelection(fallback: SelectedSlot): SelectedSlot {
 }
 
 export function saveSelection(slot: SelectedSlot): void {
+  applyProfileAccent(slot.profileId);
   saveJSON(KEY_SELECTION, {
     ...slot,
     planId: normalizePlanId(slot.planId)

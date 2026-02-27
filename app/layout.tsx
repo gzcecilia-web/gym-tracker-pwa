@@ -11,7 +11,15 @@ export const metadata: Metadata = {
 
 function HomeIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-5 w-5"
+    >
       <path d="M3 10.5 12 3l9 7.5" />
       <path d="M5 9.5V21h14V9.5" />
       <path d="M10 21v-6h4v6" />
@@ -21,20 +29,35 @@ function HomeIcon() {
 
 function DumbbellIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
-      <path d="M6 9v6" />
-      <path d="M18 9v6" />
-      <path d="M9 8v8" />
-      <path d="M15 8v8" />
-      <path d="M4 11h16" />
-      <path d="M4 13h16" />
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-5 w-5"
+    >
+      <rect x="2.5" y="8.5" width="2.5" height="7" rx="0.8" />
+      <rect x="5.8" y="7.5" width="2.5" height="9" rx="0.8" />
+      <rect x="15.7" y="7.5" width="2.5" height="9" rx="0.8" />
+      <rect x="19" y="8.5" width="2.5" height="7" rx="0.8" />
+      <path d="M8.8 12h6.4" />
     </svg>
   );
 }
 
 function CalendarIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-5 w-5"
+    >
       <rect x="3" y="5" width="18" height="16" rx="2" />
       <path d="M8 3v4M16 3v4M3 10h18" />
     </svg>
@@ -43,7 +66,15 @@ function CalendarIcon() {
 
 function ChartIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-5 w-5"
+    >
       <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
     </svg>
   );

@@ -2,10 +2,9 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Card } from '@/components/ui';
+import { Button, Card, PageContainer, SegmentedControl } from '@/components/ui';
 import { defaultSlot, getDayExercises, getRoutineFromBundle } from '@/lib/routine';
 import { isSameLocalDay, formatLocalDateTime } from '@/lib/date';
-import { getProfileTheme } from '@/lib/profileTheme';
 import {
   appendWorkoutToHistory,
   loadHistory,
@@ -56,7 +55,6 @@ export default function HomePage() {
   const [isLoadedSelection, setIsLoadedSelection] = useState(false);
   const [todayWorkout, setTodayWorkout] = useState<WorkoutRecord | null>(null);
   const [weekStatuses, setWeekStatuses] = useState<Record<number, 'done' | 'skipped'>>({});
-  const [allStatuses, setAllStatuses] = useState<Record<string, 'done' | 'skipped'>>({});
   const [weekCompleted, setWeekCompleted] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
@@ -88,7 +86,6 @@ export default function HomePage() {
         }
       }
       if (cancelled) return;
-      setAllStatuses(latestByWeekDay);
 
       const completionMap: Record<number, boolean> = {};
       for (let w = 1; w <= 4; w += 1) {
@@ -153,7 +150,6 @@ export default function HomePage() {
   const profile = routine.profiles.find((p) => p.id === slot.profileId) ?? routine.profiles[0];
   const plan = profile?.plans.find((p) => p.id === slot.planId) ?? profile?.plans[0];
   const profilePlans = profile?.plans ?? [];
-  const theme = getProfileTheme(slot.profileId);
   const exercisesForSelectedDay = useMemo(
     () => getDayExercises(routine, slot.profileId, slot.planId, slot.week, slot.day),
     [routine, slot.day, slot.planId, slot.profileId, slot.week]
@@ -185,136 +181,97 @@ export default function HomePage() {
   };
 
   return (
-    <div className="space-y-4">
+    <PageContainer>
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">Hoy</h1>
+        <p className="mt-1 text-sm text-neutral-600">
+          {plan?.name ?? 'Rutina'} · Semana {slot.week} · Día {slot.day}
+        </p>
+      </div>
+
       <Card>
-        <p className="text-xs uppercase tracking-wider text-neutral-500">Gym Tracker</p>
-        <h1 className="mt-1 text-2xl font-bold">Hoy</h1>
-        <div className="mt-3 space-y-3">
+        <div className="space-y-5">
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Perfil</p>
-            <div className="flex flex-wrap gap-2">
-              {routine.profiles.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => {
-                    const firstPlan = p.plans[0];
-                    setSlot({
-                      profileId: p.id,
-                      planId: firstPlan?.id ?? slot.planId,
-                      week: 1,
-                      day: 1
-                    });
-                  }}
-                  className={`rounded-full border px-3 py-1.5 text-sm font-semibold ${
-                    p.id === slot.profileId
-                      ? theme.chip
-                      : 'border-neutral-200 text-neutral-600'
-                  }`}
-                >
-                  {p.name}
-                </button>
-              ))}
-            </div>
+            <SegmentedControl
+              className="grid-cols-2"
+              value={slot.profileId}
+              onChange={(profileId) => {
+                const nextProfile = routine.profiles.find((p) => p.id === profileId);
+                const firstPlan = nextProfile?.plans[0];
+                setSlot({
+                  profileId,
+                  planId: firstPlan?.id ?? slot.planId,
+                  week: 1,
+                  day: 1
+                });
+              }}
+              items={routine.profiles.map((p) => ({ value: p.id, label: p.name }))}
+            />
           </div>
 
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Plan mensual</p>
-            <div className="flex flex-wrap gap-2">
-              {profilePlans.map((pl) => (
-                <button
-                  key={pl.id}
-                  type="button"
-                  onClick={() => setSlot({ ...slot, planId: pl.id, week: 1, day: 1 })}
-                  className={`rounded-xl border px-3 py-1.5 text-sm font-semibold ${
-                    pl.id === slot.planId
-                      ? theme.chip
-                      : 'border-neutral-200 text-neutral-600'
-                  }`}
-                >
-                  {pl.name}
-                </button>
-              ))}
-            </div>
+            <SegmentedControl
+              className="grid-cols-1"
+              value={slot.planId}
+              onChange={(planId) => setSlot({ ...slot, planId, week: 1, day: 1 })}
+              items={profilePlans.map((pl) => ({ value: pl.id, label: pl.name }))}
+            />
           </div>
         </div>
       </Card>
 
       <Card className="space-y-4">
         <div>
-          <p className="mb-2 text-sm font-semibold text-neutral-600">Semana</p>
-          <div className="grid grid-cols-4 gap-2">
-            {[1, 2, 3, 4].map((w) => {
-              const active = w === slot.week;
-              const complete = weekCompleted[w];
-              return (
-                <button
-                  key={w}
-                  type="button"
-                  onClick={() => setSlot({ ...slot, week: w })}
-                  className={`rounded-lg border px-3 py-2 text-center text-sm font-semibold ${
-                    active
-                      ? theme.chip
-                      : complete
-                      ? 'border-olive/50 bg-olive/10 text-olive'
-                      : 'border-neutral-200 text-neutral-600'
-                  }`}
-                >
-                  S{w} {complete ? '✓' : ''}
-                </button>
-              );
-            })}
-          </div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Semana</p>
+          <SegmentedControl
+            className="grid-cols-4"
+            value={slot.week}
+            onChange={(week) => setSlot({ ...slot, week })}
+            items={[1, 2, 3, 4].map((week) => ({
+              value: week,
+              label: `S${week}`,
+              rightBadge: weekCompleted[week] ? <span className="text-[11px]">✓</span> : undefined
+            }))}
+          />
         </div>
 
         <div>
-          <p className="mb-2 text-sm font-semibold text-neutral-600">Día</p>
-          <div className="grid grid-cols-4 gap-2">
-            {[1, 2, 3, 4].map((d) => {
-              const status = weekStatuses[d];
-              const active = d === slot.day;
-              return (
-                <button
-                  key={d}
-                  type="button"
-                  onClick={() => setSlot({ ...slot, day: d })}
-                  className={`rounded-lg border px-3 py-2 text-center text-xs font-semibold ${
-                    active
-                      ? theme.chip
-                      : status === 'done'
-                      ? 'border-olive/50 bg-olive/10 text-olive'
-                      : status === 'skipped'
-                      ? 'border-amber-300 bg-amber-50 text-amber-700'
-                      : 'border-neutral-200 text-neutral-500'
-                  }`}
-                >
-                  Día {d} {status === 'done' ? '✓' : status === 'skipped' ? '⏸' : ''}
-                </button>
-              );
-            })}
-          </div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Día</p>
+          <SegmentedControl
+            className="grid-cols-4"
+            value={slot.day}
+            onChange={(day) => setSlot({ ...slot, day })}
+            items={[1, 2, 3, 4].map((day) => ({
+              value: day,
+              label: `Día ${day}`,
+              rightBadge:
+                weekStatuses[day] === 'done' ? (
+                  <span className="text-[11px]">✓</span>
+                ) : weekStatuses[day] === 'skipped' ? (
+                  <span className="text-[11px]">⏸</span>
+                ) : undefined
+            }))}
+          />
         </div>
-        <Button className={theme.trainButton} onClick={() => router.push('/workout')}>
+        <Button className="h-14 text-base font-semibold" onClick={() => router.push('/workout')}>
           Entrenar hoy
         </Button>
-        <button
-          type="button"
-          onClick={markSkipped}
-          className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-neutral-700"
-        >
+        <button type="button" onClick={markSkipped} className="h-14 w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-neutral-700">
           No entrené hoy
         </button>
       </Card>
 
       {todayWorkout ? (
-        <Card className="space-y-3 border border-olive/20">
-          <p className={`text-sm font-semibold ${theme.softText}`}>Ya guardaste un entrenamiento hoy</p>
+        <Card className="space-y-3">
+          <p className="text-sm font-semibold text-accent">Ya guardaste un entrenamiento hoy</p>
           <p className="text-sm text-neutral-600">{formatLocalDateTime(todayWorkout.createdAt)}</p>
-          <Button className={theme.button} onClick={() => router.push(`/history?id=${todayWorkout.id}`)}>
+          <Button onClick={() => router.push(`/history?id=${todayWorkout.id}`)}>
             Ver entrenamiento de hoy
           </Button>
         </Card>
       ) : null}
-    </div>
+    </PageContainer>
   );
 }

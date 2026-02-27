@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Card } from '@/components/ui';
+import { Card, PageContainer } from '@/components/ui';
 import { formatLocalDateTime } from '@/lib/date';
 import { getProfileTheme } from '@/lib/profileTheme';
 import { defaultSlot, getRoutineFromBundle } from '@/lib/routine';
@@ -91,12 +91,12 @@ export default function ProgressPage() {
   }, [history]);
 
   return (
-    <div className="space-y-3 pb-4">
+    <PageContainer>
       <Card>
-        <h1 className="text-2xl font-bold">Progreso</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">Progreso</h1>
         <p className="text-sm text-neutral-600">Seleccioná un ejercicio para ver evolución</p>
         {slot ? (
-          <p className={`mt-1 text-sm font-medium ${theme.softText}`}>Perfil actual: {slot.profileId}</p>
+          <p className="mt-1 text-xs font-medium uppercase tracking-wide text-neutral-500">Perfil actual: {slot.profileId}</p>
         ) : null}
       </Card>
 
@@ -121,22 +121,23 @@ export default function ProgressPage() {
       </Card>
 
       {selectedExercise ? (
-        <Card className={`space-y-2 border ${theme.softSurface} border-transparent`}>
-          <p className={`text-sm font-semibold ${theme.text}`}>Mejor marca</p>
-          <p className="text-2xl font-bold text-ink">{bestWeight > 0 ? `${bestWeight} kg` : 'Sin datos'}</p>
+        <Card className="space-y-2">
+          <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">Mejor marca</p>
+          <p className="text-4xl font-bold text-ink">{bestWeight > 0 ? `${bestWeight} kg` : '—'}</p>
         </Card>
       ) : null}
 
       {selectedExercise ? (
         <Card className="space-y-3">
-          <p className="text-sm font-semibold text-ink">Historial</p>
+          <p className="text-lg font-semibold text-ink">Timeline</p>
           {history.length === 0 ? (
-            <p className="text-sm text-neutral-500">Aún no hay registros para este ejercicio.</p>
+            <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-500">
+              No hay marcas para este ejercicio todavía.
+            </div>
           ) : (
             history.map((item) => (
-              <div key={item.id} className="rounded-xl border border-neutral-200 p-3">
-                <p className="text-sm font-semibold">{formatLocalDateTime(item.createdAt)}</p>
-                <p className="text-sm text-neutral-600">Peso máximo: {item.maxWeight} kg</p>
+              <div key={item.id} className="text-sm text-neutral-700">
+                • {new Date(item.createdAt).toLocaleDateString('es-AR')} — {item.maxWeight} kg
               </div>
             ))
           )}
@@ -146,6 +147,6 @@ export default function ProgressPage() {
           <p className="text-sm text-neutral-500">Elegí un ejercicio para ver tu progreso.</p>
         </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }

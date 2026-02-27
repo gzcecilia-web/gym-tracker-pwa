@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui';
+import { DropSetBlock, ExerciseAccordion, SetTableRow } from '@/components/workout-ui';
+import { Button, Card, Input, PageContainer, SegmentedControl, StickyFooterCTA } from '@/components/ui';
 import { findCombinedGroupLabel, getCombinedGroupsForDay } from '@/lib/combined';
-import { getProfileTheme } from '@/lib/profileTheme';
 import { defaultSlot, getDayExercises, getRoutineFromBundle } from '@/lib/routine';
 import {
   appendWorkoutToHistory,
@@ -23,15 +23,47 @@ type IndexedExercise = {
   exercise: RoutineExercise;
 };
 
+type RenderBlock =
+  | { id: string; type: 'single'; item: IndexedExercise }
+  | { id: string; type: 'combined'; label: string; members: IndexedExercise[] };
+
+function statusByExercise(
+  exercise: RoutineExercise,
+  exIdx: number,
+  weights: Record<string, string>,
+  checks: Record<string, boolean>,
+  defaultSets: number
+) {
+  const sets = resolveSetCount(exercise, defaultSets);
+  const dropCount = detectDropCount(exercise);
+  const prefix = `${exIdx}-`;
+
+  const hasWeight = Object.keys(weights).some((key) => key === `${exIdx}-same` || key.startsWith(prefix));
+  const hasCheck = Object.keys(checks).some((key) => key.startsWith(prefix) && checks[key]);
+
+  const completeByCheck = Array.from({ length: sets }).every((_, setIdx) => checks[`${exIdx}-${setIdx}-done`]);
+  const completeByWeight =
+    dropCount > 0
+      ? Array.from({ length: sets }).every((_, setIdx) => [1, 2, 3].every((drop) => Boolean(weights[`${exIdx}-${setIdx}-drop${drop}`])))
+      : Array.from({ length: sets }).every((_, setIdx) => Boolean(weights[`${exIdx}-${setIdx}`] || weights[`${exIdx}-same`]));
+
+  return {
+    touched: hasWeight || hasCheck,
+    complete: completeByCheck || completeByWeight
+  };
+}
+
 export default function WorkoutPage() {
   const router = useRouter();
   const routine = useMemo<RoutineDB>(() => getRoutineFromBundle(), []);
+  const defaultSets = routine.defaultSetsIfMissing || 4;
 
   const [slot, setSlot] = useState<SelectedSlot>(() => defaultSlot(routine));
   const [weights, setWeights] = useState<Record<string, string>>({});
   const [checks, setChecks] = useState<Record<string, boolean>>({});
   const [dateMode, setDateMode] = useState<'today' | 'yesterday' | 'manual'>('today');
   const [manualDate, setManualDate] = useState('');
+  const [openBlockId, setOpenBlockId] = useState<string>('');
 
   useEffect(() => {
     migrateIfNeeded();
@@ -52,9 +84,7 @@ export default function WorkoutPage() {
 
     const draft = loadDraft(merged.profileId, merged.planId, merged.week, merged.day);
     if (draft) {
-      setWeights(
-        Object.fromEntries(Object.entries(draft.weights ?? {}).map(([k, v]) => [k, String(v ?? '')]))
-      );
+      setWeights(Object.fromEntries(Object.entries(draft.weights ?? {}).map(([k, v]) => [k, String(v ?? '')])));
       setChecks(draft.checks ?? {});
     }
   }, [routine]);
@@ -72,25 +102,23 @@ export default function WorkoutPage() {
     () => profile?.plans.find((p) => p.id === slot.planId) ?? profile?.plans[0],
     [profile, slot.planId]
   );
-  const theme = getProfileTheme(slot.profileId);
+
   const combinedGroups = useMemo(
     () => getCombinedGroupsForDay(slot.profileId, slot.planId, slot.week, slot.day),
     [slot.profileId, slot.planId, slot.week, slot.day]
   );
-  const renderBlocks = useMemo(() => {
+
+  const renderBlocks = useMemo<RenderBlock[]>(() => {
     const indexed: IndexedExercise[] = exercises.map((exercise, exIdx) => ({ exIdx, exercise }));
     const used = new Set<number>();
-    const blocks: Array<
-      | { type: 'single'; item: IndexedExercise }
-      | { type: 'combined'; label: string; members: IndexedExercise[] }
-    > = [];
+    const blocks: RenderBlock[] = [];
 
     for (const item of indexed) {
       if (used.has(item.exIdx)) continue;
       const label = findCombinedGroupLabel(String(item.exercise.name ?? ''), combinedGroups);
       if (!label) {
         used.add(item.exIdx);
-        blocks.push({ type: 'single', item });
+        blocks.push({ id: `single-${item.exIdx}`, type: 'single', item });
         continue;
       }
 
@@ -101,16 +129,26 @@ export default function WorkoutPage() {
 
       if (members.length <= 1) {
         used.add(item.exIdx);
-        blocks.push({ type: 'single', item });
+        blocks.push({ id: `single-${item.exIdx}`, type: 'single', item });
         continue;
       }
 
       members.forEach((m) => used.add(m.exIdx));
-      blocks.push({ type: 'combined', label, members });
+      blocks.push({ id: `combined-${members.map((m) => m.exIdx).join('-')}`, type: 'combined', label, members });
     }
 
     return blocks;
   }, [combinedGroups, exercises]);
+
+  useEffect(() => {
+    if (!renderBlocks.length) {
+      setOpenBlockId('');
+      return;
+    }
+    if (!openBlockId || !renderBlocks.find((b) => b.id === openBlockId)) {
+      setOpenBlockId(renderBlocks[0].id);
+    }
+  }, [renderBlocks, openBlockId]);
 
   useEffect(() => {
     saveDraft({
@@ -124,19 +162,42 @@ export default function WorkoutPage() {
     });
   }, [checks, slot, weights]);
 
-  const onSaveWorkout = () => {
-    const makeCreatedAtISO = () => {
-      const base = new Date();
-      if (dateMode === 'yesterday') {
-        base.setDate(base.getDate() - 1);
-      }
-      if (dateMode === 'manual' && /^\d{2}-\d{2}-\d{4}$/.test(manualDate.trim())) {
-        const [d, m, y] = manualDate.trim().split('-').map(Number);
-        return new Date(y, m - 1, d, 12, 0, 0).toISOString();
-      }
-      return base.toISOString();
-    };
+  const exerciseStats = useMemo(() => {
+    return exercises.map((exercise, exIdx) => statusByExercise(exercise, exIdx, weights, checks, defaultSets));
+  }, [checks, defaultSets, exercises, weights]);
 
+  const completedCount = exerciseStats.filter((x) => x.complete).length;
+  const progressPercent = exercises.length ? Math.round((completedCount / exercises.length) * 100) : 0;
+
+  const setWeight = (key: string, value: string) => {
+    const cleaned = value.replace(/[^0-9.,]/g, '');
+    setWeights((prev) => ({ ...prev, [key]: cleaned }));
+  };
+
+  const setCheck = (key: string, checked: boolean) => {
+    setChecks((prev) => ({ ...prev, [key]: checked }));
+  };
+
+  const applySameWeightAllSets = (exIdx: number, sets: number, value: string) => {
+    const cleaned = value.replace(/[^0-9.,]/g, '');
+    setWeights((prev) => {
+      const next = { ...prev, [`${exIdx}-same`]: cleaned };
+      for (let s = 0; s < sets; s += 1) next[`${exIdx}-${s}`] = cleaned;
+      return next;
+    });
+  };
+
+  const makeCreatedAtISO = () => {
+    const base = new Date();
+    if (dateMode === 'yesterday') base.setDate(base.getDate() - 1);
+    if (dateMode === 'manual' && /^\d{2}-\d{2}-\d{4}$/.test(manualDate.trim())) {
+      const [d, m, y] = manualDate.trim().split('-').map(Number);
+      return new Date(y, m - 1, d, 12, 0, 0).toISOString();
+    }
+    return base.toISOString();
+  };
+
+  const onSaveWorkout = () => {
     const payload = buildWorkoutPayload({
       profileId: slot.profileId,
       planId: slot.planId,
@@ -153,229 +214,167 @@ export default function WorkoutPage() {
     router.push(`/history?id=${payload.id}`);
   };
 
-  const setWeight = (key: string, value: string) => {
-    const cleaned = value.replace(/[^0-9.,]/g, '');
-    setWeights((prev) => ({ ...prev, [key]: cleaned }));
-  };
-
-  const applySameWeightAllSets = (exIdx: number, sets: number, value: string) => {
-    const cleaned = value.replace(/[^0-9.,]/g, '');
-    setWeights((prev) => {
-      const next = { ...prev, [`${exIdx}-same`]: cleaned };
-      for (let s = 0; s < sets; s += 1) {
-        next[`${exIdx}-${s}`] = cleaned;
-      }
-      return next;
-    });
-  };
-
   return (
-    <div className="space-y-4 pb-6">
-      <div className="mx-auto max-w-md space-y-4">
+    <PageContainer>
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight text-ink">Entrenamiento</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">Entrenamiento</h1>
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-2xl border border-neutral-200 bg-white px-5 py-2.5 text-base font-bold text-ink"
+            className="rounded-xl border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-700"
           >
             Volver
           </button>
         </div>
-
-        <p className="text-base text-neutral-600">
+        <p className="text-sm text-neutral-600">
           {profile?.name ?? '—'} · {plan?.name ?? '—'} · Semana {slot.week} · Día {slot.day}
         </p>
+      </div>
 
-        <section className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-soft">
-          <p className="text-xl font-semibold text-ink">Fecha del entrenamiento</p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            {[
-              { id: 'today', label: 'Hoy' },
-              { id: 'yesterday', label: 'Ayer' },
-              { id: 'manual', label: 'Elegir fecha' }
-            ].map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setDateMode(item.id as 'today' | 'yesterday' | 'manual')}
-                className={`rounded-full border px-5 py-2.5 text-sm font-semibold ${
-                  dateMode === item.id
-                    ? theme.chip
-                    : 'border-neutral-200 bg-white text-neutral-700'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-          {dateMode === 'manual' ? (
-            <Input
-              placeholder="DD-MM-AAAA"
-              value={manualDate}
-              onChange={(e) => setManualDate(e.target.value)}
-              className="mt-3 h-12 rounded-xl border-neutral-200 bg-white text-base text-ink placeholder:text-neutral-400"
-            />
-          ) : null}
-          <p className="mt-4 text-sm text-neutral-500">
-            Se guardará como:{' '}
-            {new Date(
-              dateMode === 'manual' && /^\d{2}-\d{2}-\d{4}$/.test(manualDate.trim())
-                ? new Date(
-                    Number(manualDate.trim().slice(6, 10)),
-                    Number(manualDate.trim().slice(3, 5)) - 1,
-                    Number(manualDate.trim().slice(0, 2)),
-                    12,
-                    0,
-                    0
-                  ).toISOString()
-                : new Date().toISOString()
-            ).toLocaleString('es-AR')}
-          </p>
-        </section>
+      <Card className="space-y-3">
+        <div className="h-1.5 w-full rounded-full bg-neutral-200">
+          <div className="h-1.5 rounded-full bg-accent transition-all" style={{ width: `${progressPercent}%` }} />
+        </div>
+        <p className="text-xs font-medium text-neutral-500">
+          Ejercicio {Math.min(completedCount + 1, Math.max(exercises.length, 1))} de {exercises.length || 1}
+        </p>
+      </Card>
 
+      <Card className="space-y-4">
+        <h2 className="text-lg font-semibold text-ink">Fecha del entrenamiento</h2>
+        <SegmentedControl
+          className="grid-cols-3"
+          value={dateMode}
+          onChange={(value) => setDateMode(value)}
+          items={[
+            { value: 'today', label: 'Hoy' },
+            { value: 'yesterday', label: 'Ayer' },
+            { value: 'manual', label: 'Elegir fecha' }
+          ]}
+        />
+        {dateMode === 'manual' ? (
+          <Input placeholder="DD-MM-AAAA" value={manualDate} onChange={(e) => setManualDate(e.target.value)} />
+        ) : null}
+      </Card>
+
+      <div className="space-y-5">
         {renderBlocks.map((block) => {
           if (block.type === 'combined') {
             const first = block.members[0];
-            const firstSets = resolveSetCount(first.exercise, routine.defaultSetsIfMissing || 4);
-            const firstReps = Array.isArray(first.exercise.reps)
-              ? first.exercise.reps.join('-')
-              : String(first.exercise.reps);
+            const sets = resolveSetCount(first.exercise, defaultSets);
+            const reps = Array.isArray(first.exercise.reps) ? first.exercise.reps.join('-') : String(first.exercise.reps);
+            const complete = block.members.every((m) => exerciseStats[m.exIdx]?.complete);
 
             return (
-              <section
-                key={`combined-${block.label}`}
-                className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-soft"
+              <ExerciseAccordion
+                key={block.id}
+                title={block.label}
+                meta={`Series: ${sets} · Reps: ${reps}`}
+                open={openBlockId === block.id}
+                onToggle={() => setOpenBlockId(block.id)}
+                complete={complete}
               >
-                <div className="flex items-start justify-between gap-3">
-                <h2 className={`text-2xl font-semibold leading-tight ${theme.text}`}>{block.label}</h2>
-                  <span className="rounded-full border border-neutral-200 bg-neutral-50 px-2 py-0.5 text-[11px] font-medium text-neutral-500">
-                    Superset
-                  </span>
-                </div>
-                <p className="mt-2 text-lg text-neutral-600">
-                  Series: {firstSets} · Reps: {firstReps}
-                </p>
-
-                <div className="mt-6 space-y-3">
-                  <p className="text-xl font-medium text-neutral-600">Pesos (mismo en todas las series)</p>
+                <p className="mb-3 text-sm text-neutral-500">Pesos (mismo en todas las series)</p>
+                <div className="space-y-2">
                   {block.members.map((member) => {
-                    const memberSets = resolveSetCount(member.exercise, routine.defaultSetsIfMissing || 4);
+                    const memberSets = resolveSetCount(member.exercise, defaultSets);
                     return (
-                      <div
-                        key={`combined-member-${member.exIdx}`}
-                        className="grid grid-cols-[1fr,150px,32px] items-center gap-3"
-                      >
-                        <p className="text-base font-medium text-neutral-700">{member.exercise.name}</p>
+                      <div key={`combined-${member.exIdx}`} className="grid grid-cols-[1fr,128px] items-center gap-2 rounded-xl border border-neutral-200 px-3 py-2">
+                        <p className="text-sm font-medium text-ink">{member.exercise.name}</p>
                         <Input
                           inputMode="decimal"
                           placeholder="kg"
                           value={weights[`${member.exIdx}-same`] ?? ''}
                           onChange={(e) => applySameWeightAllSets(member.exIdx, memberSets, e.target.value)}
-                          className="h-12 rounded-xl border-neutral-200 bg-white text-base text-ink placeholder:text-neutral-400"
+                          className="h-9"
                         />
-                        <span className="text-base text-neutral-500">kg</span>
                       </div>
                     );
                   })}
                 </div>
-              </section>
+              </ExerciseAccordion>
             );
           }
 
           const { exercise, exIdx } = block.item;
-          const sets = resolveSetCount(exercise, routine.defaultSetsIfMissing || 4);
+          const sets = resolveSetCount(exercise, defaultSets);
           const repsArr = repsToArray(exercise.reps, sets);
           const isDropSet = detectDropCount(exercise) > 0;
           const isSameWeightExercise = typeof exercise.reps === 'number' && !isDropSet;
+          const complete = exerciseStats[exIdx]?.complete;
 
           return (
-            <section
-              key={`${exercise.name}-${exIdx}`}
-              className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-soft"
+            <ExerciseAccordion
+              key={block.id}
+              title={exercise.name}
+              meta={`Series: ${sets} · Reps: ${Array.isArray(exercise.reps) ? exercise.reps.join('-') : String(exercise.reps)}`}
+              open={openBlockId === block.id}
+              onToggle={() => setOpenBlockId(block.id)}
+              complete={complete}
             >
-              <h2 className={`text-2xl font-bold leading-tight ${theme.text}`}>{exercise.name}</h2>
-              <p className="mt-2 text-lg text-neutral-600">
-                Series: {sets} · Reps:{' '}
-                {Array.isArray(exercise.reps) ? exercise.reps.join('-') : String(exercise.reps)}
-              </p>
-
               {isSameWeightExercise ? (
-                <div className="mt-6 space-y-3">
-                  <p className="text-xl font-medium text-neutral-600">Peso (mismo para todas las series)</p>
-                  <div className="grid grid-cols-[1fr,44px] items-center gap-3">
-                    <Input
-                      inputMode="decimal"
-                      placeholder="kg"
-                      value={weights[`${exIdx}-same`] ?? ''}
-                      onChange={(e) => applySameWeightAllSets(exIdx, sets, e.target.value)}
-                      className="h-12 rounded-xl border-neutral-200 bg-white text-base text-ink placeholder:text-neutral-400"
-                    />
-                    <span className="text-base text-neutral-500">kg</span>
-                  </div>
+                <div className="mb-4 space-y-2 rounded-xl border border-neutral-200 bg-neutral-50 p-3">
+                  <p className="text-xs font-medium text-neutral-500">Peso (mismo para todas las series)</p>
+                  <Input
+                    inputMode="decimal"
+                    placeholder="kg"
+                    value={weights[`${exIdx}-same`] ?? ''}
+                    onChange={(e) => applySameWeightAllSets(exIdx, sets, e.target.value)}
+                    className="h-9"
+                  />
                 </div>
               ) : null}
 
-              <div className="mt-6 space-y-4">
-                {Array.from({ length: sets }).map((_, setIdx) => {
-                  const repValue = repsArr[setIdx] ?? '?';
-                  return (
-                    <div
+              {isDropSet ? (
+                <div className="space-y-3">
+                  {Array.from({ length: sets }).map((_, setIdx) => (
+                    <DropSetBlock
+                      key={`${exIdx}-${setIdx}-drops`}
+                      setLabel={`Serie ${setIdx + 1}`}
+                      reps={String(repsArr[setIdx] ?? '?')}
+                      values={[
+                        weights[`${exIdx}-${setIdx}-drop1`] ?? '',
+                        weights[`${exIdx}-${setIdx}-drop2`] ?? '',
+                        weights[`${exIdx}-${setIdx}-drop3`] ?? ''
+                      ]}
+                      onChangeDrop={(drop, value) => setWeight(`${exIdx}-${setIdx}-drop${drop}`, value)}
+                      checked={checks[`${exIdx}-${setIdx}-done`] ?? false}
+                      onToggleCheck={() => setCheck(`${exIdx}-${setIdx}-done`, !checks[`${exIdx}-${setIdx}-done`])}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="grid grid-cols-[56px,64px,1fr,28px] gap-2 px-2 text-xs font-medium uppercase tracking-wide text-neutral-500">
+                    <span>Serie</span>
+                    <span>Reps</span>
+                    <span>Peso</span>
+                    <span>Ok</span>
+                  </div>
+                  {Array.from({ length: sets }).map((_, setIdx) => (
+                    <SetTableRow
                       key={`${exIdx}-${setIdx}`}
-                      className={`space-y-3 ${setIdx === 0 ? '' : 'border-t border-neutral-100 pt-4'}`}
-                    >
-                      <p className="text-lg font-medium text-ink">
-                        Serie {setIdx + 1} · Reps: {String(repValue)}
-                      </p>
-
-                      {isDropSet ? (
-                        <div className="space-y-3">
-                          {[1, 2, 3].map((drop) => {
-                            const key = `${exIdx}-${setIdx}-drop${drop}`;
-                            return (
-                              <div key={key} className="grid grid-cols-[88px,1fr,44px] items-center gap-3">
-                                <span className="text-base text-neutral-600">Drop {drop}</span>
-                                <Input
-                                  inputMode="decimal"
-                                  placeholder="kg"
-                                  value={weights[key] ?? ''}
-                                  onChange={(e) => setWeight(key, e.target.value)}
-                                  className="h-12 rounded-xl border-neutral-200 bg-white text-base text-ink placeholder:text-neutral-400"
-                                />
-                                <span className="text-base text-neutral-500">kg</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <div className="grid grid-cols-[88px,1fr,44px] items-center gap-3">
-                          <span className="text-base text-neutral-600">Peso</span>
-                          <Input
-                            inputMode="decimal"
-                            placeholder="kg"
-                            value={weights[`${exIdx}-${setIdx}`] ?? ''}
-                            onChange={(e) => setWeight(`${exIdx}-${setIdx}`, e.target.value)}
-                            className="h-12 rounded-xl border-neutral-200 bg-white text-base text-ink placeholder:text-neutral-400"
-                          />
-                          <span className="text-base text-neutral-500">kg</span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
+                      label={`${setIdx + 1}`}
+                      reps={String(repsArr[setIdx] ?? '?')}
+                      value={weights[`${exIdx}-${setIdx}`] ?? ''}
+                      onChange={(value) => setWeight(`${exIdx}-${setIdx}`, value)}
+                      checked={checks[`${exIdx}-${setIdx}-done`] ?? false}
+                      onToggleCheck={() => setCheck(`${exIdx}-${setIdx}-done`, !checks[`${exIdx}-${setIdx}-done`])}
+                    />
+                  ))}
+                </div>
+              )}
+            </ExerciseAccordion>
           );
         })}
-
-        <button
-          type="button"
-          onClick={onSaveWorkout}
-          className={`mt-2 w-full rounded-2xl px-4 py-4 text-lg font-semibold ${theme.button}`}
-        >
-          Guardar entrenamiento
-        </button>
       </div>
-    </div>
+
+      <StickyFooterCTA>
+        <Button className="h-14 text-base font-semibold" onClick={onSaveWorkout}>
+          Guardar entrenamiento
+        </Button>
+      </StickyFooterCTA>
+    </PageContainer>
   );
 }

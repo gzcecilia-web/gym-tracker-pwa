@@ -1,9 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Card } from '@/components/ui';
+import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
 import { formatLocalDateTime } from '@/lib/date';
-import { getProfileTheme } from '@/lib/profileTheme';
 import { defaultSlot, getRoutineFromBundle } from '@/lib/routine';
 import {
   loadHistory,
@@ -28,9 +27,9 @@ function isoToYYYYMMDD(iso: string) {
 }
 
 function statusPill(status?: 'done' | 'skipped') {
-  if (status === 'done') return '✅';
-  if (status === 'skipped') return '⏸️';
-  return '⬜️';
+  if (status === 'done') return '✓';
+  if (status === 'skipped') return '⏸';
+  return '';
 }
 
 export default function HistoryPage() {
@@ -51,7 +50,6 @@ export default function HistoryPage() {
     () => routine.profiles.find((p) => p.id === profileId) ?? routine.profiles[0],
     [routine, profileId]
   );
-  const theme = getProfileTheme(profileId);
   const profilePlans = profile?.plans ?? [];
 
   const planId = slot.planId;
@@ -131,9 +129,6 @@ export default function HistoryPage() {
       .sort((a, b) => b.count - a.count);
   }, [rows]);
 
-  const weekButtons = [1, 2, 3, 4];
-  const dayButtons = [1, 2, 3, 4];
-
   const buildFixedCreatedAt = () => {
     const now = new Date();
     const base = new Date(now);
@@ -158,74 +153,54 @@ export default function HistoryPage() {
     void load();
   };
 
-  useEffect(() => {
-    if (!selectedDay) return;
-    const key = `${selectedDay.week}-${selectedDay.day}`;
-    if (!latestByDayKey[key]) return;
-  }, [selectedDay, latestByDayKey]);
-
   return (
-    <div className="space-y-3 pb-4">
-      <Card>
-        <h1 className="text-2xl font-bold">Historial</h1>
-        <p className="text-sm text-neutral-600">Estructura por semana/día + progreso simple</p>
-      </Card>
+    <PageContainer>
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">Historial</h1>
+        <p className="mt-1 text-sm text-neutral-600">Registros por semana/día y resumen de progreso</p>
+      </div>
 
-      <Card className="space-y-2">
-        <p className="text-sm font-semibold text-ink">Perfil</p>
-        <div className="flex flex-wrap gap-2">
-          {routine.profiles.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => {
-                const firstPlan = p.plans[0];
-                setSlot({
-                  profileId: p.id,
-                  planId: firstPlan?.id ?? slot.planId,
-                  week: slot.week,
-                  day: slot.day
-                });
-                setSelectedDay(null);
-              }}
-              className={`rounded-full border px-3 py-1.5 text-sm font-semibold ${
-                p.id === profileId ? theme.chip : 'border-neutral-200 text-neutral-600'
-              }`}
-            >
-              {p.name}
-            </button>
-          ))}
+      <Card className="space-y-5">
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Perfil</p>
+          <SegmentedControl
+            className="grid-cols-2"
+            value={profileId}
+            onChange={(profileValue) => {
+              const nextProfile = routine.profiles.find((p) => p.id === profileValue);
+              const firstPlan = nextProfile?.plans[0];
+              setSlot({
+                profileId: profileValue,
+                planId: firstPlan?.id ?? slot.planId,
+                week: slot.week,
+                day: slot.day
+              });
+              setSelectedDay(null);
+            }}
+            items={routine.profiles.map((p) => ({ value: p.id, label: p.name }))}
+          />
+        </div>
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Plan mensual</p>
+          <SegmentedControl
+            className="grid-cols-1"
+            value={planId}
+            onChange={(planValue) => {
+              setSlot((prev) => ({ ...prev, planId: planValue }));
+              setSelectedDay(null);
+            }}
+            items={profilePlans.map((pl) => ({ value: pl.id, label: pl.name }))}
+          />
         </div>
       </Card>
 
-      <Card className="space-y-2">
-        <p className="text-sm font-semibold text-ink">Plan mensual</p>
-        <div className="flex flex-wrap gap-2">
-          {profilePlans.map((pl) => (
-            <button
-              key={pl.id}
-              type="button"
-              onClick={() => {
-                setSlot((prev) => ({ ...prev, planId: pl.id }));
-                setSelectedDay(null);
-              }}
-              className={`rounded-xl border px-3 py-1.5 text-sm font-semibold ${
-                pl.id === planId ? theme.chip : 'border-neutral-200 text-neutral-600'
-              }`}
-            >
-              {pl.name}
-            </button>
-          ))}
-        </div>
-      </Card>
-
-      <Card className="space-y-3">
-        <p className="text-sm font-semibold text-ink">Semana / Día</p>
-        {weekButtons.map((week) => (
-          <div key={week} className="flex items-center gap-2">
-            <p className="w-20 text-xs font-semibold text-neutral-500">Semana {week}</p>
+      <Card className="space-y-4">
+        <p className="text-lg font-semibold text-ink">Semana / Día</p>
+        {[1, 2, 3, 4].map((week) => (
+          <div key={week} className="flex items-center gap-3">
+            <p className="w-20 text-xs font-medium text-neutral-500">Semana {week}</p>
             <div className="flex gap-2">
-              {dayButtons.map((day) => {
+              {[1, 2, 3, 4].map((day) => {
                 const key = `${week}-${day}`;
                 const latest = latestByDayKey[key];
                 const selected = selectedDay?.week === week && selectedDay?.day === day;
@@ -240,14 +215,14 @@ export default function HistoryPage() {
                     key={key}
                     type="button"
                     onClick={() => setSelectedDay({ week, day })}
-                    className={`flex h-10 w-10 items-center justify-center rounded-lg border text-sm ${
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl border text-sm font-semibold ${
                       selected
-                        ? theme.chip
+                        ? 'border-accent bg-accent/10 text-accent'
                         : status === 'done'
-                        ? 'border-olive/40 bg-olive/10'
+                        ? 'border-transparent bg-accent/15 text-accent'
                         : status === 'skipped'
-                        ? 'border-amber-300 bg-amber-50'
-                        : 'border-neutral-200'
+                        ? 'border-transparent bg-neutral-200 text-neutral-600'
+                        : 'border-dashed border-neutral-300 bg-white text-neutral-400'
                     }`}
                   >
                     {statusPill(status)}
@@ -257,11 +232,11 @@ export default function HistoryPage() {
             </div>
           </div>
         ))}
-        <p className="text-xs text-neutral-500">Leyenda: ✅ entrenado · ⏸️ no entrené · ⬜️ pendiente</p>
+        <p className="text-xs text-neutral-500">✓ entrenado · ⏸ no entrené · vacío pendiente</p>
       </Card>
 
-      <Card className="space-y-2">
-        <p className="text-sm font-semibold text-ink">Detalle</p>
+      <Card className="space-y-3">
+        <p className="text-lg font-semibold text-ink">Detalle del día</p>
         {!selectedDay ? (
           <p className="text-sm text-neutral-500">Elegí un día para ver el último registro.</p>
         ) : !selectedLatest ? (
@@ -269,61 +244,51 @@ export default function HistoryPage() {
             Semana {selectedDay.week} · Día {selectedDay.day}: sin registros.
           </p>
         ) : (
-          <div className="space-y-2">
-            <p className="text-sm font-semibold text-ink">
-              Semana {selectedLatest.week} · Día {selectedLatest.day}
+          <div className="space-y-3 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+            <h2 className="text-lg font-semibold text-ink">{formatLocalDateTime(selectedLatest.createdAt)}</h2>
+            <p className="text-sm text-neutral-600">
+              Semana {selectedLatest.week} · Día {selectedLatest.day} · {selectedLatest.planId}
             </p>
             <p className="text-sm text-neutral-600">
-              Estado: {selectedLatest.completed === false ? '⏸️ No entrené' : '✅ Entrenado'}
+              Estado: {selectedLatest.completed === false ? 'No entrené' : 'Entrené'}
             </p>
-            <p className="text-sm text-neutral-500">Fecha guardada: {formatLocalDateTime(selectedLatest.createdAt)}</p>
+            <div className="space-y-1">
+              {(selectedLatest.exercises ?? []).slice(0, 4).map((exercise, idx) => (
+                <p key={`${exercise.name}-${idx}`} className="text-sm text-neutral-600">
+                  • {exercise.name}
+                </p>
+              ))}
+            </div>
 
-            <div className="mt-2 rounded-xl border border-neutral-200 bg-neutral-50 p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Corregir fecha</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {[
-                  { id: 'today', label: 'Hoy' },
-                  { id: 'yesterday', label: 'Ayer' },
-                  { id: 'manual', label: 'Manual' }
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setFixMode(item.id as 'today' | 'yesterday' | 'manual')}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${
-                      fixMode === item.id
-                        ? theme.chip
-                        : 'border-neutral-200 bg-white text-neutral-600'
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
+            <div className="space-y-2 rounded-xl border border-neutral-200 bg-white p-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">Corregir fecha</p>
+              <SegmentedControl
+                className="grid-cols-3"
+                value={fixMode}
+                onChange={(value) => setFixMode(value)}
+                items={[
+                  { value: 'today', label: 'Hoy' },
+                  { value: 'yesterday', label: 'Ayer' },
+                  { value: 'manual', label: 'Manual' }
+                ]}
+              />
               {fixMode === 'manual' ? (
-                <input
+                <Input
                   value={manualDate}
                   onChange={(e) => setManualDate(e.target.value)}
                   placeholder="DD-MM-AAAA"
-                  className="mt-2 h-10 w-full rounded-lg border border-neutral-200 bg-white px-3 text-sm text-ink outline-none ring-accent/40 focus:ring"
                 />
               ) : null}
-              <div className="mt-3">
-                <button
-                  type="button"
-                  onClick={onFixDate}
-                  className={`rounded-lg px-3 py-2 text-xs font-semibold ${theme.button}`}
-                >
-                  Guardar nueva fecha
-                </button>
-              </div>
+              <Button className="h-11" onClick={onFixDate}>
+                Guardar nueva fecha
+              </Button>
             </div>
           </div>
         )}
       </Card>
 
       <Card className="space-y-2">
-        <p className="text-sm font-semibold text-ink">Progreso por ejercicio (simple)</p>
+        <p className="text-lg font-semibold text-ink">Progreso por ejercicio</p>
         {exerciseSummary.length === 0 ? (
           <p className="text-sm text-neutral-500">Todavía no hay registros de pesos guardados.</p>
         ) : (
@@ -339,7 +304,7 @@ export default function HistoryPage() {
       </Card>
 
       <Card className="space-y-2">
-        <p className="text-sm font-semibold text-ink">Timeline (por fecha)</p>
+        <p className="text-lg font-semibold text-ink">Timeline</p>
         {Object.keys(groupedByDate).length === 0 ? (
           <p className="text-sm text-neutral-500">No hay sesiones todavía.</p>
         ) : (
@@ -351,14 +316,13 @@ export default function HistoryPage() {
                 <p className="text-sm font-semibold text-ink">{ymd}</p>
                 {(groupedByDate[ymd] ?? []).slice(0, 6).map((r) => (
                   <p key={r.id} className="text-xs text-neutral-500">
-                    {r.completed === false ? '⏸️' : '✅'} · Semana {r.week} · Día {r.day} ·{' '}
-                    {formatLocalDateTime(r.createdAt)}
+                    {r.completed === false ? '⏸' : '✓'} · Semana {r.week} · Día {r.day} · {formatLocalDateTime(r.createdAt)}
                   </p>
                 ))}
               </div>
             ))
         )}
       </Card>
-    </div>
+    </PageContainer>
   );
 }

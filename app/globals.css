@@ -4,11 +4,13 @@
 
 :root {
   color-scheme: light;
+  --accent-rgb: 180 106 78;
+  --accent: rgb(var(--accent-rgb));
 }
 
 body {
   margin: 0;
-  background: #f7f6f2;
+  background: #f4f4f3;
   color: #1f2937;
 }
 
