@@ -5,7 +5,7 @@ import { Card } from '@/components/ui';
 import { formatLocalDateTime } from '@/lib/date';
 import { getProfileTheme } from '@/lib/profileTheme';
 import { defaultSlot, getRoutineFromBundle } from '@/lib/routine';
-import { loadAllHistory, loadSelection, migrateIfNeeded } from '@/lib/storage';
+import { loadHistory, loadSelection, migrateIfNeeded, syncHistoryFromCloud } from '@/lib/storage';
 import type { SelectedSlot, WorkoutRecord } from '@/lib/types';
 
 type Point = {
@@ -20,19 +20,30 @@ export default function ProgressPage() {
   const [selectedExercise, setSelectedExercise] = useState<string>('');
 
   useEffect(() => {
-    migrateIfNeeded();
-    const routine = getRoutineFromBundle();
-    const fallback = defaultSlot(routine);
-    const selected = loadSelection(fallback);
+    let cancelled = false;
+    const run = async () => {
+      migrateIfNeeded();
+      const routine = getRoutineFromBundle();
+      const fallback = defaultSlot(routine);
+      const selected = loadSelection(fallback);
 
-    setSlot(selected);
-    setSessions(loadAllHistory());
+      setSlot(selected);
+      try {
+        await syncHistoryFromCloud(selected.profileId, selected.planId);
+      } catch {
+        // Keep local behavior if cloud sync fails.
+      }
+      if (cancelled) return;
+      setSessions(loadHistory(selected.profileId, selected.planId));
+    };
+
+    void run();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const profileSessions = useMemo(() => {
-    if (!slot) return [];
-    return sessions.filter((s) => s.profileId === slot.profileId);
-  }, [sessions, slot]);
+  const profileSessions = useMemo(() => sessions, [sessions]);
 
   const theme = getProfileTheme(slot?.profileId ?? '');
 

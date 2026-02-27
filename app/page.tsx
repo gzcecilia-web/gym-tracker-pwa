@@ -11,7 +11,8 @@ import {
   loadHistory,
   loadSelection,
   migrateIfNeeded,
-  saveSelection
+  saveSelection,
+  syncHistoryFromCloud
 } from '@/lib/storage';
 import { buildSkippedWorkoutPayload } from '@/lib/workout';
 import type { RoutineDB, SelectedSlot, WorkoutRecord } from '@/lib/types';
@@ -68,70 +69,85 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!isLoadedSelection) return;
-    saveSelection(slot);
-    const list = loadHistory(slot.profileId, slot.planId);
-    const latestByWeekDay: Record<string, 'done' | 'skipped'> = {};
-    for (const item of list) {
-      const key = `${item.week}-${item.day}`;
-      if (!latestByWeekDay[key]) {
-        const status = getWorkoutStatus(item);
-        if (status !== 'ignore') latestByWeekDay[key] = status;
+    let cancelled = false;
+
+    const run = async () => {
+      saveSelection(slot);
+      try {
+        await syncHistoryFromCloud(slot.profileId, slot.planId);
+      } catch {
+        // Local storage remains the source of truth if cloud sync fails.
       }
-    }
-    setAllStatuses(latestByWeekDay);
-
-    const completionMap: Record<number, boolean> = {};
-    for (let w = 1; w <= 4; w += 1) {
-      completionMap[w] = [1, 2, 3, 4].every((d) => Boolean(latestByWeekDay[`${w}-${d}`]));
-    }
-    setWeekCompleted(completionMap);
-
-    const thisWeekStatuses: Record<number, 'done' | 'skipped'> = {};
-    for (let d = 1; d <= 4; d += 1) {
-      const s = latestByWeekDay[`${slot.week}-${d}`];
-      if (s) thisWeekStatuses[d] = s;
-    }
-    setWeekStatuses(thisWeekStatuses);
-
-    const today = list.find((w) => w.week === slot.week && w.day === slot.day && isSameLocalDay(w.createdAt, new Date().toISOString()));
-    setTodayWorkout(today ?? null);
-
-    // Auto-avance solo cuando el día seleccionado se guardó HOY.
-    // Evita bloquear selección manual en semanas/días históricos.
-    const selectedDoneToday = list.some(
-      (item) =>
-        item.week === slot.week &&
-        item.day === slot.day &&
-        isSameLocalDay(item.createdAt, new Date().toISOString())
-    );
-
-    if (selectedDoneToday) {
-      const currentWeekDone = completionMap[slot.week];
-      let nextWeek = slot.week;
-      let nextDay = slot.day;
-
-      if (currentWeekDone) {
-        for (let w = slot.week + 1; w <= 4; w += 1) {
-          const pendingDay = [1, 2, 3, 4].find((d) => !latestByWeekDay[`${w}-${d}`]);
-          if (pendingDay) {
-            nextWeek = w;
-            nextDay = pendingDay;
-            break;
-          }
+      const list = loadHistory(slot.profileId, slot.planId);
+      const latestByWeekDay: Record<string, 'done' | 'skipped'> = {};
+      for (const item of list) {
+        const key = `${item.week}-${item.day}`;
+        if (!latestByWeekDay[key]) {
+          const status = getWorkoutStatus(item);
+          if (status !== 'ignore') latestByWeekDay[key] = status;
         }
-      } else {
-        const pendingNextDay = [slot.day + 1, slot.day + 2, slot.day + 3]
-          .filter((d) => d >= 1 && d <= 4)
-          .find((d) => !latestByWeekDay[`${slot.week}-${d}`]);
-        if (pendingNextDay) nextDay = pendingNextDay;
       }
+      if (cancelled) return;
+      setAllStatuses(latestByWeekDay);
 
-      if (nextWeek !== slot.week || nextDay !== slot.day) {
-        const nextSlot = { ...slot, week: nextWeek, day: nextDay };
-        saveSelection(nextSlot);
-        setSlot(nextSlot);
+      const completionMap: Record<number, boolean> = {};
+      for (let w = 1; w <= 4; w += 1) {
+        completionMap[w] = [1, 2, 3, 4].every((d) => Boolean(latestByWeekDay[`${w}-${d}`]));
       }
-    }
+      setWeekCompleted(completionMap);
+
+      const thisWeekStatuses: Record<number, 'done' | 'skipped'> = {};
+      for (let d = 1; d <= 4; d += 1) {
+        const s = latestByWeekDay[`${slot.week}-${d}`];
+        if (s) thisWeekStatuses[d] = s;
+      }
+      setWeekStatuses(thisWeekStatuses);
+
+      const today = list.find(
+        (w) => w.week === slot.week && w.day === slot.day && isSameLocalDay(w.createdAt, new Date().toISOString())
+      );
+      setTodayWorkout(today ?? null);
+
+      const selectedDoneToday = list.some(
+        (item) =>
+          item.week === slot.week &&
+          item.day === slot.day &&
+          isSameLocalDay(item.createdAt, new Date().toISOString())
+      );
+
+      if (selectedDoneToday) {
+        const currentWeekDone = completionMap[slot.week];
+        let nextWeek = slot.week;
+        let nextDay = slot.day;
+
+        if (currentWeekDone) {
+          for (let w = slot.week + 1; w <= 4; w += 1) {
+            const pendingDay = [1, 2, 3, 4].find((d) => !latestByWeekDay[`${w}-${d}`]);
+            if (pendingDay) {
+              nextWeek = w;
+              nextDay = pendingDay;
+              break;
+            }
+          }
+        } else {
+          const pendingNextDay = [slot.day + 1, slot.day + 2, slot.day + 3]
+            .filter((d) => d >= 1 && d <= 4)
+            .find((d) => !latestByWeekDay[`${slot.week}-${d}`]);
+          if (pendingNextDay) nextDay = pendingNextDay;
+        }
+
+        if (nextWeek !== slot.week || nextDay !== slot.day) {
+          const nextSlot = { ...slot, week: nextWeek, day: nextDay };
+          saveSelection(nextSlot);
+          setSlot(nextSlot);
+        }
+      }
+    };
+
+    run();
+    return () => {
+      cancelled = true;
+    };
   }, [slot, isLoadedSelection]);
 
   const profile = routine.profiles.find((p) => p.id === slot.profileId) ?? routine.profiles[0];

@@ -1,5 +1,6 @@
 'use client';
 
+import { cloudLoadHistory, cloudUpsertWorkout, isCloudEnabled } from '@/lib/cloud';
 import { makeCreatedAtISO } from '@/lib/date';
 import { getRoutineFromBundle } from '@/lib/routine';
 import type { RoutineDB, SelectedSlot, WorkoutDraft, WorkoutRecord } from '@/lib/types';
@@ -119,20 +120,31 @@ export function clearDraft(profileId: string, planId: string, week: number, day:
   }
 }
 
-export function appendWorkoutToHistory(workout: WorkoutRecord): void {
+export function appendWorkoutToHistory(workout: WorkoutRecord, options?: { syncCloud?: boolean }): void {
   const normalizedPlanId = normalizePlanId(workout.planId);
   const normalizedWorkout: WorkoutRecord = {
     ...workout,
     planId: normalizedPlanId
   };
-  const itemKey = getWorkoutItemKey(workout.id);
+  const itemKey = getWorkoutItemKey(normalizedWorkout.id);
   saveJSON(itemKey, normalizedWorkout);
 
   const historyKey = getHistoryKey(workout.profileId, normalizedPlanId);
   const current = loadJSON<(string | WorkoutRecord)[]>(historyKey, []);
 
-  const next = [workout.id, ...current.filter((entry) => (typeof entry === 'string' ? entry !== workout.id : entry.id !== workout.id))];
+  const next = [
+    normalizedWorkout.id,
+    ...current.filter((entry) =>
+      typeof entry === 'string' ? entry !== normalizedWorkout.id : entry.id !== normalizedWorkout.id
+    )
+  ];
   saveJSON(historyKey, next);
+
+  if (options?.syncCloud !== false && isCloudEnabled()) {
+    cloudUpsertWorkout(normalizedWorkout).catch(() => {
+      // Keep local-first behavior if cloud is temporarily unavailable.
+    });
+  }
 }
 
 function normalizeWorkoutShape(item: WorkoutRecord): WorkoutRecord {
@@ -175,6 +187,9 @@ export function updateWorkoutCreatedAt(id: string, createdAt: string): WorkoutRe
     createdAt
   };
   saveJSON(getWorkoutItemKey(id), updated);
+  if (isCloudEnabled()) {
+    cloudUpsertWorkout(updated).catch(() => {});
+  }
   return updated;
 }
 
@@ -272,4 +287,27 @@ export function migrateIfNeeded(): void {
 
   // Migration intentionally conservative: preserve existing keys and only stamp current version.
   saveJSON('gym:version', DATA_VERSION);
+}
+
+export async function syncHistoryFromCloud(profileId: string, planId: string): Promise<number> {
+  if (!isCloudEnabled()) return 0;
+
+  const normalizedPlanId = normalizePlanId(planId);
+  const cloudItems = await cloudLoadHistory(profileId, normalizedPlanId);
+  if (!cloudItems.length) return 0;
+
+  let imported = 0;
+  for (const item of cloudItems) {
+    const normalized = normalizeWorkoutShape({
+      ...item,
+      profileId,
+      planId: normalizedPlanId
+    });
+
+    const existed = loadWorkoutById(normalized.id);
+    if (!existed) imported += 1;
+    appendWorkoutToHistory(normalized, { syncCloud: false });
+  }
+
+  return imported;
 }

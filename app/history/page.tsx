@@ -5,7 +5,14 @@ import { Card } from '@/components/ui';
 import { formatLocalDateTime } from '@/lib/date';
 import { getProfileTheme } from '@/lib/profileTheme';
 import { defaultSlot, getRoutineFromBundle } from '@/lib/routine';
-import { loadHistory, loadSelection, migrateIfNeeded, saveSelection, updateWorkoutCreatedAt } from '@/lib/storage';
+import {
+  loadHistory,
+  loadSelection,
+  migrateIfNeeded,
+  saveSelection,
+  syncHistoryFromCloud,
+  updateWorkoutCreatedAt
+} from '@/lib/storage';
 import type { SelectedSlot, WorkoutRecord } from '@/lib/types';
 
 function pad2(n: number) {
@@ -67,14 +74,19 @@ export default function HistoryPage() {
     saveSelection(slot);
   }, [slot, isLoadedSelection]);
 
-  const load = () => {
+  const load = async () => {
     migrateIfNeeded();
+    try {
+      await syncHistoryFromCloud(profileId, planId);
+    } catch {
+      // Keep local behavior if cloud sync fails.
+    }
     setRows(loadHistory(profileId, planId));
   };
 
   useEffect(() => {
     if (!isLoadedSelection) return;
-    load();
+    void load();
   }, [profileId, planId, isLoadedSelection]);
 
   const { latestByDayKey, groupedByDate } = useMemo(() => {
@@ -143,7 +155,7 @@ export default function HistoryPage() {
     if (!selectedLatest) return;
     const updated = updateWorkoutCreatedAt(selectedLatest.id, buildFixedCreatedAt());
     if (!updated) return;
-    load();
+    void load();
   };
 
   useEffect(() => {
