@@ -5,11 +5,11 @@ function cx(...classes: Array<string | false | null | undefined>): string {
 }
 
 export function PageContainer({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={cx('mx-auto w-full max-w-md space-y-8 px-5 pb-28 pt-5', className)}>{children}</div>;
+  return <div className={cx('mx-auto w-full max-w-md space-y-8 px-5 pb-32 pt-5', className)}>{children}</div>;
 }
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <section className={cx('rounded-2xl border border-neutral-200 bg-white p-5 shadow-soft', className)}>{children}</section>;
+  return <section className={cx('rounded-r-lg border border-line bg-surface p-5 shadow-card transition-all duration-200 ease-out', className)}>{children}</section>;
 }
 
 type ButtonProps = {
@@ -30,8 +30,8 @@ export function Button({
   variant = 'primary'
 }: ButtonProps) {
   const variants: Record<NonNullable<ButtonProps['variant']>, string> = {
-    primary: 'bg-accent text-white shadow-md hover:brightness-95',
-    secondary: 'border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50',
+    primary: 'bg-accent text-white shadow-float hover:-translate-y-0.5 hover:brightness-95',
+    secondary: 'border border-line bg-surface text-neutral-700 hover:-translate-y-0.5 hover:shadow-soft',
     ghost: 'border border-transparent bg-transparent text-neutral-600 hover:bg-neutral-100'
   };
 
@@ -41,7 +41,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       className={cx(
-        'inline-flex min-h-11 w-full items-center justify-center rounded-2xl px-4 py-3 text-sm font-semibold transition active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
+        'inline-flex min-h-11 w-full items-center justify-center rounded-r-md px-4 py-3 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
         disabled ? 'cursor-not-allowed bg-neutral-300 text-neutral-500 shadow-none' : variants[variant],
         className
       )}
@@ -56,7 +56,7 @@ export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={cx(
-        'h-11 w-full rounded-xl border border-neutral-200 bg-white px-3 text-sm text-ink outline-none ring-accent/40 placeholder:text-neutral-400 focus:ring',
+        'h-11 w-full rounded-r-sm border border-line bg-surface px-3 text-sm text-ink outline-none ring-accent/25 placeholder:text-neutral-400 focus:ring',
         props.className ?? ''
       )}
     />
@@ -73,13 +73,34 @@ export function SegmentedControl<T extends string | number>({
   items,
   value,
   onChange,
-  className = ''
+  className = '',
+  variant = 'default'
 }: {
   items: SegmentedItem<T>[];
   value: T;
   onChange: (value: T) => void;
   className?: string;
+  variant?: 'default' | 'compact' | 'day';
 }) {
+  const styleByVariant = {
+    default: {
+      base: 'min-h-10 rounded-r-sm text-sm',
+      active: 'border-transparent bg-accent/12 text-accent',
+      inactive: 'border-line bg-surface text-neutral-700'
+    },
+    compact: {
+      base: 'h-10 rounded-r-sm text-sm',
+      active: 'border-transparent bg-accent/12 text-accent',
+      inactive: 'border-line bg-transparent text-neutral-600'
+    },
+    day: {
+      base: 'h-11 rounded-r-sm text-sm',
+      active: 'border-transparent bg-accent text-white shadow-soft',
+      inactive: 'border-transparent bg-neutral-100 text-neutral-700'
+    }
+  } as const;
+
+  const selectedStyle = styleByVariant[variant];
   return (
     <div className={cx('grid gap-3', className)}>
       {items.map((item) => {
@@ -90,8 +111,9 @@ export function SegmentedControl<T extends string | number>({
             type="button"
             onClick={() => onChange(item.value)}
             className={cx(
-              'flex min-h-10 items-center justify-center gap-1 rounded-xl border px-3 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
-              active ? 'border-transparent bg-accent/10 text-accent' : 'border-neutral-200 bg-white text-neutral-600'
+              'flex items-center justify-center gap-1 border px-3 py-2 font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
+              selectedStyle.base,
+              active ? selectedStyle.active : selectedStyle.inactive
             )}
           >
             <span>{item.label}</span>
@@ -107,7 +129,7 @@ export function StickyFooterCTA({ children, className = '' }: { children: ReactN
   return (
     <div
       className={cx(
-        'sticky bottom-20 z-20 mt-5 rounded-2xl border border-neutral-200 bg-white/95 p-3 shadow-soft backdrop-blur',
+        'sticky bottom-[5rem] z-20 mt-5 rounded-r-md border border-line bg-surface/90 p-3 shadow-float backdrop-blur',
         className
       )}
     >

@@ -218,25 +218,25 @@ export default function WorkoutPage() {
     <PageContainer>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold tracking-tight text-ink">Entrenamiento</h1>
+          <h1 className="text-[34px] font-bold leading-[1.05] tracking-[-0.02em] text-ink">Entrenamiento</h1>
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-xl border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-700"
+            className="rounded-r-sm border border-line bg-surface px-4 py-2 text-sm font-semibold text-neutral-700 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
           >
             Volver
           </button>
         </div>
-        <p className="text-sm text-neutral-600">
+        <p className="text-sm font-medium text-muted">
           {profile?.name ?? '—'} · {plan?.name ?? '—'} · Semana {slot.week} · Día {slot.day}
         </p>
       </div>
 
       <Card className="space-y-3">
-        <div className="h-1.5 w-full rounded-full bg-neutral-200">
-          <div className="h-1.5 rounded-full bg-accent transition-all" style={{ width: `${progressPercent}%` }} />
+        <div className="h-2 w-full rounded-full bg-neutral-200">
+          <div className="h-2 rounded-full bg-accent transition-all duration-200 ease-out" style={{ width: `${progressPercent}%` }} />
         </div>
-        <p className="text-xs font-medium text-neutral-500">
+        <p className="text-xs font-medium text-muted">
           Ejercicio {Math.min(completedCount + 1, Math.max(exercises.length, 1))} de {exercises.length || 1}
         </p>
       </Card>
@@ -245,6 +245,7 @@ export default function WorkoutPage() {
         <h2 className="text-lg font-semibold text-ink">Fecha del entrenamiento</h2>
         <SegmentedControl
           className="grid-cols-3"
+          variant="compact"
           value={dateMode}
           onChange={(value) => setDateMode(value)}
           items={[
@@ -275,12 +276,12 @@ export default function WorkoutPage() {
                 onToggle={() => setOpenBlockId(block.id)}
                 complete={complete}
               >
-                <p className="mb-3 text-sm text-neutral-500">Pesos (mismo en todas las series)</p>
+                <p className="mb-3 text-sm font-medium text-muted">Pesos (mismo en todas las series)</p>
                 <div className="space-y-2">
                   {block.members.map((member) => {
                     const memberSets = resolveSetCount(member.exercise, defaultSets);
                     return (
-                      <div key={`combined-${member.exIdx}`} className="grid grid-cols-[1fr,128px] items-center gap-2 rounded-xl border border-neutral-200 px-3 py-2">
+                      <div key={`combined-${member.exIdx}`} className="grid grid-cols-[1fr,128px] items-center gap-2 rounded-r-sm border border-line bg-surface px-3 py-2">
                         <p className="text-sm font-medium text-ink">{member.exercise.name}</p>
                         <Input
                           inputMode="decimal"
@@ -314,8 +315,8 @@ export default function WorkoutPage() {
               complete={complete}
             >
               {isSameWeightExercise ? (
-                <div className="mb-4 space-y-2 rounded-xl border border-neutral-200 bg-neutral-50 p-3">
-                  <p className="text-xs font-medium text-neutral-500">Peso (mismo para todas las series)</p>
+                <div className="mb-4 space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
+                  <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Peso (mismo para todas las series)</p>
                   <Input
                     inputMode="decimal"
                     placeholder="kg"
@@ -346,7 +347,7 @@ export default function WorkoutPage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="grid grid-cols-[56px,64px,1fr,28px] gap-2 px-2 text-xs font-medium uppercase tracking-wide text-neutral-500">
+                  <div className="grid grid-cols-[56px,64px,1fr,34px] gap-2 px-2 text-xs font-medium uppercase tracking-[0.08em] text-muted">
                     <span>Serie</span>
                     <span>Reps</span>
                     <span>Peso</span>

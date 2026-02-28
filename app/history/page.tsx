@@ -166,15 +166,16 @@ export default function HistoryPage() {
   return (
     <PageContainer>
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">Historial</h1>
-        <p className="mt-1 text-sm text-neutral-600">Registros por semana/día y resumen de progreso</p>
+        <h1 className="text-[34px] font-bold leading-[1.05] tracking-[-0.02em] text-ink">Historial</h1>
+        <p className="mt-2 text-base font-medium text-muted">Registros por semana/día y resumen de progreso</p>
       </div>
 
       <Card className="space-y-5">
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Perfil</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Perfil</p>
           <SegmentedControl
             className="grid-cols-2"
+            variant="compact"
             value={profileId}
             onChange={(profileValue) => {
               const nextProfile = routine.profiles.find((p) => p.id === profileValue);
@@ -191,9 +192,10 @@ export default function HistoryPage() {
           />
         </div>
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Plan mensual</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Plan mensual</p>
           <SegmentedControl
             className="grid-cols-1"
+            variant="compact"
             value={planId}
             onChange={(planValue) => {
               setSlot((prev) => ({ ...prev, planId: planValue }));
@@ -208,7 +210,7 @@ export default function HistoryPage() {
         <p className="text-lg font-semibold text-ink">Semana / Día</p>
         {[1, 2, 3, 4].map((week) => (
           <div key={week} className="flex items-center gap-3">
-            <p className="w-20 text-xs font-medium text-neutral-500">Semana {week}</p>
+            <p className="w-20 text-xs font-medium uppercase tracking-[0.08em] text-muted">Semana {week}</p>
             <div className="flex gap-2">
               {[1, 2, 3, 4].map((day) => {
                 const key = `${week}-${day}`;
@@ -225,14 +227,14 @@ export default function HistoryPage() {
                     key={key}
                     type="button"
                     onClick={() => setSelectedDay({ week, day })}
-                    className={`flex h-10 w-10 items-center justify-center rounded-xl border text-sm font-semibold ${
+                    className={`flex h-10 w-10 items-center justify-center rounded-r-sm border text-sm font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98] ${
                       selected
-                        ? 'border-accent bg-accent/10 text-accent'
+                        ? 'border-accent bg-accent/14 text-accent'
                         : status === 'done'
-                        ? 'border-transparent bg-accent/15 text-accent'
+                        ? 'border-accent/30 bg-accent/16 text-accent'
                         : status === 'skipped'
-                        ? 'border-transparent bg-neutral-200 text-neutral-600'
-                        : 'border-dashed border-neutral-300 bg-white text-neutral-400'
+                        ? 'border-neutral-300 bg-neutral-200 text-neutral-600'
+                        : 'border-dashed border-neutral-300 bg-surface text-neutral-400'
                     }`}
                   >
                     {statusPill(status)}
@@ -242,19 +244,21 @@ export default function HistoryPage() {
             </div>
           </div>
         ))}
-        <p className="text-xs text-neutral-500">✓ entrenado · ⏸ no entrené · vacío pendiente</p>
+        <p className="text-xs text-muted">✓ entrenado · ⏸ no entrené · vacío pendiente</p>
       </Card>
 
       <Card className="space-y-3">
         <p className="text-lg font-semibold text-ink">Detalle del día</p>
         {!selectedDay ? (
-          <p className="text-sm text-neutral-500">Elegí un día para ver el último registro.</p>
+          <div className="rounded-r-md border border-dashed border-neutral-300 bg-neutral-50 p-4">
+            <p className="text-sm font-medium text-muted">Elegí un día para ver el último registro.</p>
+          </div>
         ) : !selectedLatest ? (
           <p className="text-sm text-neutral-500">
             Semana {selectedDay.week} · Día {selectedDay.day}: sin registros.
           </p>
         ) : (
-          <div className="space-y-3 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+          <div className="space-y-3 rounded-r-md border border-line bg-neutral-50 p-4">
             <h2 className="text-lg font-semibold text-ink">{formatLocalDateTime(selectedLatest.createdAt)}</h2>
             <p className="text-sm text-neutral-600">
               Semana {selectedLatest.week} · Día {selectedLatest.day} · {selectedLatest.planId}
@@ -270,10 +274,11 @@ export default function HistoryPage() {
               ))}
             </div>
 
-            <div className="space-y-2 rounded-xl border border-neutral-200 bg-white p-3">
-              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">Corregir fecha</p>
+            <div className="space-y-2 rounded-r-sm border border-line bg-surface p-3">
+              <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Corregir fecha</p>
               <SegmentedControl
                 className="grid-cols-3"
+                variant="compact"
                 value={fixMode}
                 onChange={(value) => setFixMode(value)}
                 items={[
@@ -303,12 +308,12 @@ export default function HistoryPage() {
       <Card className="space-y-2">
         <p className="text-lg font-semibold text-ink">Progreso por ejercicio</p>
         {exerciseSummary.length === 0 ? (
-          <p className="text-sm text-neutral-500">Todavía no hay registros de pesos guardados.</p>
+          <p className="text-sm text-muted">Todavía no hay registros de pesos guardados.</p>
         ) : (
           exerciseSummary.slice(0, 12).map((it) => (
-            <div key={it.name} className="border-t border-neutral-100 pt-2 first:border-none first:pt-0">
+            <div key={it.name} className="border-t border-neutral-100 pt-2.5 first:border-none first:pt-0">
               <p className="text-sm font-semibold text-ink">{it.name}</p>
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-muted">
                 Registros: {it.count} · Último: {formatLocalDateTime(it.last)}
               </p>
             </div>

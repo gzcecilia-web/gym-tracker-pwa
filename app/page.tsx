@@ -183,18 +183,19 @@ export default function HomePage() {
   return (
     <PageContainer>
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">Hoy</h1>
-        <p className="mt-1 text-sm text-neutral-600">
+        <h1 className="text-[34px] font-bold leading-[1.05] tracking-[-0.02em] text-ink">Hoy</h1>
+        <p className="mt-2 text-base font-medium text-muted">
           {plan?.name ?? 'Rutina'} · Semana {slot.week} · Día {slot.day}
         </p>
       </div>
 
       <Card>
-        <div className="space-y-5">
+        <div className="space-y-4">
           <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Perfil</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Perfil</p>
             <SegmentedControl
               className="grid-cols-2"
+              variant="compact"
               value={slot.profileId}
               onChange={(profileId) => {
                 const nextProfile = routine.profiles.find((p) => p.id === profileId);
@@ -211,22 +212,36 @@ export default function HomePage() {
           </div>
 
           <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Plan mensual</p>
-            <SegmentedControl
-              className="grid-cols-1"
-              value={slot.planId}
-              onChange={(planId) => setSlot({ ...slot, planId, week: 1, day: 1 })}
-              items={profilePlans.map((pl) => ({ value: pl.id, label: pl.name }))}
-            />
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Plan mensual</p>
+            <div className="flex flex-wrap gap-2">
+              {profilePlans.map((pl) => {
+                const active = pl.id === slot.planId;
+                return (
+                  <button
+                    key={pl.id}
+                    type="button"
+                    onClick={() => setSlot({ ...slot, planId: pl.id, week: 1, day: 1 })}
+                    className={`min-h-10 rounded-r-sm border px-3 py-2 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
+                      active
+                        ? 'border-transparent bg-accent/12 text-accent shadow-soft'
+                        : 'border-line bg-surface text-neutral-600 hover:-translate-y-0.5 hover:shadow-soft'
+                    }`}
+                  >
+                    {pl.name}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </Card>
 
       <Card className="space-y-4">
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Semana</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Semana</p>
           <SegmentedControl
             className="grid-cols-4"
+            variant="compact"
             value={slot.week}
             onChange={(week) => setSlot({ ...slot, week })}
             items={[1, 2, 3, 4].map((week) => ({
@@ -238,9 +253,10 @@ export default function HomePage() {
         </div>
 
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Día</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Día</p>
           <SegmentedControl
             className="grid-cols-4"
+            variant="day"
             value={slot.day}
             onChange={(day) => setSlot({ ...slot, day })}
             items={[1, 2, 3, 4].map((day) => ({
@@ -255,10 +271,14 @@ export default function HomePage() {
             }))}
           />
         </div>
-        <Button className="h-14 text-base font-semibold" onClick={() => router.push('/workout')}>
+        <Button className="h-14 text-[16px] font-semibold" onClick={() => router.push('/workout')}>
           Entrenar hoy
         </Button>
-        <button type="button" onClick={markSkipped} className="h-14 w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-neutral-700">
+        <button
+          type="button"
+          onClick={markSkipped}
+          className="h-14 w-full rounded-r-md border border-line bg-surface px-4 py-3 text-sm font-semibold text-neutral-700 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+        >
           No entrené hoy
         </button>
       </Card>

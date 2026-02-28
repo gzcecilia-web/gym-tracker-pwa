@@ -6,14 +6,37 @@
   color-scheme: light;
   --accent-rgb: 180 106 78;
   --accent: rgb(var(--accent-rgb));
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --border: #e5e7eb;
+  --text: #111827;
+  --muted: #6b7280;
+  --r-lg: 20px;
+  --r-md: 16px;
+  --r-sm: 12px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
 }
 
 body {
   margin: 0;
-  background: #f4f4f3;
-  color: #1f2937;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 * {
   box-sizing: border-box;
+}
+
+button,
+input,
+section,
+a {
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
 }
