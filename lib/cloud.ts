@@ -72,3 +72,15 @@ export async function cloudLoadHistory(profileId: string, planId: string): Promi
   const rows = (data ?? []) as Array<{ payload?: WorkoutRecord }>;
   return rows.map((r) => r.payload).filter(Boolean) as WorkoutRecord[];
 }
+
+export async function cloudDeleteWorkout(id: string): Promise<void> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return;
+  const userId = await getCloudUserId();
+  if (!userId) return;
+
+  const { error } = await supabase.from('workouts').delete().eq('id', id).eq('user_id', userId);
+  if (error) {
+    throw new Error(`cloudDeleteWorkout failed: ${error.message}`);
+  }
+}

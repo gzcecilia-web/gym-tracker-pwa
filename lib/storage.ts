@@ -1,6 +1,6 @@
 'use client';
 
-import { cloudLoadHistory, cloudUpsertWorkout, isCloudEnabled } from '@/lib/cloud';
+import { cloudDeleteWorkout, cloudLoadHistory, cloudUpsertWorkout, isCloudEnabled } from '@/lib/cloud';
 import { makeCreatedAtISO } from '@/lib/date';
 import { applyProfileAccent } from '@/lib/profileTheme';
 import { getRoutineFromBundle } from '@/lib/routine';
@@ -178,6 +178,32 @@ export function loadWorkoutById(id: string): WorkoutRecord | null {
   const raw = loadJSON<WorkoutRecord | null>(getWorkoutItemKey(id), null);
   if (!raw) return null;
   return normalizeWorkoutShape(raw);
+}
+
+export function removeWorkoutFromHistory(
+  profileId: string,
+  planId: string,
+  workoutId: string,
+  options?: { syncCloud?: boolean }
+): void {
+  if (typeof window === 'undefined') return;
+  const normalizedPlanId = normalizePlanId(planId);
+  const allPlanIds = [normalizedPlanId, ...getLegacyPlanIds(normalizedPlanId)];
+
+  for (const pid of allPlanIds) {
+    const historyKey = getHistoryKey(profileId, pid);
+    const current = loadJSON<(string | WorkoutRecord)[]>(historyKey, []);
+    const next = current.filter((entry) => (typeof entry === 'string' ? entry !== workoutId : entry?.id !== workoutId));
+    saveJSON(historyKey, next);
+  }
+
+  window.localStorage.removeItem(getWorkoutItemKey(workoutId));
+
+  if (options?.syncCloud !== false && isCloudEnabled()) {
+    cloudDeleteWorkout(workoutId).catch(() => {
+      // Keep local-first behavior if cloud deletion fails.
+    });
+  }
 }
 
 export function updateWorkoutCreatedAt(id: string, createdAt: string): WorkoutRecord | null {

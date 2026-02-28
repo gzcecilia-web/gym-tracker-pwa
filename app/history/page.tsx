@@ -8,6 +8,7 @@ import {
   loadHistory,
   loadSelection,
   migrateIfNeeded,
+  removeWorkoutFromHistory,
   saveSelection,
   syncHistoryFromCloud,
   updateWorkoutCreatedAt
@@ -153,6 +154,15 @@ export default function HistoryPage() {
     void load();
   };
 
+  const onDeleteWorkout = () => {
+    if (!selectedLatest) return;
+    const ok = window.confirm('¿Querés eliminar este entrenamiento? Esta acción no se puede deshacer.');
+    if (!ok) return;
+    removeWorkoutFromHistory(profileId, planId, selectedLatest.id);
+    setSelectedDay(null);
+    void load();
+  };
+
   return (
     <PageContainer>
       <div>
@@ -281,6 +291,9 @@ export default function HistoryPage() {
               ) : null}
               <Button className="h-11" onClick={onFixDate}>
                 Guardar nueva fecha
+              </Button>
+              <Button className="h-11" variant="secondary" onClick={onDeleteWorkout}>
+                Eliminar entrenamiento
               </Button>
             </div>
           </div>
