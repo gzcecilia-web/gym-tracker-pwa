@@ -61,6 +61,10 @@ function statusByExercise(
   };
 }
 
+function isExerciseChecked(exIdx: number, sets: number, checks: Record<string, boolean>) {
+  return Array.from({ length: sets }).every((_, setIdx) => checks[`${exIdx}-${setIdx}-done`]);
+}
+
 export default function WorkoutPage() {
   const router = useRouter();
   const routine = useMemo<RoutineDB>(() => getRoutineFromBundle(), []);
@@ -199,6 +203,16 @@ export default function WorkoutPage() {
     setChecks((prev) => ({ ...prev, [key]: checked }));
   };
 
+  const setExerciseChecked = (exIdx: number, sets: number, checked: boolean) => {
+    setChecks((prev) => {
+      const next = { ...prev };
+      for (let setIdx = 0; setIdx < sets; setIdx += 1) {
+        next[`${exIdx}-${setIdx}-done`] = checked;
+      }
+      return next;
+    });
+  };
+
   const applySameWeightAllSets = (exIdx: number, sets: number, value: string) => {
     const cleaned = value.replace(/[^0-9.,]/g, '');
     setWeights((prev) => {
@@ -302,9 +316,10 @@ export default function WorkoutPage() {
                   {block.members.map((member) => {
                     const memberSets = resolveSetCount(member.exercise, defaultSets);
                     const latestSummary = latestByExercise[String(member.exercise.name ?? '')] ?? [];
+                    const memberChecked = isExerciseChecked(member.exIdx, memberSets, checks);
                     return (
                       <div key={`combined-${member.exIdx}`} className="space-y-2 rounded-r-sm border border-line bg-surface px-3 py-3">
-                        <div className="grid grid-cols-[1fr,128px] items-center gap-2">
+                        <div className="grid grid-cols-[1fr,128px,28px] items-center gap-2">
                           <p className="text-sm font-medium text-ink">{member.exercise.name}</p>
                           <Input
                             inputMode="decimal"
@@ -312,6 +327,13 @@ export default function WorkoutPage() {
                             value={weights[`${member.exIdx}-same`] ?? ''}
                             onChange={(e) => applySameWeightAllSets(member.exIdx, memberSets, e.target.value)}
                             className="h-9"
+                          />
+                          <input
+                            aria-label={`${member.exercise.name} completado`}
+                            type="checkbox"
+                            checked={memberChecked}
+                            onChange={(e) => setExerciseChecked(member.exIdx, memberSets, e.target.checked)}
+                            className="h-5 w-5 rounded border-line accent-[rgb(var(--accent-rgb))] transition-all duration-200 ease-out"
                           />
                         </div>
                         {latestSummary.length > 0 ? (
@@ -341,6 +363,7 @@ export default function WorkoutPage() {
           const isSameWeightExercise = typeof exercise.reps === 'number' && !isDropSet;
           const complete = exerciseStats[exIdx]?.complete;
           const latestSummary = latestByExercise[String(exercise.name ?? '')] ?? [];
+          const exerciseChecked = isExerciseChecked(exIdx, sets, checks);
 
           return (
             <ExerciseAccordion
@@ -351,6 +374,16 @@ export default function WorkoutPage() {
               onToggle={() => setOpenBlockId(block.id)}
               complete={complete}
             >
+              <div className="mb-4 flex items-center justify-between rounded-r-sm border border-line bg-surface px-3 py-2">
+                <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Ejercicio completado</p>
+                <input
+                  aria-label={`${exercise.name} completado`}
+                  type="checkbox"
+                  checked={exerciseChecked}
+                  onChange={(e) => setExerciseChecked(exIdx, sets, e.target.checked)}
+                  className="h-5 w-5 rounded border-line accent-[rgb(var(--accent-rgb))] transition-all duration-200 ease-out"
+                />
+              </div>
               {latestSummary.length > 0 ? (
                 <div className="mb-4 rounded-r-sm border border-line bg-neutral-50 p-3">
                   <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Último registro</p>
