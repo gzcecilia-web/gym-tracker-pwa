@@ -13,6 +13,7 @@ import {
   syncHistoryFromCloud,
   updateWorkoutCreatedAt
 } from '@/lib/storage';
+import { summarizeExerciseWeights } from '@/lib/workout';
 import type { SelectedSlot, WorkoutRecord } from '@/lib/types';
 
 function pad2(n: number) {
@@ -272,6 +273,35 @@ export default function HistoryPage() {
                   • {exercise.name}
                 </p>
               ))}
+            </div>
+
+            <div className="space-y-2 rounded-r-sm border border-line bg-surface p-3">
+              <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Pesos del entrenamiento</p>
+              {Object.keys(selectedLatest.weightsByExercise ?? {}).length === 0 ? (
+                <p className="text-sm text-muted">Este registro no tiene pesos guardados.</p>
+              ) : (
+                Object.entries(selectedLatest.weightsByExercise)
+                  .sort((a, b) => a[0].localeCompare(b[0]))
+                  .map(([exerciseName, weightMap]) => {
+                    const lines = summarizeExerciseWeights(weightMap);
+                    return (
+                      <div key={exerciseName} className="rounded-r-sm border border-neutral-100 bg-neutral-50 p-3">
+                        <p className="text-sm font-semibold text-ink">{exerciseName}</p>
+                        <div className="mt-1 space-y-1">
+                          {lines.length > 0 ? (
+                            lines.map((line) => (
+                              <p key={`${exerciseName}-${line}`} className="text-xs text-neutral-600">
+                                {line}
+                              </p>
+                            ))
+                          ) : (
+                            <p className="text-xs text-muted">Sin detalle de series.</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+              )}
             </div>
 
             <div className="space-y-2 rounded-r-sm border border-line bg-surface p-3">

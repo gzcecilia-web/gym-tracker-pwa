@@ -10,13 +10,21 @@ import {
   appendWorkoutToHistory,
   clearDraft,
   loadDraft,
+  loadHistory,
   loadSelection,
   migrateIfNeeded,
   saveDraft,
   saveSelection
 } from '@/lib/storage';
-import { buildWorkoutPayload, detectDropCount, repsToArray, resolveSetCount } from '@/lib/workout';
-import type { RoutineDB, RoutineExercise, SelectedSlot } from '@/lib/types';
+import {
+  buildWorkoutPayload,
+  detectDropCount,
+  findLatestExerciseWeights,
+  repsToArray,
+  resolveSetCount,
+  summarizeExerciseWeights
+} from '@/lib/workout';
+import type { RoutineDB, RoutineExercise, SelectedSlot, WorkoutRecord } from '@/lib/types';
 
 type IndexedExercise = {
   exIdx: number;
@@ -64,6 +72,7 @@ export default function WorkoutPage() {
   const [dateMode, setDateMode] = useState<'today' | 'yesterday' | 'manual'>('today');
   const [manualDate, setManualDate] = useState('');
   const [openBlockId, setOpenBlockId] = useState<string>('');
+  const [historyRows, setHistoryRows] = useState<WorkoutRecord[]>([]);
 
   useEffect(() => {
     migrateIfNeeded();
@@ -87,6 +96,7 @@ export default function WorkoutPage() {
       setWeights(Object.fromEntries(Object.entries(draft.weights ?? {}).map(([k, v]) => [k, String(v ?? '')])));
       setChecks(draft.checks ?? {});
     }
+    setHistoryRows(loadHistory(merged.profileId, merged.planId));
   }, [routine]);
 
   const exercises = useMemo(
@@ -165,6 +175,17 @@ export default function WorkoutPage() {
   const exerciseStats = useMemo(() => {
     return exercises.map((exercise, exIdx) => statusByExercise(exercise, exIdx, weights, checks, defaultSets));
   }, [checks, defaultSets, exercises, weights]);
+
+  const latestByExercise = useMemo(() => {
+    const map: Record<string, string[]> = {};
+    for (const exercise of exercises) {
+      const name = String(exercise.name ?? '');
+      if (!name || map[name]) continue;
+      const latest = findLatestExerciseWeights(historyRows, name);
+      map[name] = summarizeExerciseWeights(latest ?? undefined);
+    }
+    return map;
+  }, [exercises, historyRows]);
 
   const completedCount = exerciseStats.filter((x) => x.complete).length;
   const progressPercent = exercises.length ? Math.round((completedCount / exercises.length) * 100) : 0;
@@ -280,16 +301,31 @@ export default function WorkoutPage() {
                 <div className="space-y-2">
                   {block.members.map((member) => {
                     const memberSets = resolveSetCount(member.exercise, defaultSets);
+                    const latestSummary = latestByExercise[String(member.exercise.name ?? '')] ?? [];
                     return (
-                      <div key={`combined-${member.exIdx}`} className="grid grid-cols-[1fr,128px] items-center gap-2 rounded-r-sm border border-line bg-surface px-3 py-2">
-                        <p className="text-sm font-medium text-ink">{member.exercise.name}</p>
-                        <Input
-                          inputMode="decimal"
-                          placeholder="kg"
-                          value={weights[`${member.exIdx}-same`] ?? ''}
-                          onChange={(e) => applySameWeightAllSets(member.exIdx, memberSets, e.target.value)}
-                          className="h-9"
-                        />
+                      <div key={`combined-${member.exIdx}`} className="space-y-2 rounded-r-sm border border-line bg-surface px-3 py-3">
+                        <div className="grid grid-cols-[1fr,128px] items-center gap-2">
+                          <p className="text-sm font-medium text-ink">{member.exercise.name}</p>
+                          <Input
+                            inputMode="decimal"
+                            placeholder="kg"
+                            value={weights[`${member.exIdx}-same`] ?? ''}
+                            onChange={(e) => applySameWeightAllSets(member.exIdx, memberSets, e.target.value)}
+                            className="h-9"
+                          />
+                        </div>
+                        {latestSummary.length > 0 ? (
+                          <div className="rounded-r-sm bg-neutral-50 px-3 py-2">
+                            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Último registro</p>
+                            <div className="mt-1 space-y-1">
+                              {latestSummary.map((line) => (
+                                <p key={`${member.exIdx}-${line}`} className="text-xs text-neutral-600">
+                                  {line}
+                                </p>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null}
                       </div>
                     );
                   })}
@@ -304,6 +340,7 @@ export default function WorkoutPage() {
           const isDropSet = detectDropCount(exercise) > 0;
           const isSameWeightExercise = typeof exercise.reps === 'number' && !isDropSet;
           const complete = exerciseStats[exIdx]?.complete;
+          const latestSummary = latestByExercise[String(exercise.name ?? '')] ?? [];
 
           return (
             <ExerciseAccordion
@@ -314,6 +351,18 @@ export default function WorkoutPage() {
               onToggle={() => setOpenBlockId(block.id)}
               complete={complete}
             >
+              {latestSummary.length > 0 ? (
+                <div className="mb-4 rounded-r-sm border border-line bg-neutral-50 p-3">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Último registro</p>
+                  <div className="mt-1 space-y-1">
+                    {latestSummary.map((line) => (
+                      <p key={`${exIdx}-${line}`} className="text-xs text-neutral-600">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
               {isSameWeightExercise ? (
                 <div className="mb-4 space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
                   <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Peso (mismo para todas las series)</p>

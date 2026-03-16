@@ -110,3 +110,68 @@ export function repsToArray(reps: RoutineExercise['reps'], sets: number): (numbe
   if (typeof reps === 'number') return Array.from({ length: sets }, () => reps);
   return Array.from({ length: sets }, () => '?');
 }
+
+function toDisplayWeight(value: string | number): string {
+  const normalized = String(value ?? '').trim();
+  if (!normalized) return '';
+  return `${normalized} kg`;
+}
+
+export function summarizeExerciseWeights(
+  weights: Record<string, string | number> | undefined
+): string[] {
+  if (!weights) return [];
+
+  const entries = Object.entries(weights);
+  const setEntries = entries
+    .map(([key, value]) => {
+      const match = key.match(/^\d+-(\d+)(?:-drop(\d+))?$/);
+      if (!match) return null;
+      return {
+        key,
+        setIdx: Number(match[1]),
+        dropIdx: match[2] ? Number(match[2]) : null,
+        value
+      };
+    })
+    .filter(Boolean) as Array<{ key: string; setIdx: number; dropIdx: number | null; value: string | number }>;
+
+  if (setEntries.length > 0) {
+    const grouped = new Map<number, Array<{ dropIdx: number | null; value: string | number }>>();
+    for (const entry of setEntries) {
+      const current = grouped.get(entry.setIdx) ?? [];
+      current.push({ dropIdx: entry.dropIdx, value: entry.value });
+      grouped.set(entry.setIdx, current);
+    }
+
+    return Array.from(grouped.entries())
+      .sort((a, b) => a[0] - b[0])
+      .map(([setIdx, values]) => {
+        const ordered = values.sort((a, b) => {
+          const left = a.dropIdx ?? 0;
+          const right = b.dropIdx ?? 0;
+          return left - right;
+        });
+        const rendered = ordered.map((entry) => toDisplayWeight(entry.value)).filter(Boolean).join(' / ');
+        return `Serie ${setIdx + 1}: ${rendered}`;
+      })
+      .filter(Boolean);
+  }
+
+  const sameEntry = entries.find(([key]) => key.endsWith('-same'));
+  if (!sameEntry) return [];
+  return [`Mismo peso: ${toDisplayWeight(sameEntry[1])}`];
+}
+
+export function findLatestExerciseWeights(
+  history: WorkoutRecord[],
+  exerciseName: string
+): Record<string, string | number> | null {
+  for (const workout of history) {
+    const weightMap = workout.weightsByExercise?.[exerciseName];
+    if (weightMap && Object.keys(weightMap).length > 0) {
+      return weightMap;
+    }
+  }
+  return null;
+}
