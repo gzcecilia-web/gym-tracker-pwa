@@ -314,7 +314,7 @@ export default function WorkoutPage() {
                       <div key={`combined-series-${setIdx}`} className="rounded-r-sm border border-line bg-surface px-3 py-4">
                         <div className="space-y-2">
                           <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
-                            <p className="text-[28px] font-bold leading-none tracking-[-0.02em] text-accent">Serie {setIdx + 1}</p>
+                            <p className="text-base font-semibold tracking-[-0.01em] text-accent">Serie {setIdx + 1}</p>
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Ok</span>
                               <input
