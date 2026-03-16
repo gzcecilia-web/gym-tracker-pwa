@@ -199,6 +199,16 @@ export default function WorkoutPage() {
     setChecks((prev) => ({ ...prev, [key]: checked }));
   };
 
+  const setCombinedSeriesChecked = (members: IndexedExercise[], setIdx: number, checked: boolean) => {
+    setChecks((prev) => {
+      const next = { ...prev };
+      for (const member of members) {
+        next[`${member.exIdx}-${setIdx}-done`] = checked;
+      }
+      return next;
+    });
+  };
+
   const applySameWeightAllSets = (exIdx: number, sets: number, value: string) => {
     const cleaned = value.replace(/[^0-9.,]/g, '');
     setWeights((prev) => {
@@ -298,43 +308,60 @@ export default function WorkoutPage() {
                 complete={complete}
               >
                 <div className="space-y-2">
-                  {block.members.map((member) => {
-                    const memberSets = resolveSetCount(member.exercise, defaultSets);
-                    const memberReps = repsToArray(member.exercise.reps, memberSets);
-                    const latestSummary = latestByExercise[String(member.exercise.name ?? '')] ?? [];
+                  {Array.from({ length: sets }).map((_, setIdx) => {
+                    const pairChecked = block.members.every((member) => checks[`${member.exIdx}-${setIdx}-done`] ?? false);
                     return (
-                      <div key={`combined-${member.exIdx}`} className="space-y-2 rounded-r-sm border border-line bg-surface px-3 py-3">
-                        <p className="text-sm font-medium text-ink">{member.exercise.name}</p>
-                        {latestSummary.length > 0 ? (
-                          <div className="rounded-r-sm bg-neutral-50 px-3 py-2">
-                            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Último registro</p>
-                            <div className="mt-1 space-y-1">
-                              {latestSummary.map((line) => (
-                                <p key={`${member.exIdx}-${line}`} className="text-xs text-neutral-600">
-                                  {line}
-                                </p>
-                              ))}
+                      <div key={`combined-series-${setIdx}`} className="rounded-r-sm border border-line bg-surface px-3 py-4">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
+                            <p className="text-[28px] font-bold leading-none tracking-[-0.02em] text-accent">Serie {setIdx + 1}</p>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Ok</span>
+                              <input
+                                aria-label={`Superserie ${setIdx + 1} completada`}
+                                type="checkbox"
+                                checked={pairChecked}
+                                onChange={(e) => setCombinedSeriesChecked(block.members, setIdx, e.target.checked)}
+                                className="h-5 w-5 rounded border-line accent-[rgb(var(--accent-rgb))] transition-all duration-200 ease-out"
+                              />
                             </div>
                           </div>
-                        ) : null}
-                        <div className="space-y-2">
-                          <div className="grid grid-cols-[56px,64px,1fr,34px] gap-2 px-2 text-xs font-medium uppercase tracking-[0.08em] text-muted">
-                            <span>Serie</span>
-                            <span>Reps</span>
-                            <span>Peso</span>
-                            <span>Ok</span>
-                          </div>
-                          {Array.from({ length: memberSets }).map((_, setIdx) => (
-                            <SetTableRow
-                              key={`${member.exIdx}-${setIdx}`}
-                              label={`${setIdx + 1}`}
-                              reps={String(memberReps[setIdx] ?? '?')}
-                              value={weights[`${member.exIdx}-${setIdx}`] ?? ''}
-                              onChange={(value) => setWeight(`${member.exIdx}-${setIdx}`, value)}
-                              checked={checks[`${member.exIdx}-${setIdx}-done`] ?? false}
-                              onToggleCheck={() => setCheck(`${member.exIdx}-${setIdx}-done`, !checks[`${member.exIdx}-${setIdx}-done`])}
-                            />
-                          ))}
+
+                          {block.members.map((member) => {
+                            const memberReps = repsToArray(member.exercise.reps, sets);
+                            const latestSummary = latestByExercise[String(member.exercise.name ?? '')] ?? [];
+                            return (
+                              <div key={`combined-${member.exIdx}-${setIdx}`} className="space-y-2 pt-1">
+                                <p className="text-sm font-semibold uppercase text-ink">{member.exercise.name}</p>
+                                {latestSummary.length > 0 ? (
+                                  <div className="rounded-r-sm bg-neutral-50 px-3 py-2">
+                                    <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Último registro</p>
+                                    <div className="mt-1 space-y-1">
+                                      {latestSummary.map((line) => (
+                                        <p key={`${member.exIdx}-${line}`} className="text-xs text-neutral-600">
+                                          {line}
+                                        </p>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ) : null}
+                                <div className="grid grid-cols-[64px,1fr] gap-2 px-2 text-xs font-medium uppercase tracking-[0.08em] text-muted">
+                                  <span>Reps</span>
+                                  <span>Peso</span>
+                                </div>
+                                <div className="grid grid-cols-[64px,1fr] items-center gap-2 rounded-r-sm border border-line bg-surface px-2.5 py-2">
+                                  <span className="text-sm font-medium text-neutral-700">{String(memberReps[setIdx] ?? '?')}</span>
+                                  <Input
+                                    inputMode="decimal"
+                                    placeholder="kg"
+                                    value={weights[`${member.exIdx}-${setIdx}`] ?? ''}
+                                    onChange={(e) => setWeight(`${member.exIdx}-${setIdx}`, e.target.value)}
+                                    className="h-11 rounded-[14px] placeholder:text-neutral-400"
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     );
