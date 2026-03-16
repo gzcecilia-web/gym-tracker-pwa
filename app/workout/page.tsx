@@ -61,10 +61,6 @@ function statusByExercise(
   };
 }
 
-function isExerciseChecked(exIdx: number, sets: number, checks: Record<string, boolean>) {
-  return Array.from({ length: sets }).every((_, setIdx) => checks[`${exIdx}-${setIdx}-done`]);
-}
-
 export default function WorkoutPage() {
   const router = useRouter();
   const routine = useMemo<RoutineDB>(() => getRoutineFromBundle(), []);
@@ -203,16 +199,6 @@ export default function WorkoutPage() {
     setChecks((prev) => ({ ...prev, [key]: checked }));
   };
 
-  const setExerciseChecked = (exIdx: number, sets: number, checked: boolean) => {
-    setChecks((prev) => {
-      const next = { ...prev };
-      for (let setIdx = 0; setIdx < sets; setIdx += 1) {
-        next[`${exIdx}-${setIdx}-done`] = checked;
-      }
-      return next;
-    });
-  };
-
   const applySameWeightAllSets = (exIdx: number, sets: number, value: string) => {
     const cleaned = value.replace(/[^0-9.,]/g, '');
     setWeights((prev) => {
@@ -311,31 +297,14 @@ export default function WorkoutPage() {
                 onToggle={() => setOpenBlockId(block.id)}
                 complete={complete}
               >
-                <p className="mb-3 text-sm font-medium text-muted">Pesos (mismo en todas las series)</p>
                 <div className="space-y-2">
                   {block.members.map((member) => {
                     const memberSets = resolveSetCount(member.exercise, defaultSets);
+                    const memberReps = repsToArray(member.exercise.reps, memberSets);
                     const latestSummary = latestByExercise[String(member.exercise.name ?? '')] ?? [];
-                    const memberChecked = isExerciseChecked(member.exIdx, memberSets, checks);
                     return (
                       <div key={`combined-${member.exIdx}`} className="space-y-2 rounded-r-sm border border-line bg-surface px-3 py-3">
-                        <div className="grid grid-cols-[1fr,128px,28px] items-center gap-2">
-                          <p className="text-sm font-medium text-ink">{member.exercise.name}</p>
-                          <Input
-                            inputMode="decimal"
-                            placeholder="kg"
-                            value={weights[`${member.exIdx}-same`] ?? ''}
-                            onChange={(e) => applySameWeightAllSets(member.exIdx, memberSets, e.target.value)}
-                            className="h-9"
-                          />
-                          <input
-                            aria-label={`${member.exercise.name} completado`}
-                            type="checkbox"
-                            checked={memberChecked}
-                            onChange={(e) => setExerciseChecked(member.exIdx, memberSets, e.target.checked)}
-                            className="h-5 w-5 rounded border-line accent-[rgb(var(--accent-rgb))] transition-all duration-200 ease-out"
-                          />
-                        </div>
+                        <p className="text-sm font-medium text-ink">{member.exercise.name}</p>
                         {latestSummary.length > 0 ? (
                           <div className="rounded-r-sm bg-neutral-50 px-3 py-2">
                             <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Último registro</p>
@@ -348,6 +317,25 @@ export default function WorkoutPage() {
                             </div>
                           </div>
                         ) : null}
+                        <div className="space-y-2">
+                          <div className="grid grid-cols-[56px,64px,1fr,34px] gap-2 px-2 text-xs font-medium uppercase tracking-[0.08em] text-muted">
+                            <span>Serie</span>
+                            <span>Reps</span>
+                            <span>Peso</span>
+                            <span>Ok</span>
+                          </div>
+                          {Array.from({ length: memberSets }).map((_, setIdx) => (
+                            <SetTableRow
+                              key={`${member.exIdx}-${setIdx}`}
+                              label={`${setIdx + 1}`}
+                              reps={String(memberReps[setIdx] ?? '?')}
+                              value={weights[`${member.exIdx}-${setIdx}`] ?? ''}
+                              onChange={(value) => setWeight(`${member.exIdx}-${setIdx}`, value)}
+                              checked={checks[`${member.exIdx}-${setIdx}-done`] ?? false}
+                              onToggleCheck={() => setCheck(`${member.exIdx}-${setIdx}-done`, !checks[`${member.exIdx}-${setIdx}-done`])}
+                            />
+                          ))}
+                        </div>
                       </div>
                     );
                   })}
@@ -363,7 +351,6 @@ export default function WorkoutPage() {
           const isSameWeightExercise = typeof exercise.reps === 'number' && !isDropSet;
           const complete = exerciseStats[exIdx]?.complete;
           const latestSummary = latestByExercise[String(exercise.name ?? '')] ?? [];
-          const exerciseChecked = isExerciseChecked(exIdx, sets, checks);
 
           return (
             <ExerciseAccordion
@@ -374,16 +361,6 @@ export default function WorkoutPage() {
               onToggle={() => setOpenBlockId(block.id)}
               complete={complete}
             >
-              <div className="mb-4 flex items-center justify-between rounded-r-sm border border-line bg-surface px-3 py-2">
-                <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Ejercicio completado</p>
-                <input
-                  aria-label={`${exercise.name} completado`}
-                  type="checkbox"
-                  checked={exerciseChecked}
-                  onChange={(e) => setExerciseChecked(exIdx, sets, e.target.checked)}
-                  className="h-5 w-5 rounded border-line accent-[rgb(var(--accent-rgb))] transition-all duration-200 ease-out"
-                />
-              </div>
               {latestSummary.length > 0 ? (
                 <div className="mb-4 rounded-r-sm border border-line bg-neutral-50 p-3">
                   <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Último registro</p>
