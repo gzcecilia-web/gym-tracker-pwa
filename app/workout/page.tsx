@@ -308,13 +308,35 @@ export default function WorkoutPage() {
                 complete={complete}
               >
                 <div className="space-y-2">
+                  <div className="space-y-2">
+                    {block.members.map((member) => {
+                      const latestSummary = latestByExercise[String(member.exercise.name ?? '')] ?? [];
+                      if (!latestSummary.length) return null;
+
+                      return (
+                        <div key={`combined-history-${member.exIdx}`} className="rounded-r-sm bg-neutral-50 px-3 py-3">
+                          <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">
+                            Último registro {member.exercise.name}
+                          </p>
+                          <div className="mt-2 space-y-1">
+                            {latestSummary.map((line) => (
+                              <p key={`combined-history-${member.exIdx}-${line}`} className="text-sm text-neutral-600">
+                                {line}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
                   {Array.from({ length: sets }).map((_, setIdx) => {
                     const pairChecked = block.members.every((member) => checks[`${member.exIdx}-${setIdx}-done`] ?? false);
                     return (
                       <div key={`combined-series-${setIdx}`} className="rounded-r-sm border border-line bg-surface px-3 py-4">
                         <div className="space-y-2">
                           <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
-                            <p className="text-base font-semibold tracking-[-0.01em] text-accent">Serie {setIdx + 1}</p>
+                            <p className="text-base font-semibold tracking-[-0.01em] text-muted">Serie {setIdx + 1}</p>
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Ok</span>
                               <input
@@ -329,22 +351,9 @@ export default function WorkoutPage() {
 
                           {block.members.map((member) => {
                             const memberReps = repsToArray(member.exercise.reps, sets);
-                            const latestSummary = latestByExercise[String(member.exercise.name ?? '')] ?? [];
                             return (
                               <div key={`combined-${member.exIdx}-${setIdx}`} className="space-y-2 pt-1">
                                 <p className="text-sm font-semibold uppercase text-ink">{member.exercise.name}</p>
-                                {latestSummary.length > 0 ? (
-                                  <div className="rounded-r-sm bg-neutral-50 px-3 py-2">
-                                    <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Último registro</p>
-                                    <div className="mt-1 space-y-1">
-                                      {latestSummary.map((line) => (
-                                        <p key={`${member.exIdx}-${line}`} className="text-xs text-neutral-600">
-                                          {line}
-                                        </p>
-                                      ))}
-                                    </div>
-                                  </div>
-                                ) : null}
                                 <div className="grid grid-cols-[64px,1fr] gap-2 px-2 text-xs font-medium uppercase tracking-[0.08em] text-muted">
                                   <span>Reps</span>
                                   <span>Peso</span>
