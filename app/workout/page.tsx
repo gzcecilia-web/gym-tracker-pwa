@@ -314,13 +314,13 @@ export default function WorkoutPage() {
                       if (!latestSummary.length) return null;
 
                       return (
-                        <div key={`combined-history-${member.exIdx}`} className="rounded-r-sm bg-neutral-50 px-3 py-3">
+                        <div key={`combined-history-${member.exIdx}`} className="rounded-r-sm bg-neutral-50 px-3 py-2.5">
                           <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">
                             Último registro {member.exercise.name}
                           </p>
-                          <div className="mt-2 space-y-1">
+                          <div className="mt-1.5 space-y-0.5">
                             {latestSummary.map((line) => (
-                              <p key={`combined-history-${member.exIdx}-${line}`} className="text-sm text-neutral-600">
+                              <p key={`combined-history-${member.exIdx}-${line}`} className="text-xs leading-5 text-neutral-600">
                                 {line}
                               </p>
                             ))}
