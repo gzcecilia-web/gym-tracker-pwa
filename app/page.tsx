@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
-import { createEmptyProfile, defaultSlot, getDayExercises } from '@/lib/routine';
+import { createEmptyProfile, defaultSlot, getDayExercises, updateDayExercises } from '@/lib/routine';
 import { isSameLocalDay, formatLocalDateTime } from '@/lib/date';
 import {
   appendWorkoutToHistory,
@@ -16,7 +16,7 @@ import {
   syncHistoryFromCloud
 } from '@/lib/storage';
 import { buildSkippedWorkoutPayload } from '@/lib/workout';
-import type { RoutineDB, SelectedSlot, WorkoutRecord } from '@/lib/types';
+import type { RoutineDB, RoutineExercise, SelectedSlot, WorkoutRecord } from '@/lib/types';
 
 function clampWeekDay(value: number): number {
   if (!Number.isFinite(value)) return 1;
@@ -60,6 +60,10 @@ export default function HomePage() {
   const [weekCompleted, setWeekCompleted] = useState<Record<number, boolean>>({});
   const [isAddingProfile, setIsAddingProfile] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
+  const [exerciseName, setExerciseName] = useState('');
+  const [exerciseReps, setExerciseReps] = useState('');
+  const [exerciseSets, setExerciseSets] = useState('');
+  const [exerciseType, setExerciseType] = useState<'normal' | 'dropset'>('normal');
 
   useEffect(() => {
     migrateIfNeeded();
@@ -200,6 +204,27 @@ export default function HomePage() {
     setWeekStatuses(thisWeekStatuses);
   };
 
+  const parseManualReps = (value: string): RoutineExercise['reps'] => {
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+    if (/^\d+\+\d+\+\d+$/.test(trimmed.replace(/\s+/g, ''))) {
+      return trimmed.replace(/\s+/g, '');
+    }
+    if (/^\d+(-\d+)+$/.test(trimmed.replace(/\s+/g, ''))) {
+      return trimmed
+        .replace(/\s+/g, '')
+        .split('-')
+        .map((part) => Number(part));
+    }
+    if (/^\d+$/.test(trimmed)) return Number(trimmed);
+    return trimmed;
+  };
+
+  const saveRoutineAndRefresh = (nextRoutine: RoutineDB) => {
+    const normalized = saveRoutine(nextRoutine);
+    setRoutine(normalized);
+  };
+
   const onCreateProfile = () => {
     const name = newProfileName.trim();
     if (!name) return;
@@ -225,6 +250,47 @@ export default function HomePage() {
     saveSelection(nextSlot);
     setNewProfileName('');
     setIsAddingProfile(false);
+  };
+
+  const onAddExercise = () => {
+    const name = exerciseName.trim();
+    const reps = exerciseReps.trim();
+    if (!name || !reps) return;
+
+    const nextExercise: RoutineExercise = {
+      name,
+      reps: parseManualReps(reps),
+      type: exerciseType,
+      notes: '',
+      sets: exerciseSets.trim() ? Number(exerciseSets.trim()) : null
+    };
+
+    const nextRoutine = updateDayExercises(
+      routine,
+      slot.profileId,
+      slot.planId,
+      slot.week,
+      slot.day,
+      (exercises) => [...exercises, nextExercise]
+    );
+
+    saveRoutineAndRefresh(nextRoutine);
+    setExerciseName('');
+    setExerciseReps('');
+    setExerciseSets('');
+    setExerciseType('normal');
+  };
+
+  const onDeleteExercise = (index: number) => {
+    const nextRoutine = updateDayExercises(
+      routine,
+      slot.profileId,
+      slot.planId,
+      slot.week,
+      slot.day,
+      (exercises) => exercises.filter((_, currentIndex) => currentIndex !== index)
+    );
+    saveRoutineAndRefresh(nextRoutine);
   };
 
   return (
@@ -362,6 +428,84 @@ export default function HomePage() {
         >
           No entrené hoy
         </button>
+      </Card>
+
+      <Card className="space-y-4">
+        <div>
+          <p className="text-lg font-semibold text-ink">Editar plan del día</p>
+          <p className="mt-1 text-sm text-muted">
+            {profile?.name ?? 'Perfil'} · {plan?.name ?? 'Plan'} · Semana {slot.week} · Día {slot.day}
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Ejercicios actuales</p>
+          {exercisesForSelectedDay.length === 0 ? (
+            <div className="rounded-r-sm border border-dashed border-line bg-neutral-50 p-3 text-sm text-muted">
+              Este día todavía no tiene ejercicios.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {exercisesForSelectedDay.map((exercise, index) => (
+                <div key={`${exercise.name}-${index}`} className="flex items-center justify-between gap-3 rounded-r-sm border border-line bg-surface px-3 py-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-ink">{exercise.name}</p>
+                    <p className="text-xs text-muted">
+                      Reps:{' '}
+                      {Array.isArray(exercise.reps)
+                        ? exercise.reps.join('-')
+                        : String(exercise.reps)}
+                      {' · '}
+                      Series: {exercise.sets ?? routine.defaultSetsIfMissing}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onDeleteExercise(index)}
+                    className="rounded-r-sm border border-line px-3 py-2 text-xs font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-3 rounded-r-sm border border-line bg-neutral-50 p-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Agregar ejercicio</p>
+          <Input
+            placeholder="Nombre del ejercicio"
+            value={exerciseName}
+            onChange={(e) => setExerciseName(e.target.value)}
+          />
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              placeholder="Reps (15 o 15-12-10-8)"
+              value={exerciseReps}
+              onChange={(e) => setExerciseReps(e.target.value)}
+            />
+            <Input
+              inputMode="numeric"
+              placeholder="Series (vacío = 4)"
+              value={exerciseSets}
+              onChange={(e) => setExerciseSets(e.target.value.replace(/[^0-9]/g, ''))}
+            />
+          </div>
+          <SegmentedControl
+            className="grid-cols-2"
+            variant="compact"
+            value={exerciseType}
+            onChange={(value) => setExerciseType(value)}
+            items={[
+              { value: 'normal', label: 'Normal' },
+              { value: 'dropset', label: 'Dropset' }
+            ]}
+          />
+          <Button className="h-11" onClick={onAddExercise}>
+            Agregar al día
+          </Button>
+        </div>
       </Card>
 
       {todayWorkout ? (

@@ -151,3 +151,41 @@ export function createEmptyProfile(name: string, existingIds: string[] = []): Ro
     ]
   };
 }
+
+export function updateDayExercises(
+  db: RoutineDB,
+  profileId: string,
+  planId: string,
+  week: number,
+  day: number,
+  updater: (exercises: RoutineExercise[]) => RoutineExercise[]
+): RoutineDB {
+  return {
+    ...db,
+    profiles: db.profiles.map((profile) => {
+      if (profile.id !== profileId) return profile;
+      return {
+        ...profile,
+        plans: profile.plans.map((plan) => {
+          if (plan.id !== planId) return plan;
+          return {
+            ...plan,
+            weeks: plan.weeks.map((weekItem) => {
+              if (weekItem.week !== week) return weekItem;
+              return {
+                ...weekItem,
+                days: weekItem.days.map((dayItem) => {
+                  if (dayItem.day !== day) return dayItem;
+                  return {
+                    ...dayItem,
+                    exercises: updater(dayItem.exercises)
+                  };
+                })
+              };
+            })
+          };
+        })
+      };
+    })
+  };
+}
