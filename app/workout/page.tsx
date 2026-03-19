@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation';
 import { DropSetBlock, ExerciseAccordion, SetTableRow } from '@/components/workout-ui';
 import { Button, Card, Input, PageContainer, SegmentedControl, StickyFooterCTA } from '@/components/ui';
 import { findCombinedGroupLabel, getCombinedGroupsForDay } from '@/lib/combined';
-import { defaultSlot, getDayExercises, getRoutineFromBundle } from '@/lib/routine';
+import { defaultSlot, getDayExercises } from '@/lib/routine';
 import {
   appendWorkoutToHistory,
   clearDraft,
   loadDraft,
   loadHistory,
+  loadRoutine,
   loadSelection,
   migrateIfNeeded,
   saveDraft,
@@ -63,7 +64,7 @@ function statusByExercise(
 
 export default function WorkoutPage() {
   const router = useRouter();
-  const routine = useMemo<RoutineDB>(() => getRoutineFromBundle(), []);
+  const [routine, setRoutine] = useState<RoutineDB>(() => loadRoutine());
   const defaultSets = routine.defaultSetsIfMissing || 4;
 
   const [slot, setSlot] = useState<SelectedSlot>(() => defaultSlot(routine));
@@ -76,7 +77,9 @@ export default function WorkoutPage() {
 
   useEffect(() => {
     migrateIfNeeded();
-    const fallback = defaultSlot(routine);
+    const loadedRoutine = loadRoutine();
+    setRoutine(loadedRoutine);
+    const fallback = defaultSlot(loadedRoutine);
     const selected = loadSelection(fallback);
     const params = new URLSearchParams(window.location.search);
 
@@ -97,7 +100,7 @@ export default function WorkoutPage() {
       setChecks(draft.checks ?? {});
     }
     setHistoryRows(loadHistory(merged.profileId, merged.planId));
-  }, [routine]);
+  }, []);
 
   const exercises = useMemo(
     () => getDayExercises(routine, slot.profileId, slot.planId, slot.week, slot.day),

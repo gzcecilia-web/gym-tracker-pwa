@@ -3,7 +3,7 @@
 import { cloudDeleteWorkout, cloudLoadHistory, cloudUpsertWorkout, isCloudEnabled } from '@/lib/cloud';
 import { makeCreatedAtISO } from '@/lib/date';
 import { applyProfileAccent } from '@/lib/profileTheme';
-import { getRoutineFromBundle } from '@/lib/routine';
+import { getRoutineFromBundle, normalizeRoutine } from '@/lib/routine';
 import type { RoutineDB, SelectedSlot, WorkoutDraft, WorkoutRecord } from '@/lib/types';
 
 const KEY_ROUTINE = 'gym:routine';
@@ -69,12 +69,18 @@ export function getWorkoutItemKey(id: string): string {
 export function loadRoutine(): RoutineDB {
   const fromLS = loadJSON<RoutineDB | null>(KEY_ROUTINE, null);
   if (fromLS && Array.isArray(fromLS.profiles)) {
-    return fromLS;
+    return normalizeRoutine(fromLS);
   }
 
   const bundled = getRoutineFromBundle();
   saveJSON(KEY_ROUTINE, bundled);
   return bundled;
+}
+
+export function saveRoutine(routine: RoutineDB): RoutineDB {
+  const normalized = normalizeRoutine(routine);
+  saveJSON(KEY_ROUTINE, normalized);
+  return normalized;
 }
 
 export function loadSelection(fallback: SelectedSlot): SelectedSlot {

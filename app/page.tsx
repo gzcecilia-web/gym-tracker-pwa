@@ -2,14 +2,16 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Card, PageContainer, SegmentedControl } from '@/components/ui';
-import { defaultSlot, getDayExercises, getRoutineFromBundle } from '@/lib/routine';
+import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
+import { createEmptyProfile, defaultSlot, getDayExercises } from '@/lib/routine';
 import { isSameLocalDay, formatLocalDateTime } from '@/lib/date';
 import {
   appendWorkoutToHistory,
   loadHistory,
+  loadRoutine,
   loadSelection,
   migrateIfNeeded,
+  saveRoutine,
   saveSelection,
   syncHistoryFromCloud
 } from '@/lib/storage';
@@ -48,7 +50,7 @@ function getWorkoutStatus(item: WorkoutRecord): 'done' | 'skipped' | 'ignore' {
 
 export default function HomePage() {
   const router = useRouter();
-  const routine = useMemo<RoutineDB>(() => getRoutineFromBundle(), []);
+  const [routine, setRoutine] = useState<RoutineDB>(() => loadRoutine());
   const fallback = useMemo(() => defaultSlot(routine), [routine]);
 
   const [slot, setSlot] = useState<SelectedSlot>(fallback);
@@ -56,14 +58,32 @@ export default function HomePage() {
   const [todayWorkout, setTodayWorkout] = useState<WorkoutRecord | null>(null);
   const [weekStatuses, setWeekStatuses] = useState<Record<number, 'done' | 'skipped'>>({});
   const [weekCompleted, setWeekCompleted] = useState<Record<number, boolean>>({});
+  const [isAddingProfile, setIsAddingProfile] = useState(false);
+  const [newProfileName, setNewProfileName] = useState('');
 
   useEffect(() => {
     migrateIfNeeded();
-    const selected = normalizeSlot(loadSelection(fallback), routine, fallback);
+    const loadedRoutine = loadRoutine();
+    setRoutine(loadedRoutine);
+    const loadedFallback = defaultSlot(loadedRoutine);
+    const selected = normalizeSlot(loadSelection(loadedFallback), loadedRoutine, loadedFallback);
     setSlot(selected);
     saveSelection(selected);
     setIsLoadedSelection(true);
-  }, [fallback, routine]);
+  }, []);
+
+  useEffect(() => {
+    if (!isLoadedSelection) return;
+    const normalized = normalizeSlot(slot, routine, fallback);
+    if (
+      normalized.profileId !== slot.profileId ||
+      normalized.planId !== slot.planId ||
+      normalized.week !== slot.week ||
+      normalized.day !== slot.day
+    ) {
+      setSlot(normalized);
+    }
+  }, [fallback, isLoadedSelection, routine, slot]);
 
   useEffect(() => {
     if (!isLoadedSelection) return;
@@ -180,6 +200,33 @@ export default function HomePage() {
     setWeekStatuses(thisWeekStatuses);
   };
 
+  const onCreateProfile = () => {
+    const name = newProfileName.trim();
+    if (!name) return;
+
+    const profile = createEmptyProfile(
+      name,
+      routine.profiles.map((item) => item.id)
+    );
+
+    const nextRoutine = saveRoutine({
+      ...routine,
+      profiles: [...routine.profiles, profile]
+    });
+    setRoutine(nextRoutine);
+
+    const nextSlot = {
+      profileId: profile.id,
+      planId: profile.plans[0]?.id ?? slot.planId,
+      week: 1,
+      day: 1
+    };
+    setSlot(nextSlot);
+    saveSelection(nextSlot);
+    setNewProfileName('');
+    setIsAddingProfile(false);
+  };
+
   return (
     <PageContainer>
       <div>
@@ -209,6 +256,40 @@ export default function HomePage() {
               }}
               items={routine.profiles.map((p) => ({ value: p.id, label: p.name }))}
             />
+            <div className="mt-3">
+              {isAddingProfile ? (
+                <div className="space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
+                  <Input
+                    placeholder="Nombre del perfil"
+                    value={newProfileName}
+                    onChange={(e) => setNewProfileName(e.target.value)}
+                  />
+                  <div className="flex gap-2">
+                    <Button className="h-11" onClick={onCreateProfile}>
+                      Guardar perfil
+                    </Button>
+                    <Button
+                      className="h-11"
+                      variant="secondary"
+                      onClick={() => {
+                        setIsAddingProfile(false);
+                        setNewProfileName('');
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsAddingProfile(true)}
+                  className="rounded-r-sm border border-dashed border-line px-3 py-2 text-sm font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                >
+                  + Agregar perfil
+                </button>
+              )}
+            </div>
           </div>
 
           <div>

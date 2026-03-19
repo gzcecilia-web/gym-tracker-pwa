@@ -73,13 +73,17 @@ function normalizeProfile(profile: RoutineProfile, defaultSetsIfMissing: number)
   };
 }
 
-export function getRoutineFromBundle(): RoutineDB {
-  const raw = routineJson as RoutineDB;
+export function normalizeRoutine(raw: RoutineDB): RoutineDB {
   const defaultSetsIfMissing = raw.defaultSetsIfMissing ?? FALLBACK_SETS;
   return {
     defaultSetsIfMissing,
     profiles: raw.profiles.map((profile) => normalizeProfile(profile, defaultSetsIfMissing))
   };
+}
+
+export function getRoutineFromBundle(): RoutineDB {
+  const raw = routineJson as RoutineDB;
+  return normalizeRoutine(raw);
 }
 
 export function getDayExercises(
@@ -104,5 +108,46 @@ export function defaultSlot(db: RoutineDB) {
     planId: plan?.id ?? 'cecilia-rutina-6',
     week: 1,
     day: 1
+  };
+}
+
+function slugify(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .trim();
+}
+
+export function createEmptyProfile(name: string, existingIds: string[] = []): RoutineProfile {
+  const baseId = slugify(name) || 'perfil';
+  let profileId = baseId;
+  let counter = 2;
+
+  while (existingIds.includes(profileId)) {
+    profileId = `${baseId}-${counter}`;
+    counter += 1;
+  }
+
+  const planId = `${profileId}-plan-1`;
+
+  return {
+    id: profileId,
+    name: name.trim(),
+    plans: [
+      {
+        id: planId,
+        name: `Plan inicial (${name.trim()})`,
+        weeks: [1, 2, 3, 4].map((week) => ({
+          week,
+          days: [1, 2, 3, 4].map((day) => ({
+            day,
+            exercises: []
+          }))
+        }))
+      }
+    ]
   };
 }

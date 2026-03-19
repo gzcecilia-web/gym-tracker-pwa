@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
 import { formatLocalDateTime } from '@/lib/date';
-import { defaultSlot, getRoutineFromBundle } from '@/lib/routine';
+import { defaultSlot } from '@/lib/routine';
 import {
   loadHistory,
+  loadRoutine,
   loadSelection,
   migrateIfNeeded,
   removeWorkoutFromHistory,
@@ -35,17 +36,20 @@ function statusPill(status?: 'done' | 'skipped') {
 }
 
 export default function HistoryPage() {
-  const routine = useMemo(() => getRoutineFromBundle(), []);
+  const [routine, setRoutine] = useState(() => loadRoutine());
   const fallback = useMemo(() => defaultSlot(routine), [routine]);
   const [slot, setSlot] = useState<SelectedSlot>(fallback);
   const [isLoadedSelection, setIsLoadedSelection] = useState(false);
 
   useEffect(() => {
     migrateIfNeeded();
-    const selected = loadSelection(fallback);
+    const loadedRoutine = loadRoutine();
+    setRoutine(loadedRoutine);
+    const loadedFallback = defaultSlot(loadedRoutine);
+    const selected = loadSelection(loadedFallback);
     setSlot(selected);
     setIsLoadedSelection(true);
-  }, [fallback]);
+  }, []);
 
   const profileId = slot.profileId;
   const profile = useMemo(

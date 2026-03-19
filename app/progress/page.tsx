@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Card, PageContainer } from '@/components/ui';
 import { getProfileTheme } from '@/lib/profileTheme';
-import { defaultSlot, getRoutineFromBundle } from '@/lib/routine';
-import { loadHistory, loadSelection, migrateIfNeeded, syncHistoryFromCloud } from '@/lib/storage';
+import { defaultSlot } from '@/lib/routine';
+import { loadHistory, loadRoutine, loadSelection, migrateIfNeeded, syncHistoryFromCloud } from '@/lib/storage';
 import type { SelectedSlot, WorkoutRecord } from '@/lib/types';
 
 type Point = {
@@ -22,7 +22,7 @@ export default function ProgressPage() {
     let cancelled = false;
     const run = async () => {
       migrateIfNeeded();
-      const routine = getRoutineFromBundle();
+      const routine = loadRoutine();
       const fallback = defaultSlot(routine);
       const selected = loadSelection(fallback);
 
