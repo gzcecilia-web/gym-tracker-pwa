@@ -48,6 +48,36 @@ function getWorkoutStatus(item: WorkoutRecord): 'done' | 'skipped' | 'ignore' {
   return hasWeights || hasWeightsByExercise || hasChecks ? 'done' : 'ignore';
 }
 
+function weekToneClass(week: number, active: boolean): string {
+  if (!active) {
+    return 'border-line bg-transparent text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50';
+  }
+
+  const tones: Record<number, string> = {
+    1: 'border-amber-200 bg-amber-50 text-amber-700 shadow-soft',
+    2: 'border-rose-200 bg-rose-50 text-rose-700 shadow-soft',
+    3: 'border-emerald-200 bg-emerald-50 text-emerald-700 shadow-soft',
+    4: 'border-sky-200 bg-sky-50 text-sky-700 shadow-soft'
+  };
+
+  return tones[week] ?? tones[1];
+}
+
+function dayToneClass(day: number, active: boolean): string {
+  if (!active) {
+    return 'border border-transparent bg-neutral-100 text-neutral-700 hover:bg-neutral-200';
+  }
+
+  const tones: Record<number, string> = {
+    1: 'border-transparent bg-rose-500 text-white shadow-soft',
+    2: 'border-transparent bg-amber-500 text-white shadow-soft',
+    3: 'border-transparent bg-emerald-500 text-white shadow-soft',
+    4: 'border-transparent bg-sky-500 text-white shadow-soft'
+  };
+
+  return tones[day] ?? tones[1];
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [routine, setRoutine] = useState<RoutineDB>(() => loadRoutine());
@@ -639,37 +669,46 @@ export default function HomePage() {
       <Card className="space-y-4">
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Semana</p>
-          <SegmentedControl
-            className="grid-cols-4"
-            variant="compact"
-            value={slot.week}
-            onChange={(week) => setSlot({ ...slot, week })}
-            items={[1, 2, 3, 4].map((week) => ({
-              value: week,
-              label: `S${week}`,
-              rightBadge: weekCompleted[week] ? <span className="text-[11px]">✓</span> : undefined
-            }))}
-          />
+          <div className="grid grid-cols-4 gap-3">
+            {[1, 2, 3, 4].map((week) => {
+              const active = slot.week === week;
+              return (
+                <button
+                  key={week}
+                  type="button"
+                  onClick={() => setSlot({ ...slot, week })}
+                  className={`flex h-10 items-center justify-center gap-1 rounded-r-sm border px-3 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${weekToneClass(week, active)}`}
+                >
+                  <span>{`S${week}`}</span>
+                  {weekCompleted[week] ? <span className="text-[11px]">✓</span> : null}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Día</p>
-          <SegmentedControl
-            className="grid-cols-4"
-            variant="day"
-            value={slot.day}
-            onChange={(day) => setSlot({ ...slot, day })}
-            items={[1, 2, 3, 4].map((day) => ({
-              value: day,
-              label: `Día ${day}`,
-              rightBadge:
-                weekStatuses[day] === 'done' ? (
-                  <span className="text-[11px]">✓</span>
-                ) : weekStatuses[day] === 'skipped' ? (
-                  <span className="text-[11px]">⏸</span>
-                ) : undefined
-            }))}
-          />
+          <div className="grid grid-cols-4 gap-3">
+            {[1, 2, 3, 4].map((day) => {
+              const active = slot.day === day;
+              return (
+                <button
+                  key={day}
+                  type="button"
+                  onClick={() => setSlot({ ...slot, day })}
+                  className={`flex h-11 items-center justify-center gap-1 rounded-r-sm px-3 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${dayToneClass(day, active)}`}
+                >
+                  <span>{`Día ${day}`}</span>
+                  {weekStatuses[day] === 'done' ? (
+                    <span className="text-[11px]">✓</span>
+                  ) : weekStatuses[day] === 'skipped' ? (
+                    <span className="text-[11px]">⏸</span>
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
         </div>
         <Button className="h-14 text-[16px] font-semibold" onClick={() => router.push('/workout')}>
           Entrenar hoy
