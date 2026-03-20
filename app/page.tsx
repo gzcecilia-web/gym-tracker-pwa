@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
-import { createEmptyProfile, defaultSlot, getDayExercises, updateDayExercises, updatePlanName } from '@/lib/routine';
+import { addPlanToProfile, createEmptyPlan, createEmptyProfile, defaultSlot, getDayExercises, updateDayExercises, updatePlanName } from '@/lib/routine';
 import { isSameLocalDay, formatLocalDateTime } from '@/lib/date';
 import {
   appendWorkoutToHistory,
@@ -68,6 +68,8 @@ export default function HomePage() {
   const [editingIndexes, setEditingIndexes] = useState<number[] | null>(null);
   const [isEditingPlanName, setIsEditingPlanName] = useState(false);
   const [planNameDraft, setPlanNameDraft] = useState('');
+  const [isAddingPlan, setIsAddingPlan] = useState(false);
+  const [newPlanName, setNewPlanName] = useState('');
 
   useEffect(() => {
     migrateIfNeeded();
@@ -430,6 +432,29 @@ export default function HomePage() {
     setIsEditingPlanName(false);
   };
 
+  const onCreatePlan = () => {
+    const name = newPlanName.trim();
+    if (!name || !profile) return;
+
+    const plan = createEmptyPlan(
+      name,
+      profile.plans.map((item) => item.id)
+    );
+    const nextRoutine = addPlanToProfile(routine, slot.profileId, plan);
+    saveRoutineAndRefresh(nextRoutine);
+
+    const nextSlot = {
+      ...slot,
+      planId: plan.id,
+      week: 1,
+      day: 1
+    };
+    setSlot(nextSlot);
+    saveSelection(nextSlot);
+    setNewPlanName('');
+    setIsAddingPlan(false);
+  };
+
   return (
     <PageContainer>
       <div>
@@ -520,6 +545,38 @@ export default function HomePage() {
                   );
                 })}
               </div>
+              {isAddingPlan ? (
+                <div className="space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
+                  <Input
+                    placeholder="Nombre del plan"
+                    value={newPlanName}
+                    onChange={(e) => setNewPlanName(e.target.value)}
+                  />
+                  <div className="flex gap-2">
+                    <Button className="h-11" onClick={onCreatePlan}>
+                      Guardar plan
+                    </Button>
+                    <Button
+                      className="h-11"
+                      variant="secondary"
+                      onClick={() => {
+                        setIsAddingPlan(false);
+                        setNewPlanName('');
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsAddingPlan(true)}
+                  className="rounded-r-sm border border-dashed border-line px-3 py-2 text-sm font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                >
+                  + Agregar plan
+                </button>
+              )}
               {isEditingPlanName ? (
                 <div className="space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
                   <Input

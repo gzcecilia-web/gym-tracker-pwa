@@ -154,6 +154,35 @@ export function createEmptyProfile(name: string, existingIds: string[] = []): Ro
   };
 }
 
+function uniqueId(baseId: string, existingIds: string[]): string {
+  let nextId = baseId;
+  let counter = 2;
+
+  while (existingIds.includes(nextId)) {
+    nextId = `${baseId}-${counter}`;
+    counter += 1;
+  }
+
+  return nextId;
+}
+
+export function createEmptyPlan(name: string, existingIds: string[] = []): RoutinePlan {
+  const baseId = slugify(name) || 'plan';
+  const planId = uniqueId(baseId, existingIds);
+
+  return {
+    id: planId,
+    name: name.trim(),
+    weeks: [1, 2, 3, 4].map((week) => ({
+      week,
+      days: [1, 2, 3, 4].map((day) => ({
+        day,
+        exercises: []
+      }))
+    }))
+  };
+}
+
 export function updateDayExercises(
   db: RoutineDB,
   profileId: string,
@@ -211,6 +240,23 @@ export function updatePlanName(
             name: nextName.trim()
           };
         })
+      };
+    })
+  };
+}
+
+export function addPlanToProfile(
+  db: RoutineDB,
+  profileId: string,
+  plan: RoutinePlan
+): RoutineDB {
+  return {
+    ...db,
+    profiles: db.profiles.map((profile) => {
+      if (profile.id !== profileId) return profile;
+      return {
+        ...profile,
+        plans: [...profile.plans, plan]
       };
     })
   };
