@@ -2309,28 +2309,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "APERTURA INCLINADA",
+                      "name": "APERTURA INCLINADA + FLEXIONES",
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
                       "sets": 3
                     },
                     {
-                      "name": "FLEXIONES",
-                      "reps": 15,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "VUELOS LAT POLEA",
-                      "reps": 15,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "VUELOS LAT MANC",
+                      "name": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
@@ -2386,14 +2372,7 @@
                       "notes": ""
                     },
                     {
-                      "name": "REMO HAMMER CERRADO",
-                      "reps": 15,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "PULLOVER",
+                      "name": "REMO HAMMER CERRADO + PULLOVER",
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
@@ -2449,14 +2428,7 @@
                       "notes": ""
                     },
                     {
-                      "name": "TIJERAS",
-                      "reps": 15,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
@@ -2553,28 +2525,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "APERTURA INCLINADA",
+                      "name": "APERTURA INCLINADA + FLEXIONES",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 4
                     },
                     {
-                      "name": "FLEXIONES",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "VUELOS LAT POLEA",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "VUELOS LAT MANC",
+                      "name": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
@@ -2630,14 +2588,7 @@
                       "notes": ""
                     },
                     {
-                      "name": "REMO HAMMER CERRADO",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "PULLOVER",
+                      "name": "REMO HAMMER CERRADO + PULLOVER",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
@@ -2693,14 +2644,7 @@
                       "notes": ""
                     },
                     {
-                      "name": "TIJERAS",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
@@ -2797,28 +2741,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "APERTURA INCLINADA",
+                      "name": "APERTURA INCLINADA + FLEXIONES",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 5
                     },
                     {
-                      "name": "FLEXIONES",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "VUELOS LAT POLEA",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "VUELOS LAT MANC",
+                      "name": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
@@ -2874,14 +2804,7 @@
                       "notes": ""
                     },
                     {
-                      "name": "REMO HAMMER CERRADO",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "PULLOVER",
+                      "name": "REMO HAMMER CERRADO + PULLOVER",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
@@ -2937,14 +2860,7 @@
                       "notes": ""
                     },
                     {
-                      "name": "TIJERAS",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
@@ -3041,28 +2957,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "APERTURA INCLINADA",
+                      "name": "APERTURA INCLINADA + FLEXIONES",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 2
                     },
                     {
-                      "name": "FLEXIONES",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "VUELOS LAT POLEA",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "VUELOS LAT MANC",
+                      "name": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
@@ -3118,14 +3020,7 @@
                       "notes": ""
                     },
                     {
-                      "name": "REMO HAMMER CERRADO",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "PULLOVER",
+                      "name": "REMO HAMMER CERRADO + PULLOVER",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
@@ -3181,14 +3076,7 @@
                       "notes": ""
                     },
                     {
-                      "name": "TIJERAS",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",

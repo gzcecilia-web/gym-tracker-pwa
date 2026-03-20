@@ -2923,6 +2923,7 @@
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "APERTURA INCLINADA + FLEXIONES",
                       "sets": 3
                     },
                     {
@@ -2930,6 +2931,7 @@
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "APERTURA INCLINADA + FLEXIONES",
                       "sets": 3
                     },
                     {
@@ -2937,6 +2939,7 @@
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "sets": 3
                     },
                     {
@@ -2944,6 +2947,7 @@
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "sets": 3
                     },
                     {
@@ -3000,6 +3004,7 @@
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "REMO HAMMER CERRADO + PULLOVER",
                       "sets": 3
                     },
                     {
@@ -3007,6 +3012,7 @@
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "REMO HAMMER CERRADO + PULLOVER",
                       "sets": 3
                     },
                     {
@@ -3063,6 +3069,7 @@
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "sets": 3
                     },
                     {
@@ -3070,6 +3077,7 @@
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "sets": 3
                     },
                     {
@@ -3077,6 +3085,7 @@
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "SUMO + ADUCTORES",
                       "sets": 3
                     },
                     {
@@ -3084,6 +3093,7 @@
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "SUMO + ADUCTORES",
                       "sets": 3
                     },
                     {
@@ -3174,6 +3184,7 @@
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "APERTURA INCLINADA + FLEXIONES",
                       "sets": 4
                     },
                     {
@@ -3181,6 +3192,7 @@
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "APERTURA INCLINADA + FLEXIONES",
                       "sets": 4
                     },
                     {
@@ -3188,6 +3200,7 @@
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "sets": 4
                     },
                     {
@@ -3195,6 +3208,7 @@
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "sets": 4
                     },
                     {
@@ -3251,6 +3265,7 @@
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "REMO HAMMER CERRADO + PULLOVER",
                       "sets": 4
                     },
                     {
@@ -3258,6 +3273,7 @@
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "REMO HAMMER CERRADO + PULLOVER",
                       "sets": 4
                     },
                     {
@@ -3314,6 +3330,7 @@
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "sets": 4
                     },
                     {
@@ -3321,6 +3338,7 @@
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "sets": 4
                     },
                     {
@@ -3328,6 +3346,7 @@
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "SUMO + ADUCTORES",
                       "sets": 4
                     },
                     {
@@ -3335,6 +3354,7 @@
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "SUMO + ADUCTORES",
                       "sets": 4
                     },
                     {
@@ -3425,6 +3445,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "APERTURA INCLINADA + FLEXIONES",
                       "sets": 5
                     },
                     {
@@ -3432,6 +3453,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "APERTURA INCLINADA + FLEXIONES",
                       "sets": 5
                     },
                     {
@@ -3439,6 +3461,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "sets": 5
                     },
                     {
@@ -3446,6 +3469,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "sets": 5
                     },
                     {
@@ -3502,6 +3526,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "REMO HAMMER CERRADO + PULLOVER",
                       "sets": 5
                     },
                     {
@@ -3509,6 +3534,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "REMO HAMMER CERRADO + PULLOVER",
                       "sets": 5
                     },
                     {
@@ -3565,6 +3591,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "sets": 5
                     },
                     {
@@ -3572,6 +3599,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "sets": 5
                     },
                     {
@@ -3579,6 +3607,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "SUMO + ADUCTORES",
                       "sets": 5
                     },
                     {
@@ -3586,6 +3615,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "SUMO + ADUCTORES",
                       "sets": 5
                     },
                     {
@@ -3676,6 +3706,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "APERTURA INCLINADA + FLEXIONES",
                       "sets": 2
                     },
                     {
@@ -3683,6 +3714,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "APERTURA INCLINADA + FLEXIONES",
                       "sets": 2
                     },
                     {
@@ -3690,6 +3722,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "sets": 2
                     },
                     {
@@ -3697,6 +3730,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "VUELOS LAT POLEA + VUELOS LAT MANC",
                       "sets": 2
                     },
                     {
@@ -3753,6 +3787,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "REMO HAMMER CERRADO + PULLOVER",
                       "sets": 2
                     },
                     {
@@ -3760,6 +3795,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "REMO HAMMER CERRADO + PULLOVER",
                       "sets": 2
                     },
                     {
@@ -3816,6 +3852,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "sets": 2
                     },
                     {
@@ -3823,6 +3860,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS",
                       "sets": 2
                     },
                     {
@@ -3830,6 +3868,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "SUMO + ADUCTORES",
                       "sets": 2
                     },
                     {
@@ -3837,6 +3876,7 @@
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
+                      "supersetGroup": "SUMO + ADUCTORES",
                       "sets": 2
                     },
                     {
