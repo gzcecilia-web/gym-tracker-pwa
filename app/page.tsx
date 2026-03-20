@@ -51,14 +51,14 @@ function getWorkoutStatus(item: WorkoutRecord): 'done' | 'skipped' | 'ignore' {
 
 function weekToneClass(week: number, active: boolean): string {
   if (!active) {
-    return 'border-line bg-transparent text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50';
+    return 'border-line bg-transparent text-muted hover:border-lineStrong hover:bg-[#F6F3EE]';
   }
 
   const tones: Record<number, string> = {
-    1: 'border-amber-200 bg-amber-50 text-amber-700 shadow-soft',
-    2: 'border-rose-200 bg-rose-50 text-rose-700 shadow-soft',
-    3: 'border-emerald-200 bg-emerald-50 text-emerald-700 shadow-soft',
-    4: 'border-sky-200 bg-sky-50 text-sky-700 shadow-soft'
+    1: 'border-[#93BDB6] bg-[#E8F1EF] text-[#5C8E86] shadow-soft',
+    2: 'border-[#A8C686] bg-[#EEF5E6] text-[#6F8A5A] shadow-soft',
+    3: 'border-[#E5DDBB] bg-[#F7F4E7] text-[#988F63] shadow-soft',
+    4: 'border-[#E6C0A5] bg-[#F8EDE5] text-[#B97855] shadow-soft'
   };
 
   return tones[week] ?? tones[1];
@@ -66,14 +66,14 @@ function weekToneClass(week: number, active: boolean): string {
 
 function dayToneClass(day: number, active: boolean): string {
   if (!active) {
-    return 'border border-transparent bg-neutral-100 text-neutral-700 hover:bg-neutral-200';
+    return 'border border-transparent bg-[#F1EFEB] text-muted hover:bg-[#EAE5DD]';
   }
 
   const tones: Record<number, string> = {
-    1: 'border-transparent bg-rose-500 text-white shadow-soft',
-    2: 'border-transparent bg-amber-500 text-white shadow-soft',
-    3: 'border-transparent bg-emerald-500 text-white shadow-soft',
-    4: 'border-transparent bg-sky-500 text-white shadow-soft'
+    1: 'border-transparent bg-[#7EB6AE] text-white shadow-soft',
+    2: 'border-transparent bg-[#8DAE73] text-white shadow-soft',
+    3: 'border-transparent bg-[#D8C278] text-[#4F4426] shadow-soft',
+    4: 'border-transparent bg-[#D98D62] text-white shadow-soft'
   };
 
   return tones[day] ?? tones[1];
