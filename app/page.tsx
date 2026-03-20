@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Input, PageContainer, SegmentedControl, Select } from '@/components/ui';
+import { getProfileTheme } from '@/lib/profileTheme';
 import { addPlanToProfile, createEmptyPlan, createEmptyProfile, defaultSlot, duplicatePlanInProfile, getDayExercises, getLatestPlanForProfile, updateDayExercises, updatePlanName } from '@/lib/routine';
 import { isSameLocalDay, formatLocalDateTime } from '@/lib/date';
 import {
@@ -76,6 +77,12 @@ function dayToneClass(day: number, active: boolean): string {
   };
 
   return tones[day] ?? tones[1];
+}
+
+function profileToneClass(profileId: string, active: boolean): string {
+  const theme = getProfileTheme(profileId);
+  if (active) return `${theme.chip} shadow-soft`;
+  return 'border-line bg-surface text-muted hover:bg-[#F1EFEB]';
 }
 
 export default function HomePage() {
@@ -519,22 +526,30 @@ export default function HomePage() {
         <div className="space-y-4">
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Perfil</p>
-            <SegmentedControl
-              className="grid-cols-2"
-              variant="compact"
-              value={slot.profileId}
-              onChange={(profileId) => {
-                const nextProfile = routine.profiles.find((p) => p.id === profileId);
-                const latestPlan = getLatestPlanForProfile(nextProfile);
-                setSlot({
-                  profileId,
-                  planId: latestPlan?.id ?? slot.planId,
-                  week: 1,
-                  day: 1
-                });
-              }}
-              items={routine.profiles.map((p) => ({ value: p.id, label: p.name }))}
-            />
+            <div className="grid grid-cols-2 gap-3">
+              {routine.profiles.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => {
+                    const nextProfile = routine.profiles.find((item) => item.id === p.id);
+                    const latestPlan = getLatestPlanForProfile(nextProfile);
+                    setSlot({
+                      profileId: p.id,
+                      planId: latestPlan?.id ?? slot.planId,
+                      week: 1,
+                      day: 1
+                    });
+                  }}
+                  className={`flex min-h-10 items-center justify-center rounded-r-sm border px-3 py-2 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25 ${profileToneClass(
+                    p.id,
+                    slot.profileId === p.id
+                  )}`}
+                >
+                  {p.name}
+                </button>
+              ))}
+            </div>
             <div className="mt-3">
               {isAddingProfile ? (
                 <div className="space-y-2 rounded-r-md border border-line bg-surfaceSoft p-3">
