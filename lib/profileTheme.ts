@@ -8,7 +8,7 @@ export type ProfileTheme = {
 };
 
 const PROFILE_ACCENT_RGB: Record<string, string> = {
-  cecilia: '140 94 88',
+  cecilia: '209 91 51',
   gabriel: '111 140 90'
 };
 
@@ -27,13 +27,13 @@ export function applyProfileAccent(profileId: string): void {
 export function getProfileTheme(profileId: string): ProfileTheme {
   const isGabriel = profileId === 'gabriel';
   return {
-    text: isGabriel ? 'text-[#6F8A5A]' : 'text-brown',
-    softText: isGabriel ? 'text-[#6F8A5A]' : 'text-brown',
+    text: isGabriel ? 'text-[#6F8A5A]' : 'text-[#D15B33]',
+    softText: isGabriel ? 'text-[#6F8A5A]' : 'text-[#C76946]',
     chip: isGabriel
       ? 'border-[#9FBC83] bg-[#EEF5E6] text-[#6F8A5A]'
-      : 'border-[#C69D95] bg-[#F8EEEA] text-brown',
-    button: isGabriel ? 'bg-[#7E9D67] text-white' : 'bg-brown text-white',
-    trainButton: isGabriel ? 'bg-[#7E9D67] text-white' : 'bg-brown text-white',
-    softSurface: isGabriel ? 'bg-[#EEF5E6]' : 'bg-[#F8EEEA]'
+      : 'border-[#E2A088] bg-[#FBEEE8] text-[#D15B33]',
+    button: isGabriel ? 'bg-[#7E9D67] text-white' : 'bg-[#D15B33] text-white',
+    trainButton: isGabriel ? 'bg-[#7E9D67] text-white' : 'bg-[#D15B33] text-white',
+    softSurface: isGabriel ? 'bg-[#EEF5E6]' : 'bg-[#FBEEE8]'
   };
 }
