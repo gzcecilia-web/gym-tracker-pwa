@@ -102,9 +102,14 @@ export function getDayExercises(
   return dayData?.exercises ?? [];
 }
 
+export function getLatestPlanForProfile(profile?: RoutineProfile | null): RoutinePlan | undefined {
+  if (!profile?.plans?.length) return undefined;
+  return profile.plans[profile.plans.length - 1];
+}
+
 export function defaultSlot(db: RoutineDB) {
   const profile = db.profiles[0];
-  const plan = profile?.plans[0];
+  const plan = getLatestPlanForProfile(profile);
   return {
     profileId: profile?.id ?? 'cecilia',
     planId: plan?.id ?? 'cecilia-rutina-6',

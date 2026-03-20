@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
-import { addPlanToProfile, createEmptyPlan, createEmptyProfile, defaultSlot, duplicatePlanInProfile, getDayExercises, updateDayExercises, updatePlanName } from '@/lib/routine';
+import { Button, Card, Input, PageContainer, SegmentedControl, Select } from '@/components/ui';
+import { addPlanToProfile, createEmptyPlan, createEmptyProfile, defaultSlot, duplicatePlanInProfile, getDayExercises, getLatestPlanForProfile, updateDayExercises, updatePlanName } from '@/lib/routine';
 import { isSameLocalDay, formatLocalDateTime } from '@/lib/date';
 import {
   appendWorkoutToHistory,
@@ -26,7 +26,7 @@ function clampWeekDay(value: number): number {
 function normalizeSlot(slot: SelectedSlot, routine: RoutineDB, fallback: SelectedSlot): SelectedSlot {
   const profile = routine.profiles.find((p) => p.id === slot.profileId) ?? routine.profiles.find((p) => p.id === fallback.profileId);
   const safeProfile = profile ?? routine.profiles[0];
-  const safePlan = safeProfile?.plans.find((p) => p.id === slot.planId) ?? safeProfile?.plans[0];
+  const safePlan = safeProfile?.plans.find((p) => p.id === slot.planId) ?? getLatestPlanForProfile(safeProfile);
 
   return {
     profileId: safeProfile?.id ?? fallback.profileId,
@@ -495,10 +495,10 @@ export default function HomePage() {
               value={slot.profileId}
               onChange={(profileId) => {
                 const nextProfile = routine.profiles.find((p) => p.id === profileId);
-                const firstPlan = nextProfile?.plans[0];
+                const latestPlan = getLatestPlanForProfile(nextProfile);
                 setSlot({
                   profileId,
-                  planId: firstPlan?.id ?? slot.planId,
+                  planId: latestPlan?.id ?? slot.planId,
                   week: 1,
                   day: 1
                 });
@@ -544,28 +544,19 @@ export default function HomePage() {
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Plan mensual</p>
             <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
-                {profilePlans.map((pl) => {
-                  const active = pl.id === slot.planId;
-                  return (
-                    <button
-                      key={pl.id}
-                      type="button"
-                      onClick={() => {
-                        setSlot({ ...slot, planId: pl.id, week: 1, day: 1 });
-                        setIsEditingPlanName(false);
-                      }}
-                      className={`min-h-10 rounded-r-sm border px-3 py-2 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
-                        active
-                          ? 'border-transparent bg-accent/12 text-accent shadow-soft'
-                          : 'border-line bg-surface text-neutral-600 hover:-translate-y-0.5 hover:shadow-soft'
-                      }`}
-                    >
-                      {pl.name}
-                    </button>
-                  );
-                })}
-              </div>
+              <Select
+                value={slot.planId}
+                onChange={(e) => {
+                  setSlot({ ...slot, planId: e.target.value, week: 1, day: 1 });
+                  setIsEditingPlanName(false);
+                }}
+              >
+                {profilePlans.map((pl) => (
+                  <option key={pl.id} value={pl.id}>
+                    {pl.name}
+                  </option>
+                ))}
+              </Select>
               {isAddingPlan ? (
                 <div className="space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
                   <Input

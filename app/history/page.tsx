@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
+import { Button, Card, Input, PageContainer, SegmentedControl, Select } from '@/components/ui';
 import { formatLocalDateTime } from '@/lib/date';
-import { defaultSlot } from '@/lib/routine';
+import { defaultSlot, getLatestPlanForProfile } from '@/lib/routine';
 import {
   loadHistory,
   loadRoutine,
@@ -184,10 +184,10 @@ export default function HistoryPage() {
             value={profileId}
             onChange={(profileValue) => {
               const nextProfile = routine.profiles.find((p) => p.id === profileValue);
-              const firstPlan = nextProfile?.plans[0];
+              const latestPlan = getLatestPlanForProfile(nextProfile);
               setSlot({
                 profileId: profileValue,
-                planId: firstPlan?.id ?? slot.planId,
+                planId: latestPlan?.id ?? slot.planId,
                 week: slot.week,
                 day: slot.day
               });
@@ -198,16 +198,19 @@ export default function HistoryPage() {
         </div>
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Plan mensual</p>
-          <SegmentedControl
-            className="grid-cols-1"
-            variant="compact"
+          <Select
             value={planId}
-            onChange={(planValue) => {
-              setSlot((prev) => ({ ...prev, planId: planValue }));
+            onChange={(e) => {
+              setSlot((prev) => ({ ...prev, planId: e.target.value }));
               setSelectedDay(null);
             }}
-            items={profilePlans.map((pl) => ({ value: pl.id, label: pl.name }))}
-          />
+          >
+            {profilePlans.map((pl) => (
+              <option key={pl.id} value={pl.id}>
+                {pl.name}
+              </option>
+            ))}
+          </Select>
         </div>
       </Card>
 
