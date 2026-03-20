@@ -6,6 +6,7 @@ export type RoutineExercise = {
   type?: 'normal' | 'dropset';
   notes?: string;
   sets?: number | null;
+  supersetGroup?: string;
 };
 
 export type RoutineDay = {

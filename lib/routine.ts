@@ -36,7 +36,8 @@ function normalizeExercise(ex: RoutineExercise, defaultSetsIfMissing: number): R
       name: normalizedName,
       sets: null,
       type: normalizedType,
-      notes: ex.notes ?? ''
+      notes: ex.notes ?? '',
+      supersetGroup: ex.supersetGroup?.trim() || undefined
     };
   }
 
@@ -45,6 +46,7 @@ function normalizeExercise(ex: RoutineExercise, defaultSetsIfMissing: number): R
     name: normalizedName,
     type: normalizedType,
     notes: ex.notes ?? '',
+    supersetGroup: ex.supersetGroup?.trim() || undefined,
     sets: ex.sets || defaultSetsIfMissing
   };
 }

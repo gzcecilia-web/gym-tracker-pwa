@@ -61,9 +61,10 @@ export default function HomePage() {
   const [isAddingProfile, setIsAddingProfile] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
   const [exerciseName, setExerciseName] = useState('');
+  const [exerciseNameB, setExerciseNameB] = useState('');
   const [exerciseReps, setExerciseReps] = useState('');
   const [exerciseSets, setExerciseSets] = useState('');
-  const [exerciseType, setExerciseType] = useState<'normal' | 'dropset'>('normal');
+  const [exerciseType, setExerciseType] = useState<'normal' | 'dropset' | 'superset'>('normal');
 
   useEffect(() => {
     migrateIfNeeded();
@@ -254,16 +255,42 @@ export default function HomePage() {
 
   const onAddExercise = () => {
     const name = exerciseName.trim();
+    const nameB = exerciseNameB.trim();
     const reps = exerciseReps.trim();
     if (!name || !reps) return;
+    if (exerciseType === 'superset' && !nameB) return;
 
-    const nextExercise: RoutineExercise = {
-      name,
-      reps: parseManualReps(reps),
-      type: exerciseType,
-      notes: '',
-      sets: exerciseSets.trim() ? Number(exerciseSets.trim()) : null
-    };
+    const parsedReps = parseManualReps(reps);
+    const parsedSets = exerciseSets.trim() ? Number(exerciseSets.trim()) : null;
+    const nextExercises: RoutineExercise[] =
+      exerciseType === 'superset'
+        ? [
+            {
+              name,
+              reps: parsedReps,
+              type: 'normal',
+              notes: '',
+              sets: parsedSets,
+              supersetGroup: `${name} + ${nameB}`
+            },
+            {
+              name: nameB,
+              reps: parsedReps,
+              type: 'normal',
+              notes: '',
+              sets: parsedSets,
+              supersetGroup: `${name} + ${nameB}`
+            }
+          ]
+        : [
+            {
+              name,
+              reps: parsedReps,
+              type: exerciseType,
+              notes: '',
+              sets: parsedSets
+            }
+          ];
 
     const nextRoutine = updateDayExercises(
       routine,
@@ -271,11 +298,12 @@ export default function HomePage() {
       slot.planId,
       slot.week,
       slot.day,
-      (exercises) => [...exercises, nextExercise]
+      (exercises) => [...exercises, ...nextExercises]
     );
 
     saveRoutineAndRefresh(nextRoutine);
     setExerciseName('');
+    setExerciseNameB('');
     setExerciseReps('');
     setExerciseSets('');
     setExerciseType('normal');
@@ -457,6 +485,7 @@ export default function HomePage() {
                         : String(exercise.reps)}
                       {' · '}
                       Series: {exercise.sets ?? routine.defaultSetsIfMissing}
+                      {exercise.supersetGroup ? ' · Superserie' : ''}
                     </p>
                   </div>
                   <button
@@ -493,15 +522,23 @@ export default function HomePage() {
             />
           </div>
           <SegmentedControl
-            className="grid-cols-2"
+            className="grid-cols-3"
             variant="compact"
             value={exerciseType}
             onChange={(value) => setExerciseType(value)}
             items={[
               { value: 'normal', label: 'Normal' },
-              { value: 'dropset', label: 'Dropset' }
+              { value: 'dropset', label: 'Dropset' },
+              { value: 'superset', label: 'Superserie' }
             ]}
           />
+          {exerciseType === 'superset' ? (
+            <Input
+              placeholder="Segundo ejercicio de la superserie"
+              value={exerciseNameB}
+              onChange={(e) => setExerciseNameB(e.target.value)}
+            />
+          ) : null}
           <Button className="h-11" onClick={onAddExercise}>
             Agregar al día
           </Button>
