@@ -65,6 +65,7 @@ export default function HomePage() {
   const [exerciseReps, setExerciseReps] = useState('');
   const [exerciseSets, setExerciseSets] = useState('');
   const [exerciseType, setExerciseType] = useState<'normal' | 'dropset' | 'superset'>('normal');
+  const [editingIndexes, setEditingIndexes] = useState<number[] | null>(null);
 
   useEffect(() => {
     migrateIfNeeded();
@@ -180,6 +181,24 @@ export default function HomePage() {
     [routine, slot.day, slot.planId, slot.profileId, slot.week]
   );
 
+  const groupedExerciseKeys = useMemo(() => {
+    const seen = new Set<string>();
+    const out = new Set<number>();
+
+    exercisesForSelectedDay.forEach((exercise, index) => {
+      const group = exercise.supersetGroup?.trim();
+      if (!group) {
+        out.add(index);
+        return;
+      }
+      if (seen.has(group)) return;
+      seen.add(group);
+      out.add(index);
+    });
+
+    return out;
+  }, [exercisesForSelectedDay]);
+
   const markSkipped = () => {
     const payload = buildSkippedWorkoutPayload({
       profileId: slot.profileId,
@@ -226,6 +245,15 @@ export default function HomePage() {
     setRoutine(normalized);
   };
 
+  const resetExerciseForm = () => {
+    setExerciseName('');
+    setExerciseNameB('');
+    setExerciseReps('');
+    setExerciseSets('');
+    setExerciseType('normal');
+    setEditingIndexes(null);
+  };
+
   const onCreateProfile = () => {
     const name = newProfileName.trim();
     if (!name) return;
@@ -253,16 +281,16 @@ export default function HomePage() {
     setIsAddingProfile(false);
   };
 
-  const onAddExercise = () => {
+  const buildExercisesFromForm = (): RoutineExercise[] | null => {
     const name = exerciseName.trim();
     const nameB = exerciseNameB.trim();
     const reps = exerciseReps.trim();
-    if (!name || !reps) return;
-    if (exerciseType === 'superset' && !nameB) return;
+    if (!name || !reps) return null;
+    if (exerciseType === 'superset' && !nameB) return null;
 
     const parsedReps = parseManualReps(reps);
     const parsedSets = exerciseSets.trim() ? Number(exerciseSets.trim()) : null;
-    const nextExercises: RoutineExercise[] =
+    return (
       exerciseType === 'superset'
         ? [
             {
@@ -290,7 +318,13 @@ export default function HomePage() {
               notes: '',
               sets: parsedSets
             }
-          ];
+          ]
+    );
+  };
+
+  const onAddExercise = () => {
+    const nextExercises = buildExercisesFromForm();
+    if (!nextExercises) return;
 
     const nextRoutine = updateDayExercises(
       routine,
@@ -302,11 +336,68 @@ export default function HomePage() {
     );
 
     saveRoutineAndRefresh(nextRoutine);
-    setExerciseName('');
+    resetExerciseForm();
+  };
+
+  const onStartEditExercise = (index: number) => {
+    const exercise = exercisesForSelectedDay[index];
+    if (!exercise) return;
+
+    const group = exercise.supersetGroup?.trim();
+    if (group) {
+      const pairIndexes = exercisesForSelectedDay
+        .map((item, currentIndex) => ({ item, currentIndex }))
+        .filter(({ item }) => item.supersetGroup?.trim() === group)
+        .map(({ currentIndex }) => currentIndex);
+
+      const first = exercisesForSelectedDay[pairIndexes[0]];
+      const second = exercisesForSelectedDay[pairIndexes[1]];
+
+      setExerciseType('superset');
+      setExerciseName(first?.name ?? '');
+      setExerciseNameB(second?.name ?? '');
+      setExerciseReps(
+        Array.isArray(first?.reps) ? first.reps.join('-') : String(first?.reps ?? '')
+      );
+      setExerciseSets(first?.sets ? String(first.sets) : '');
+      setEditingIndexes(pairIndexes);
+      return;
+    }
+
+    setExerciseType(exercise.type === 'dropset' ? 'dropset' : 'normal');
+    setExerciseName(exercise.name ?? '');
     setExerciseNameB('');
-    setExerciseReps('');
-    setExerciseSets('');
-    setExerciseType('normal');
+    setExerciseReps(Array.isArray(exercise.reps) ? exercise.reps.join('-') : String(exercise.reps ?? ''));
+    setExerciseSets(exercise.sets ? String(exercise.sets) : '');
+    setEditingIndexes([index]);
+  };
+
+  const onSaveExerciseEdits = () => {
+    if (!editingIndexes?.length) return;
+    const nextExercises = buildExercisesFromForm();
+    if (!nextExercises) return;
+
+    const sortedIndexes = [...editingIndexes].sort((a, b) => a - b);
+    const startIndex = sortedIndexes[0];
+
+    const nextRoutine = updateDayExercises(
+      routine,
+      slot.profileId,
+      slot.planId,
+      slot.week,
+      slot.day,
+      (exercises) => {
+        const remaining = exercises.filter((_, index) => !sortedIndexes.includes(index));
+        return [
+          ...remaining.slice(0, startIndex),
+          ...nextExercises,
+          ...remaining.slice(startIndex)
+        ];
+      }
+    );
+
+    saveRoutineAndRefresh(nextRoutine);
+    resetExerciseForm();
   };
 
   const onDeleteExercise = (index: number) => {
@@ -475,6 +566,7 @@ export default function HomePage() {
           ) : (
             <div className="space-y-2">
               {exercisesForSelectedDay.map((exercise, index) => (
+                groupedExerciseKeys.has(index) ? (
                 <div key={`${exercise.name}-${index}`} className="flex items-center justify-between gap-3 rounded-r-sm border border-line bg-surface px-3 py-3">
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-ink">{exercise.name}</p>
@@ -488,14 +580,24 @@ export default function HomePage() {
                       {exercise.supersetGroup ? ' · Superserie' : ''}
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => onDeleteExercise(index)}
-                    className="rounded-r-sm border border-line px-3 py-2 text-xs font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
-                  >
-                    Eliminar
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onStartEditExercise(index)}
+                      className="rounded-r-sm border border-line px-3 py-2 text-xs font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDeleteExercise(index)}
+                      className="rounded-r-sm border border-line px-3 py-2 text-xs font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
+                ) : null
               ))}
             </div>
           )}
@@ -539,9 +641,16 @@ export default function HomePage() {
               onChange={(e) => setExerciseNameB(e.target.value)}
             />
           ) : null}
-          <Button className="h-11" onClick={onAddExercise}>
-            Agregar al día
-          </Button>
+          <div className="flex gap-2">
+            <Button className="h-11" onClick={editingIndexes ? onSaveExerciseEdits : onAddExercise}>
+              {editingIndexes ? 'Guardar cambios' : 'Agregar al día'}
+            </Button>
+            {editingIndexes ? (
+              <Button className="h-11" variant="secondary" onClick={resetExerciseForm}>
+                Cancelar edición
+              </Button>
+            ) : null}
+          </div>
         </div>
       </Card>
 
