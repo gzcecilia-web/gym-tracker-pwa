@@ -401,13 +401,21 @@ export default function HomePage() {
   };
 
   const onDeleteExercise = (index: number) => {
+    const exercise = exercisesForSelectedDay[index];
+    const group = exercise?.supersetGroup?.trim();
+
     const nextRoutine = updateDayExercises(
       routine,
       slot.profileId,
       slot.planId,
       slot.week,
       slot.day,
-      (exercises) => exercises.filter((_, currentIndex) => currentIndex !== index)
+      (exercises) =>
+        exercises.filter((item, currentIndex) => {
+          if (currentIndex === index) return false;
+          if (group && item.supersetGroup?.trim() === group) return false;
+          return true;
+        })
     );
     saveRoutineAndRefresh(nextRoutine);
   };
