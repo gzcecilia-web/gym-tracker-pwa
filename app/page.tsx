@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
-import { addPlanToProfile, createEmptyPlan, createEmptyProfile, defaultSlot, getDayExercises, updateDayExercises, updatePlanName } from '@/lib/routine';
+import { addPlanToProfile, createEmptyPlan, createEmptyProfile, defaultSlot, duplicatePlanInProfile, getDayExercises, updateDayExercises, updatePlanName } from '@/lib/routine';
 import { isSameLocalDay, formatLocalDateTime } from '@/lib/date';
 import {
   appendWorkoutToHistory,
@@ -455,6 +455,27 @@ export default function HomePage() {
     setIsAddingPlan(false);
   };
 
+  const onDuplicatePlan = () => {
+    const result = duplicatePlanInProfile(
+      routine,
+      slot.profileId,
+      slot.planId,
+      `${plan?.name ?? 'Plan'} copia`
+    );
+
+    if (!result.duplicatedPlanId) return;
+
+    saveRoutineAndRefresh(result.routine);
+    const nextSlot = {
+      ...slot,
+      planId: result.duplicatedPlanId,
+      week: 1,
+      day: 1
+    };
+    setSlot(nextSlot);
+    saveSelection(nextSlot);
+  };
+
   return (
     <PageContainer>
       <div>
@@ -577,6 +598,13 @@ export default function HomePage() {
                   + Agregar plan
                 </button>
               )}
+              <button
+                type="button"
+                onClick={onDuplicatePlan}
+                className="rounded-r-sm border border-dashed border-line px-3 py-2 text-sm font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+              >
+                Duplicar plan actual
+              </button>
               {isEditingPlanName ? (
                 <div className="space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
                   <Input

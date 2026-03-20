@@ -261,3 +261,30 @@ export function addPlanToProfile(
     })
   };
 }
+
+export function duplicatePlanInProfile(
+  db: RoutineDB,
+  profileId: string,
+  sourcePlanId: string,
+  nextName?: string
+): { routine: RoutineDB; duplicatedPlanId: string | null } {
+  const profile = db.profiles.find((item) => item.id === profileId);
+  const sourcePlan = profile?.plans.find((item) => item.id === sourcePlanId);
+  if (!profile || !sourcePlan) {
+    return { routine: db, duplicatedPlanId: null };
+  }
+
+  const duplicated = createEmptyPlan(nextName?.trim() || `${sourcePlan.name} copia`, profile.plans.map((item) => item.id));
+  duplicated.weeks = sourcePlan.weeks.map((week) => ({
+    ...week,
+    days: week.days.map((day) => ({
+      ...day,
+      exercises: day.exercises.map((exercise) => ({ ...exercise }))
+    }))
+  }));
+
+  return {
+    duplicatedPlanId: duplicated.id,
+    routine: addPlanToProfile(db, profileId, duplicated)
+  };
+}
