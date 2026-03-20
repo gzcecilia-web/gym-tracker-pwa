@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
-import { createEmptyProfile, defaultSlot, getDayExercises, updateDayExercises } from '@/lib/routine';
+import { createEmptyProfile, defaultSlot, getDayExercises, updateDayExercises, updatePlanName } from '@/lib/routine';
 import { isSameLocalDay, formatLocalDateTime } from '@/lib/date';
 import {
   appendWorkoutToHistory,
@@ -66,6 +66,8 @@ export default function HomePage() {
   const [exerciseSets, setExerciseSets] = useState('');
   const [exerciseType, setExerciseType] = useState<'normal' | 'dropset' | 'superset'>('normal');
   const [editingIndexes, setEditingIndexes] = useState<number[] | null>(null);
+  const [isEditingPlanName, setIsEditingPlanName] = useState(false);
+  const [planNameDraft, setPlanNameDraft] = useState('');
 
   useEffect(() => {
     migrateIfNeeded();
@@ -420,6 +422,14 @@ export default function HomePage() {
     saveRoutineAndRefresh(nextRoutine);
   };
 
+  const onSavePlanName = () => {
+    const nextName = planNameDraft.trim();
+    if (!nextName) return;
+    const nextRoutine = updatePlanName(routine, slot.profileId, slot.planId, nextName);
+    saveRoutineAndRefresh(nextRoutine);
+    setIsEditingPlanName(false);
+  };
+
   return (
     <PageContainer>
       <div>
@@ -487,24 +497,64 @@ export default function HomePage() {
 
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Plan mensual</p>
-            <div className="flex flex-wrap gap-2">
-              {profilePlans.map((pl) => {
-                const active = pl.id === slot.planId;
-                return (
-                  <button
-                    key={pl.id}
-                    type="button"
-                    onClick={() => setSlot({ ...slot, planId: pl.id, week: 1, day: 1 })}
-                    className={`min-h-10 rounded-r-sm border px-3 py-2 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
-                      active
-                        ? 'border-transparent bg-accent/12 text-accent shadow-soft'
-                        : 'border-line bg-surface text-neutral-600 hover:-translate-y-0.5 hover:shadow-soft'
-                    }`}
-                  >
-                    {pl.name}
-                  </button>
-                );
-              })}
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                {profilePlans.map((pl) => {
+                  const active = pl.id === slot.planId;
+                  return (
+                    <button
+                      key={pl.id}
+                      type="button"
+                      onClick={() => {
+                        setSlot({ ...slot, planId: pl.id, week: 1, day: 1 });
+                        setIsEditingPlanName(false);
+                      }}
+                      className={`min-h-10 rounded-r-sm border px-3 py-2 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
+                        active
+                          ? 'border-transparent bg-accent/12 text-accent shadow-soft'
+                          : 'border-line bg-surface text-neutral-600 hover:-translate-y-0.5 hover:shadow-soft'
+                      }`}
+                    >
+                      {pl.name}
+                    </button>
+                  );
+                })}
+              </div>
+              {isEditingPlanName ? (
+                <div className="space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
+                  <Input
+                    placeholder="Nombre del plan"
+                    value={planNameDraft}
+                    onChange={(e) => setPlanNameDraft(e.target.value)}
+                  />
+                  <div className="flex gap-2">
+                    <Button className="h-11" onClick={onSavePlanName}>
+                      Guardar nombre
+                    </Button>
+                    <Button
+                      className="h-11"
+                      variant="secondary"
+                      onClick={() => {
+                        setIsEditingPlanName(false);
+                        setPlanNameDraft(plan?.name ?? '');
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPlanNameDraft(plan?.name ?? '');
+                    setIsEditingPlanName(true);
+                  }}
+                  className="rounded-r-sm border border-dashed border-line px-3 py-2 text-sm font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                >
+                  Editar nombre del plan
+                </button>
+              )}
             </div>
           </div>
         </div>

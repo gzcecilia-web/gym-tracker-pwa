@@ -191,3 +191,27 @@ export function updateDayExercises(
     })
   };
 }
+
+export function updatePlanName(
+  db: RoutineDB,
+  profileId: string,
+  planId: string,
+  nextName: string
+): RoutineDB {
+  return {
+    ...db,
+    profiles: db.profiles.map((profile) => {
+      if (profile.id !== profileId) return profile;
+      return {
+        ...profile,
+        plans: profile.plans.map((plan) => {
+          if (plan.id !== planId) return plan;
+          return {
+            ...plan,
+            name: nextName.trim()
+          };
+        })
+      };
+    })
+  };
+}
