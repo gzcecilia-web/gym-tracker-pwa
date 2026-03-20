@@ -751,28 +751,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "SUBIDAS AL STEP",
+                      "name": "SUBIDAS AL STEP + SENTADILLAS",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 3
                     },
                     {
-                      "name": "SENTADILLAS",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "CAMPANA",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "CAMPANA + SILLÓN DE CUÁDRICEPS",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
@@ -802,42 +788,21 @@
                       "notes": ""
                     },
                     {
-                      "name": "APERTURA INCLINADA",
+                      "name": "APERTURA INCLINADA + VUELOS FRONT DISCO",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 3
                     },
                     {
-                      "name": "VUELOS FRONT DISCO",
+                      "name": "PRESS DE HOMBROS + VUELOS LATERALES",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 3
                     },
                     {
-                      "name": "PRESS DE HOMBROS",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "VUELOS LATERALES",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "FRANCÉS POLEA ALTA",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "EMPUJES MÁQUINA",
+                      "name": "FRANCÉS POLEA ALTA + EMPUJES MÁQUINA",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
@@ -860,28 +825,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "PATADAS DE GLÚTEOS",
+                      "name": "PATADAS DE GLÚTEOS + SUMO",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 3
                     },
                     {
-                      "name": "SUMO",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "PUENTES",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "ESTOCADAS CAMINADAS",
+                      "name": "PUENTES + ESTOCADAS CAMINADAS",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
@@ -911,28 +862,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "REMO TRX",
+                      "name": "REMO TRX + PULLOVER",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 3
                     },
                     {
-                      "name": "PULLOVER",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "TIRONES",
-                      "reps": 15,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "ESPINALES",
+                      "name": "TIRONES + ESPINALES",
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
@@ -982,28 +919,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "SUBIDAS AL STEP",
+                      "name": "SUBIDAS AL STEP + SENTADILLAS",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 4
                     },
                     {
-                      "name": "SENTADILLAS",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "CAMPANA",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "CAMPANA + SILLÓN DE CUÁDRICEPS",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
@@ -1011,7 +934,7 @@
                     },
                     {
                       "name": "GEMELOS DE PIE",
-                      "reps": 12,
+                      "reps": 15,
                       "type": "normal",
                       "notes": "",
                       "sets": 4
@@ -1033,42 +956,21 @@
                       "notes": ""
                     },
                     {
-                      "name": "APERTURA INCLINADA",
+                      "name": "APERTURA INCLINADA + VUELOS FRONT DISCO",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 4
                     },
                     {
-                      "name": "VUELOS FRONT DISCO",
+                      "name": "PRESS DE HOMBROS + VUELOS LATERALES",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 4
                     },
                     {
-                      "name": "PRESS DE HOMBROS",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "VUELOS LATERALES",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "FRANCÉS POLEA ALTA",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "EMPUJES MÁQUINA",
+                      "name": "FRANCÉS POLEA ALTA + EMPUJES MÁQUINA",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
@@ -1091,28 +993,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "PATADAS DE GLÚTEOS",
+                      "name": "PATADAS DE GLÚTEOS + SUMO",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 4
                     },
                     {
-                      "name": "SUMO",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "PUENTES",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "ESTOCADAS CAMINADAS",
+                      "name": "PUENTES + ESTOCADAS CAMINADAS",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
@@ -1142,28 +1030,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "REMO TRX",
+                      "name": "REMO TRX + PULLOVER",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 4
                     },
                     {
-                      "name": "PULLOVER",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "TIRONES",
-                      "reps": 15,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "ESPINALES",
+                      "name": "TIRONES + ESPINALES",
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
@@ -1213,28 +1087,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "SUBIDAS AL STEP",
+                      "name": "SUBIDAS AL STEP + SENTADILLAS",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 5
                     },
                     {
-                      "name": "SENTADILLAS",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "CAMPANA",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "CAMPANA + SILLÓN DE CUÁDRICEPS",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
@@ -1242,7 +1102,7 @@
                     },
                     {
                       "name": "GEMELOS DE PIE",
-                      "reps": 12,
+                      "reps": 15,
                       "type": "normal",
                       "notes": "",
                       "sets": 5
@@ -1264,42 +1124,21 @@
                       "notes": ""
                     },
                     {
-                      "name": "APERTURA INCLINADA",
+                      "name": "APERTURA INCLINADA + VUELOS FRONT DISCO",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 5
                     },
                     {
-                      "name": "VUELOS FRONT DISCO",
+                      "name": "PRESS DE HOMBROS + VUELOS LATERALES",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 5
                     },
                     {
-                      "name": "PRESS DE HOMBROS",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "VUELOS LATERALES",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "FRANCÉS POLEA ALTA",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "EMPUJES MÁQUINA",
+                      "name": "FRANCÉS POLEA ALTA + EMPUJES MÁQUINA",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
@@ -1322,28 +1161,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "PATADAS DE GLÚTEOS",
+                      "name": "PATADAS DE GLÚTEOS + SUMO",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 5
                     },
                     {
-                      "name": "SUMO",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "PUENTES",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "ESTOCADAS CAMINADAS",
+                      "name": "PUENTES + ESTOCADAS CAMINADAS",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
@@ -1351,7 +1176,7 @@
                     },
                     {
                       "name": "ABDUCTORES",
-                      "reps": 12,
+                      "reps": 15,
                       "type": "normal",
                       "notes": "",
                       "sets": 5
@@ -1373,28 +1198,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "REMO TRX",
+                      "name": "REMO TRX + PULLOVER",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 5
                     },
                     {
-                      "name": "PULLOVER",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "TIRONES",
-                      "reps": 15,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "ESPINALES",
+                      "name": "TIRONES + ESPINALES",
                       "reps": 15,
                       "type": "normal",
                       "notes": "",
@@ -1444,28 +1255,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "SUBIDAS AL STEP",
+                      "name": "SUBIDAS AL STEP + SENTADILLAS",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 2
                     },
                     {
-                      "name": "SENTADILLAS",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "CAMPANA",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "CAMPANA + SILLÓN DE CUÁDRICEPS",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
@@ -1495,42 +1292,21 @@
                       "notes": ""
                     },
                     {
-                      "name": "APERTURA INCLINADA",
+                      "name": "APERTURA INCLINADA + VUELOS FRONT DISCO",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 2
                     },
                     {
-                      "name": "VUELOS FRONT DISCO",
+                      "name": "PRESS DE HOMBROS + VUELOS LATERALES",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 2
                     },
                     {
-                      "name": "PRESS DE HOMBROS",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "VUELOS LATERALES",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "FRANCÉS POLEA ALTA",
-                      "reps": "8 A 10",
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "EMPUJES MÁQUINA",
+                      "name": "FRANCÉS POLEA ALTA + EMPUJES MÁQUINA",
                       "reps": "8 A 10",
                       "type": "normal",
                       "notes": "",
@@ -1553,28 +1329,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "PATADAS DE GLÚTEOS",
+                      "name": "PATADAS DE GLÚTEOS + SUMO",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 2
                     },
                     {
-                      "name": "SUMO",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "PUENTES",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "ESTOCADAS CAMINADAS",
+                      "name": "PUENTES + ESTOCADAS CAMINADAS",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
@@ -1604,28 +1366,14 @@
                       "notes": ""
                     },
                     {
-                      "name": "REMO TRX",
+                      "name": "REMO TRX + PULLOVER",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 2
                     },
                     {
-                      "name": "PULLOVER",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "TIRONES",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "ESPINALES",
+                      "name": "TIRONES + ESPINALES",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
