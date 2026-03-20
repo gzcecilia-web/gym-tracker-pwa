@@ -256,7 +256,7 @@ export default function WorkoutPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-r-md border border-line bg-surface px-4 py-2 text-sm font-semibold text-ink transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
+            className="rounded-r-md border border-line bg-surface px-4 py-2 text-sm font-semibold text-ink transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[rgb(var(--profile-accent-rgb)/0.08)] hover:shadow-soft active:scale-[0.98]"
           >
             Volver
           </button>
@@ -268,7 +268,7 @@ export default function WorkoutPage() {
 
       <Card className="space-y-3">
         <div className="h-2 w-full rounded-full bg-[#EEE9E1]">
-          <div className="h-2 rounded-full bg-accent transition-all duration-200 ease-out" style={{ width: `${progressPercent}%` }} />
+          <div className="h-2 rounded-full bg-profile transition-all duration-200 ease-out" style={{ width: `${progressPercent}%` }} />
         </div>
         <p className="text-xs font-medium text-muted">
           Ejercicio {Math.min(completedCount + 1, Math.max(exercises.length, 1))} de {exercises.length || 1}

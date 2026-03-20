@@ -25,34 +25,34 @@ export function ExerciseAccordion({
   const isSuperset = supersetParts.length >= 2;
 
   return (
-    <section className={`rounded-r-lg border bg-surface p-4 shadow-card transition-all duration-200 ease-out ${complete ? 'border-accent/25' : 'border-line'}`}>
+    <section className={`rounded-r-lg border bg-surface p-4 shadow-card transition-all duration-200 ease-out ${complete ? 'border-profile/25' : 'border-line'}`}>
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-start justify-between gap-3 rounded-r-sm text-left transition-all duration-200 ease-out hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25 active:scale-[0.99]"
+        className="flex w-full items-start justify-between gap-3 rounded-r-sm text-left transition-all duration-200 ease-out hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-profile/25 active:scale-[0.99]"
       >
         <div className="min-w-0">
           {isSuperset ? (
-            <div className="rounded-r-md border-l-4 border-accent bg-accent/8 px-3 py-2.5">
-              <span className="mb-2 inline-flex rounded-full bg-accent/12 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-accent">
+            <div className="rounded-r-md border-l-4 border-profile bg-profile/8 px-3 py-2.5">
+              <span className="mb-2 inline-flex rounded-full bg-profile/12 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-profile">
                 Superserie
               </span>
               <div className="space-y-0.5">
                 {supersetParts.map((part) => (
-                  <h3 key={part} className="font-warm text-base font-semibold leading-tight text-brown">
+                  <h3 key={part} className="font-warm text-base font-semibold leading-tight text-profile">
                     {part}
                   </h3>
                 ))}
               </div>
             </div>
           ) : (
-            <h3 className="font-warm text-base font-semibold text-brown">{title}</h3>
+            <h3 className="font-warm text-base font-semibold text-profile">{title}</h3>
           )}
           <p className="mt-2 text-sm text-muted">{meta}</p>
         </div>
         <div className="flex items-center gap-2">
           {complete ? (
-            <span className="rounded-full bg-balance/20 px-2.5 py-1 text-xs font-medium text-[#6C7C55]">Completo</span>
+            <span className="rounded-full bg-profile/12 px-2.5 py-1 text-xs font-medium text-profile">Completo</span>
           ) : null}
           <span className="text-muted">{open ? '▾' : '▸'}</span>
         </div>
@@ -87,7 +87,7 @@ export function SetTableRow({
         type="checkbox"
         checked={Boolean(checked)}
         onChange={onToggleCheck}
-        className="h-5 w-5 rounded border-line accent-[rgb(var(--accent-rgb))] transition-all duration-200 ease-out"
+        className="h-5 w-5 rounded border-line accent-[rgb(var(--profile-accent-rgb))] transition-all duration-200 ease-out"
       />
     </div>
   );
@@ -109,7 +109,7 @@ export function DropSetBlock({
   onToggleCheck?: () => void;
 }) {
   return (
-    <div className="rounded-r-md border border-line border-l-4 border-l-accent bg-accent/8 p-4">
+    <div className="rounded-r-md border border-line border-l-4 border-l-profile bg-profile/8 p-4">
       <div className="mb-3 flex items-center justify-between">
         <p className="font-warm text-sm font-semibold text-ink">
           {setLabel} · Reps: {reps}
@@ -119,7 +119,7 @@ export function DropSetBlock({
           type="checkbox"
           checked={Boolean(checked)}
           onChange={onToggleCheck}
-          className="h-5 w-5 rounded border-line accent-[rgb(var(--accent-rgb))] transition-all duration-200 ease-out"
+          className="h-5 w-5 rounded border-line accent-[rgb(var(--profile-accent-rgb))] transition-all duration-200 ease-out"
         />
       </div>
       <div className="space-y-2">

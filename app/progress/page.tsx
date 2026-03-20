@@ -149,7 +149,7 @@ export default function ProgressPage() {
             <div className="relative space-y-3 pl-5 before:absolute before:bottom-2 before:left-1.5 before:top-1 before:w-px before:bg-[#DDD8D0]">
               {history.map((item) => (
                 <div key={item.id} className="relative">
-                  <span className="absolute -left-[14px] top-1 h-2.5 w-2.5 rounded-full bg-accent" />
+                  <span className="absolute -left-[14px] top-1 h-2.5 w-2.5 rounded-full bg-profile" />
                   <p className="text-xs font-medium text-muted">{new Date(item.createdAt).toLocaleDateString('es-AR')}</p>
                   <p className="font-warm text-sm font-semibold text-ink">{item.maxWeight} kg</p>
                 </div>

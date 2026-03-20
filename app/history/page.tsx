@@ -252,9 +252,9 @@ export default function HistoryPage() {
                     onClick={() => setSelectedDay({ week, day })}
                     className={`flex h-10 w-10 items-center justify-center rounded-r-sm border text-sm font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98] ${
                       selected
-                        ? 'border-accent bg-accent/14 text-accent shadow-soft'
+                        ? 'border-profile bg-profile/14 text-profile shadow-soft'
                         : status === 'done'
-                        ? 'border-accent/25 bg-accent/14 text-accent'
+                        ? 'border-profile/25 bg-profile/14 text-profile'
                         : status === 'skipped'
                         ? 'border-lineStrong bg-[#F1EFEB] text-muted'
                         : 'border-dashed border-lineStrong bg-surface text-[#B8B6B1]'

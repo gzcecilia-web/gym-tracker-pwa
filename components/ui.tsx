@@ -39,7 +39,7 @@ export function Button({
   variant = 'primary'
 }: ButtonProps) {
   const variants: Record<NonNullable<ButtonProps['variant']>, string> = {
-    primary: 'bg-accent text-white shadow-float hover:-translate-y-0.5 hover:brightness-[0.98]',
+    primary: 'bg-profile text-white shadow-float hover:-translate-y-0.5 hover:brightness-[0.98]',
     secondary: 'border border-line bg-[#F1EFEB] text-ink hover:-translate-y-0.5 hover:shadow-soft',
     ghost: 'border border-transparent bg-transparent text-muted hover:bg-[#F1EFEB]'
   };
@@ -50,7 +50,7 @@ export function Button({
         onClick={onClick}
         disabled={disabled}
         className={cx(
-        'inline-flex min-h-11 w-full items-center justify-center rounded-r-md px-4 py-3 text-sm font-semibold text-center transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25',
+        'inline-flex min-h-11 w-full items-center justify-center rounded-r-md px-4 py-3 text-sm font-semibold text-center transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-profile/25',
         disabled ? 'cursor-not-allowed bg-[#D9D4CD] text-[#8E8A84] shadow-none' : variants[variant],
         className
       )}
@@ -65,7 +65,7 @@ export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={cx(
-        'h-11 w-full rounded-r-sm border border-line bg-surface px-3 text-sm text-ink outline-none ring-accent/25 placeholder:text-[#B8B6B1] focus:border-accent/20 focus:ring',
+        'h-11 w-full rounded-r-sm border border-line bg-surface px-3 text-sm text-ink outline-none ring-profile/25 placeholder:text-[#B8B6B1] focus:border-profile/20 focus:ring',
         props.className ?? ''
       )}
     />
@@ -77,7 +77,7 @@ export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
     <select
       {...props}
       className={cx(
-        'h-11 w-full rounded-r-sm border border-line bg-surface px-3 text-sm text-ink outline-none ring-accent/25 focus:border-accent/20 focus:ring',
+        'h-11 w-full rounded-r-sm border border-line bg-surface px-3 text-sm text-ink outline-none ring-profile/25 focus:border-profile/20 focus:ring',
         props.className ?? ''
       )}
     />
@@ -106,17 +106,17 @@ export function SegmentedControl<T extends string | number>({
   const styleByVariant = {
     default: {
       base: 'min-h-10 rounded-r-sm text-sm',
-      active: 'border-transparent bg-accent/14 text-accent shadow-soft',
+      active: 'border-transparent bg-profile/14 text-profile shadow-soft',
       inactive: 'border-line bg-surface text-ink'
     },
     compact: {
       base: 'h-10 rounded-r-sm text-sm',
-      active: 'border-transparent bg-accent/14 text-accent shadow-soft',
+      active: 'border-transparent bg-profile/14 text-profile shadow-soft',
       inactive: 'border-line bg-transparent text-muted'
     },
     day: {
       base: 'h-11 rounded-r-sm text-sm',
-      active: 'border-transparent bg-accent text-white shadow-soft',
+      active: 'border-transparent bg-profile text-white shadow-soft',
       inactive: 'border-transparent bg-[#F1EFEB] text-ink'
     }
   } as const;
@@ -132,7 +132,7 @@ export function SegmentedControl<T extends string | number>({
             type="button"
             onClick={() => onChange(item.value)}
             className={cx(
-              'flex items-center justify-center gap-1 border px-3 py-2 font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
+              'flex items-center justify-center gap-1 border px-3 py-2 font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-profile/25',
               selectedStyle.base,
               active ? selectedStyle.active : selectedStyle.inactive
             )}
