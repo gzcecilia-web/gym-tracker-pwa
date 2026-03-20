@@ -509,8 +509,8 @@ export default function HomePage() {
   return (
     <PageContainer>
       <div>
-        <h1 className="text-[34px] font-bold leading-[1.05] tracking-[-0.02em] text-ink">Hoy</h1>
-        <p className="mt-2 text-base font-medium text-muted">
+        <h1 className="font-display text-[36px] font-bold leading-[1.02] tracking-[-0.03em] text-ink">Hoy</h1>
+        <p className="font-warm mt-2 text-base font-medium text-muted">
           {plan?.name ?? 'Rutina'} · Semana {slot.week} · Día {slot.day}
         </p>
       </div>
@@ -537,7 +537,7 @@ export default function HomePage() {
             />
             <div className="mt-3">
               {isAddingProfile ? (
-                <div className="space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
+                <div className="space-y-2 rounded-r-md border border-line bg-surfaceSoft p-3">
                   <Input
                     placeholder="Nombre del perfil"
                     value={newProfileName}
@@ -563,7 +563,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setIsAddingProfile(true)}
-                  className="rounded-r-sm border border-dashed border-line px-3 py-2 text-sm font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                  className="rounded-r-md border border-dashed border-line px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
                 >
                   + Agregar perfil
                 </button>
@@ -588,7 +588,7 @@ export default function HomePage() {
                 ))}
               </Select>
               {isAddingPlan ? (
-                <div className="space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
+                <div className="space-y-2 rounded-r-md border border-line bg-surfaceSoft p-3">
                   <Input
                     placeholder="Nombre del plan"
                     value={newPlanName}
@@ -614,7 +614,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setIsAddingPlan(true)}
-                  className="rounded-r-sm border border-dashed border-line px-3 py-2 text-sm font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                  className="rounded-r-md border border-dashed border-line px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
                 >
                   + Agregar plan
                 </button>
@@ -622,12 +622,12 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={onDuplicatePlan}
-                className="rounded-r-sm border border-dashed border-line px-3 py-2 text-sm font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                className="rounded-r-md border border-dashed border-line px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
               >
                 Duplicar plan actual
               </button>
               {isEditingPlanName ? (
-                <div className="space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
+                <div className="space-y-2 rounded-r-md border border-line bg-surfaceSoft p-3">
                   <Input
                     placeholder="Nombre del plan"
                     value={planNameDraft}
@@ -656,7 +656,7 @@ export default function HomePage() {
                     setPlanNameDraft(plan?.name ?? '');
                     setIsEditingPlanName(true);
                   }}
-                  className="rounded-r-sm border border-dashed border-line px-3 py-2 text-sm font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                  className="rounded-r-md border border-dashed border-line px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
                 >
                   Editar nombre del plan
                 </button>
@@ -710,13 +710,13 @@ export default function HomePage() {
             })}
           </div>
         </div>
-        <Button className="h-14 text-[16px] font-semibold" onClick={() => router.push('/workout')}>
+        <Button className="h-14 text-[16px] font-semibold shadow-float" onClick={() => router.push('/workout')}>
           Entrenar hoy
         </Button>
         <button
           type="button"
           onClick={markSkipped}
-          className="h-14 w-full rounded-r-md border border-line bg-surface px-4 py-3 text-sm font-semibold text-neutral-700 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+          className="h-14 w-full rounded-r-md border border-line bg-surface px-4 py-3 text-sm font-semibold text-ink transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
         >
           No entrené hoy
         </button>
@@ -724,7 +724,7 @@ export default function HomePage() {
 
       <Card className="space-y-4">
         <div>
-          <p className="text-lg font-semibold text-ink">Editar plan del día</p>
+          <p className="font-warm text-lg font-semibold text-ink">Editar plan del día</p>
           <p className="mt-1 text-sm text-muted">
             {profile?.name ?? 'Perfil'} · {plan?.name ?? 'Plan'} · Semana {slot.week} · Día {slot.day}
           </p>
@@ -733,16 +733,16 @@ export default function HomePage() {
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Ejercicios actuales</p>
           {exercisesForSelectedDay.length === 0 ? (
-            <div className="rounded-r-sm border border-dashed border-line bg-neutral-50 p-3 text-sm text-muted">
+            <div className="rounded-r-md border border-dashed border-line bg-surfaceSoft p-3 text-sm text-muted">
               Este día todavía no tiene ejercicios.
             </div>
           ) : (
             <div className="space-y-2">
               {exercisesForSelectedDay.map((exercise, index) => (
                 groupedExerciseKeys.has(index) ? (
-                <div key={`${exercise.name}-${index}`} className="flex items-center justify-between gap-3 rounded-r-sm border border-line bg-surface px-3 py-3">
+                <div key={`${exercise.name}-${index}`} className="flex items-center justify-between gap-3 rounded-r-md border border-line bg-surface px-3 py-3 shadow-soft">
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-ink">{exercise.name}</p>
+                    <p className="font-warm text-sm font-semibold text-ink">{exercise.name}</p>
                     <p className="text-xs text-muted">
                       Reps:{' '}
                       {Array.isArray(exercise.reps)
@@ -757,14 +757,14 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => onStartEditExercise(index)}
-                      className="rounded-r-sm border border-line px-3 py-2 text-xs font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                      className="rounded-r-md border border-line px-3 py-2 text-xs font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
                     >
                       Editar
                     </button>
                     <button
                       type="button"
                       onClick={() => onDeleteExercise(index)}
-                      className="rounded-r-sm border border-line px-3 py-2 text-xs font-semibold text-neutral-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+                      className="rounded-r-md border border-line px-3 py-2 text-xs font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
                     >
                       Eliminar
                     </button>
@@ -776,7 +776,7 @@ export default function HomePage() {
           )}
         </div>
 
-        <div className="space-y-3 rounded-r-sm border border-line bg-neutral-50 p-3">
+        <div className="space-y-3 rounded-r-md border border-line bg-surfaceSoft p-3">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Agregar ejercicio</p>
           <Input
             placeholder="Nombre del ejercicio"
@@ -829,8 +829,8 @@ export default function HomePage() {
 
       {todayWorkout ? (
         <Card className="space-y-3">
-          <p className="text-sm font-semibold text-accent">Ya guardaste un entrenamiento hoy</p>
-          <p className="text-sm text-neutral-600">{formatLocalDateTime(todayWorkout.createdAt)}</p>
+          <p className="font-warm text-sm font-semibold text-brown">Ya registraste un entrenamiento hoy</p>
+          <p className="text-sm text-muted">{formatLocalDateTime(todayWorkout.createdAt)}</p>
           <Button onClick={() => router.push(`/history?id=${todayWorkout.id}`)}>
             Ver entrenamiento de hoy
           </Button>

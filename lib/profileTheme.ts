@@ -20,8 +20,8 @@ export function applyProfileAccent(profileId: string): void {
   if (typeof window === 'undefined') return;
   const rgb = resolveProfileAccentRgb(profileId);
   const root = window.document.documentElement;
-  root.style.setProperty('--accent-rgb', rgb);
-  root.style.setProperty('--accent', `rgb(${rgb})`);
+  root.style.setProperty('--profile-accent-rgb', rgb);
+  root.style.setProperty('--profile-accent', `rgb(${rgb})`);
 }
 
 export function getProfileTheme(profileId: string): ProfileTheme {

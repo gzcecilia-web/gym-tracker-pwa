@@ -252,22 +252,22 @@ export default function WorkoutPage() {
     <PageContainer>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h1 className="text-[34px] font-bold leading-[1.05] tracking-[-0.02em] text-ink">Entrenamiento</h1>
+          <h1 className="font-display text-[36px] font-bold leading-[1.02] tracking-[-0.03em] text-ink">Entrenamiento</h1>
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-r-sm border border-line bg-surface px-4 py-2 text-sm font-semibold text-neutral-700 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]"
+            className="rounded-r-md border border-line bg-surface px-4 py-2 text-sm font-semibold text-ink transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
           >
             Volver
           </button>
         </div>
-        <p className="text-sm font-medium text-muted">
+        <p className="font-warm text-sm font-medium text-muted">
           {profile?.name ?? '—'} · {plan?.name ?? '—'} · Semana {slot.week} · Día {slot.day}
         </p>
       </div>
 
       <Card className="space-y-3">
-        <div className="h-2 w-full rounded-full bg-neutral-200">
+        <div className="h-2 w-full rounded-full bg-[#EEE9E1]">
           <div className="h-2 rounded-full bg-accent transition-all duration-200 ease-out" style={{ width: `${progressPercent}%` }} />
         </div>
         <p className="text-xs font-medium text-muted">
@@ -276,7 +276,7 @@ export default function WorkoutPage() {
       </Card>
 
       <Card className="space-y-4">
-        <h2 className="text-lg font-semibold text-ink">Fecha del entrenamiento</h2>
+        <h2 className="font-warm text-lg font-semibold text-ink">Fecha del entrenamiento</h2>
         <SegmentedControl
           className="grid-cols-3"
           variant="compact"
@@ -317,13 +317,13 @@ export default function WorkoutPage() {
                       if (!latestSummary.length) return null;
 
                       return (
-                        <div key={`combined-history-${member.exIdx}`} className="rounded-r-sm bg-neutral-50 px-3 py-2.5">
+                        <div key={`combined-history-${member.exIdx}`} className="rounded-r-md bg-surface px-3 py-2.5 shadow-soft">
                           <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">
                             Último registro {member.exercise.name}
                           </p>
                           <div className="mt-1.5 space-y-0.5">
                             {latestSummary.map((line) => (
-                              <p key={`combined-history-${member.exIdx}-${line}`} className="text-xs leading-5 text-neutral-600">
+                              <p key={`combined-history-${member.exIdx}-${line}`} className="text-xs leading-5 text-muted">
                                 {line}
                               </p>
                             ))}
@@ -336,10 +336,10 @@ export default function WorkoutPage() {
                   {Array.from({ length: sets }).map((_, setIdx) => {
                     const pairChecked = block.members.every((member) => checks[`${member.exIdx}-${setIdx}-done`] ?? false);
                     return (
-                      <div key={`combined-series-${setIdx}`} className="rounded-r-sm border border-line bg-surface px-3 py-4">
+                      <div key={`combined-series-${setIdx}`} className="rounded-r-md border border-line bg-surface px-3 py-4 shadow-soft">
                         <div className="space-y-2">
                           <div className="flex items-center justify-between border-b border-neutral-100 pb-2">
-                            <p className="text-base font-semibold tracking-[-0.01em] text-muted">Serie {setIdx + 1}</p>
+                            <p className="font-warm text-base font-semibold tracking-[-0.01em] text-muted">Serie {setIdx + 1}</p>
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Ok</span>
                               <input
@@ -356,19 +356,19 @@ export default function WorkoutPage() {
                             const memberReps = repsToArray(member.exercise.reps, sets);
                             return (
                               <div key={`combined-${member.exIdx}-${setIdx}`} className="space-y-2 pt-1">
-                                <p className="text-sm font-semibold uppercase text-ink">{member.exercise.name}</p>
+                                <p className="font-warm text-sm font-semibold uppercase text-ink">{member.exercise.name}</p>
                                 <div className="grid grid-cols-[64px,1fr] gap-2 px-2 text-xs font-medium uppercase tracking-[0.08em] text-muted">
                                   <span>Reps</span>
                                   <span>Peso</span>
                                 </div>
                                 <div className="grid grid-cols-[64px,1fr] items-center gap-2 rounded-r-sm border border-line bg-surface px-2.5 py-2">
-                                  <span className="text-sm font-medium text-neutral-700">{String(memberReps[setIdx] ?? '?')}</span>
+                                  <span className="text-sm font-medium text-ink">{String(memberReps[setIdx] ?? '?')}</span>
                                   <Input
                                     inputMode="decimal"
                                     placeholder="kg"
                                     value={weights[`${member.exIdx}-${setIdx}`] ?? ''}
                                     onChange={(e) => setWeight(`${member.exIdx}-${setIdx}`, e.target.value)}
-                                    className="h-11 rounded-[14px] placeholder:text-neutral-400"
+                                    className="h-11 rounded-[14px] placeholder:text-[#B8B6B1]"
                                   />
                                 </div>
                               </div>
@@ -401,11 +401,11 @@ export default function WorkoutPage() {
               complete={complete}
             >
               {latestSummary.length > 0 ? (
-                <div className="mb-4 rounded-r-sm border border-line bg-neutral-50 p-3">
+                <div className="mb-4 rounded-r-md border border-line bg-surfaceSoft p-3">
                   <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Último registro</p>
                   <div className="mt-1 space-y-1">
                     {latestSummary.map((line) => (
-                      <p key={`${exIdx}-${line}`} className="text-xs text-neutral-600">
+                      <p key={`${exIdx}-${line}`} className="text-xs text-muted">
                         {line}
                       </p>
                     ))}
@@ -413,14 +413,14 @@ export default function WorkoutPage() {
                 </div>
               ) : null}
               {isSameWeightExercise ? (
-                <div className="mb-4 space-y-2 rounded-r-sm border border-line bg-neutral-50 p-3">
+                <div className="mb-4 space-y-2 rounded-r-md border border-line bg-surfaceSoft p-3">
                   <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Peso (mismo para todas las series)</p>
                   <Input
                     inputMode="decimal"
                     placeholder="kg"
                     value={weights[`${exIdx}-same`] ?? ''}
                     onChange={(e) => applySameWeightAllSets(exIdx, sets, e.target.value)}
-                    className="h-9"
+                    className="h-9 placeholder:text-[#B8B6B1]"
                   />
                 </div>
               ) : null}

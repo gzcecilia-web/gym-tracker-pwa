@@ -9,14 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: '#FAFAF9',
+        bg: '#FAF9F6',
         card: '#ffffff',
         accent: 'rgb(var(--accent-rgb) / <alpha-value>)',
-        olive: '#677a52',
-        ink: '#111827',
-        muted: '#6B7280',
-        line: '#E5E7EB',
-        surface: '#FFFFFF'
+        profile: 'rgb(var(--profile-accent-rgb) / <alpha-value>)',
+        sun: '#F4C95D',
+        balance: '#A8C686',
+        brown: '#8C5E58',
+        ink: '#2B2B2B',
+        muted: '#7B7872',
+        line: '#ECEAE6',
+        lineStrong: '#DDD8D0',
+        surface: '#FFFFFF',
+        surfaceSoft: '#FDFCF9'
       },
       borderRadius: {
         'r-lg': '20px',
@@ -24,9 +29,9 @@ const config: Config = {
         'r-sm': '12px'
       },
       boxShadow: {
-        soft: '0 4px 14px rgba(15, 23, 42, 0.06)',
-        card: '0 6px 18px rgba(15, 23, 42, 0.06)',
-        float: '0 10px 26px rgba(15, 23, 42, 0.12)'
+        soft: '0 6px 18px rgba(90, 80, 67, 0.06)',
+        card: '0 10px 24px rgba(90, 80, 67, 0.07)',
+        float: '0 16px 34px rgba(90, 80, 67, 0.12)'
       }
     }
   },

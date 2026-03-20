@@ -95,15 +95,15 @@ export default function ProgressPage() {
   return (
     <PageContainer>
       <Card>
-        <h1 className="text-[34px] font-bold leading-[1.05] tracking-[-0.02em] text-ink">Progreso</h1>
-        <p className="mt-2 text-base font-medium text-muted">Seleccioná un ejercicio para ver evolución</p>
+        <h1 className="font-display text-[36px] font-bold leading-[1.02] tracking-[-0.03em] text-ink">Progreso</h1>
+        <p className="font-warm mt-2 text-base font-medium text-muted">Una lectura simple de tu fuerza y tu constancia</p>
         {slot ? (
           <p className="mt-1 text-xs font-medium uppercase tracking-[0.08em] text-muted">Perfil actual: {slot.profileId}</p>
         ) : null}
       </Card>
 
       <Card className="space-y-3">
-        <p className={`text-xs font-semibold uppercase tracking-[0.08em] ${theme.text}`}>Ejercicios</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Ejercicios</p>
         <div className="flex flex-wrap gap-2">
           {exerciseList.map((ex) => (
             <button
@@ -113,7 +113,7 @@ export default function ProgressPage() {
               className={`rounded-r-sm border px-3 py-2 text-sm font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98] ${
                 selectedExercise === ex
                   ? theme.chip
-                  : 'border-line bg-surface text-neutral-600'
+                  : 'border-line bg-surface text-muted'
               }`}
             >
               {ex}
@@ -126,7 +126,7 @@ export default function ProgressPage() {
         <Card className="space-y-2">
           <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Mejor marca</p>
           <div className="flex items-end gap-2">
-            <p className="text-[52px] font-extrabold leading-none text-ink">{bestWeight > 0 ? bestWeight : '—'}</p>
+            <p className="font-warm text-[56px] font-extrabold leading-none text-ink">{bestWeight > 0 ? bestWeight : '—'}</p>
             <span className="pb-1 text-base font-semibold text-muted">kg</span>
           </div>
           {deltaVsLast !== null ? (
@@ -140,18 +140,18 @@ export default function ProgressPage() {
 
       {selectedExercise ? (
         <Card className="space-y-3">
-          <p className="text-lg font-semibold text-ink">Timeline</p>
+          <p className="font-warm text-lg font-semibold text-ink">Timeline</p>
           {history.length === 0 ? (
-            <div className="rounded-r-sm border border-line bg-neutral-50 p-4 text-sm text-muted">
+            <div className="rounded-r-sm border border-line bg-surfaceSoft p-4 text-sm text-muted">
               No hay marcas para este ejercicio todavía.
             </div>
           ) : (
-            <div className="relative space-y-3 pl-5 before:absolute before:bottom-2 before:left-1.5 before:top-1 before:w-px before:bg-neutral-200">
+            <div className="relative space-y-3 pl-5 before:absolute before:bottom-2 before:left-1.5 before:top-1 before:w-px before:bg-[#DDD8D0]">
               {history.map((item) => (
                 <div key={item.id} className="relative">
                   <span className="absolute -left-[14px] top-1 h-2.5 w-2.5 rounded-full bg-accent" />
                   <p className="text-xs font-medium text-muted">{new Date(item.createdAt).toLocaleDateString('es-AR')}</p>
-                  <p className="text-sm font-semibold text-ink">{item.maxWeight} kg</p>
+                  <p className="font-warm text-sm font-semibold text-ink">{item.maxWeight} kg</p>
                 </div>
               ))}
             </div>

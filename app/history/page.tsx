@@ -171,8 +171,8 @@ export default function HistoryPage() {
   return (
     <PageContainer>
       <div>
-        <h1 className="text-[34px] font-bold leading-[1.05] tracking-[-0.02em] text-ink">Historial</h1>
-        <p className="mt-2 text-base font-medium text-muted">Registros por semana/día y resumen de progreso</p>
+        <h1 className="font-display text-[36px] font-bold leading-[1.02] tracking-[-0.03em] text-ink">Historial</h1>
+        <p className="font-warm mt-2 text-base font-medium text-muted">Tus registros, constancia y cargas con una lectura más clara</p>
       </div>
 
       <Card className="space-y-5">
@@ -215,7 +215,7 @@ export default function HistoryPage() {
       </Card>
 
       <Card className="space-y-4">
-        <p className="text-lg font-semibold text-ink">Semana / Día</p>
+        <p className="font-warm text-lg font-semibold text-ink">Semana / Día</p>
         {[1, 2, 3, 4].map((week) => (
           <div key={week} className="flex items-center gap-3">
             <p className="w-20 text-xs font-medium uppercase tracking-[0.08em] text-muted">Semana {week}</p>
@@ -237,12 +237,12 @@ export default function HistoryPage() {
                     onClick={() => setSelectedDay({ week, day })}
                     className={`flex h-10 w-10 items-center justify-center rounded-r-sm border text-sm font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98] ${
                       selected
-                        ? 'border-accent bg-accent/14 text-accent'
+                        ? 'border-accent bg-accent/14 text-accent shadow-soft'
                         : status === 'done'
-                        ? 'border-accent/30 bg-accent/16 text-accent'
+                        ? 'border-accent/25 bg-accent/14 text-accent'
                         : status === 'skipped'
-                        ? 'border-neutral-300 bg-neutral-200 text-neutral-600'
-                        : 'border-dashed border-neutral-300 bg-surface text-neutral-400'
+                        ? 'border-lineStrong bg-[#F1EFEB] text-muted'
+                        : 'border-dashed border-lineStrong bg-surface text-[#B8B6B1]'
                     }`}
                   >
                     {statusPill(status)}
@@ -256,9 +256,9 @@ export default function HistoryPage() {
       </Card>
 
       <Card className="space-y-3">
-        <p className="text-lg font-semibold text-ink">Detalle del día</p>
+        <p className="font-warm text-lg font-semibold text-ink">Detalle del día</p>
         {!selectedDay ? (
-          <div className="rounded-r-md border border-dashed border-neutral-300 bg-neutral-50 p-4">
+          <div className="rounded-r-md border border-dashed border-lineStrong bg-surfaceSoft p-4">
             <p className="text-sm font-medium text-muted">Elegí un día para ver el último registro.</p>
           </div>
         ) : !selectedLatest ? (
@@ -266,17 +266,17 @@ export default function HistoryPage() {
             Semana {selectedDay.week} · Día {selectedDay.day}: sin registros.
           </p>
         ) : (
-          <div className="space-y-3 rounded-r-md border border-line bg-neutral-50 p-4">
-            <h2 className="text-lg font-semibold text-ink">{formatLocalDateTime(selectedLatest.createdAt)}</h2>
-            <p className="text-sm text-neutral-600">
+          <div className="space-y-3 rounded-r-md border border-line bg-surfaceSoft p-4">
+            <h2 className="font-warm text-lg font-semibold text-ink">{formatLocalDateTime(selectedLatest.createdAt)}</h2>
+            <p className="text-sm text-muted">
               Semana {selectedLatest.week} · Día {selectedLatest.day} · {selectedLatest.planId}
             </p>
-            <p className="text-sm text-neutral-600">
+            <p className="text-sm text-muted">
               Estado: {selectedLatest.completed === false ? 'No entrené' : 'Entrené'}
             </p>
             <div className="space-y-1">
               {(selectedLatest.exercises ?? []).slice(0, 4).map((exercise, idx) => (
-                <p key={`${exercise.name}-${idx}`} className="text-sm text-neutral-600">
+                <p key={`${exercise.name}-${idx}`} className="text-sm text-muted">
                   • {exercise.name}
                 </p>
               ))}
@@ -292,12 +292,12 @@ export default function HistoryPage() {
                   .map(([exerciseName, weightMap]) => {
                     const lines = summarizeExerciseWeights(weightMap);
                     return (
-                      <div key={exerciseName} className="rounded-r-sm border border-neutral-100 bg-neutral-50 p-3">
-                        <p className="text-sm font-semibold text-ink">{exerciseName}</p>
+                      <div key={exerciseName} className="rounded-r-md border border-[#F1EFEB] bg-surface p-3">
+                        <p className="font-warm text-sm font-semibold text-ink">{exerciseName}</p>
                         <div className="mt-1 space-y-1">
                           {lines.length > 0 ? (
                             lines.map((line) => (
-                              <p key={`${exerciseName}-${line}`} className="text-xs text-neutral-600">
+                              <p key={`${exerciseName}-${line}`} className="text-xs text-muted">
                                 {line}
                               </p>
                             ))
@@ -343,13 +343,13 @@ export default function HistoryPage() {
       </Card>
 
       <Card className="space-y-2">
-        <p className="text-lg font-semibold text-ink">Progreso por ejercicio</p>
+        <p className="font-warm text-lg font-semibold text-ink">Progreso por ejercicio</p>
         {exerciseSummary.length === 0 ? (
           <p className="text-sm text-muted">Todavía no hay registros de pesos guardados.</p>
         ) : (
           exerciseSummary.slice(0, 12).map((it) => (
-            <div key={it.name} className="border-t border-neutral-100 pt-2.5 first:border-none first:pt-0">
-              <p className="text-sm font-semibold text-ink">{it.name}</p>
+            <div key={it.name} className="border-t border-[#F1EFEB] pt-2.5 first:border-none first:pt-0">
+              <p className="font-warm text-sm font-semibold text-ink">{it.name}</p>
               <p className="text-xs text-muted">
                 Registros: {it.count} · Último: {formatLocalDateTime(it.last)}
               </p>
@@ -359,7 +359,7 @@ export default function HistoryPage() {
       </Card>
 
       <Card className="space-y-2">
-        <p className="text-lg font-semibold text-ink">Timeline</p>
+        <p className="font-warm text-lg font-semibold text-ink">Timeline</p>
         {Object.keys(groupedByDate).length === 0 ? (
           <p className="text-sm text-neutral-500">No hay sesiones todavía.</p>
         ) : (
@@ -367,10 +367,10 @@ export default function HistoryPage() {
             .sort((a, b) => (a < b ? 1 : -1))
             .slice(0, 10)
             .map((ymd) => (
-              <div key={ymd} className="border-t border-neutral-100 pt-2 first:border-none first:pt-0">
-                <p className="text-sm font-semibold text-ink">{ymd}</p>
+              <div key={ymd} className="border-t border-[#F1EFEB] pt-2 first:border-none first:pt-0">
+                <p className="font-warm text-sm font-semibold text-ink">{ymd}</p>
                 {(groupedByDate[ymd] ?? []).slice(0, 6).map((r) => (
-                  <p key={r.id} className="text-xs text-neutral-500">
+                  <p key={r.id} className="text-xs text-muted">
                     {r.completed === false ? '⏸' : '✓'} · Semana {r.week} · Día {r.day} · {formatLocalDateTime(r.createdAt)}
                   </p>
                 ))}

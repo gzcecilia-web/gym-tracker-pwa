@@ -55,7 +55,7 @@ export function AuthBar() {
 
   if (!supabase) {
     return (
-      <div className="mb-5 rounded-2xl border border-neutral-200 bg-white p-4 text-xs text-neutral-500 shadow-soft">
+      <div className="mb-5 rounded-r-lg border border-line bg-surface p-4 text-xs text-muted shadow-soft">
         Supabase no configurado. La app usa guardado local.
       </div>
     );
@@ -139,23 +139,23 @@ export function AuthBar() {
   };
 
   const modeButtonClass = (active: boolean) =>
-    `rounded-full border px-3 py-1 text-xs font-semibold ${
-      active ? 'border-transparent bg-accent/10 text-accent' : 'border-neutral-200 text-neutral-600'
+    `rounded-full border px-3 py-1 text-xs font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
+      active ? 'border-transparent bg-accent/12 text-accent shadow-soft' : 'border-line text-muted'
     }`;
 
   return (
     <div className="mb-5 space-y-3">
-      <div className="flex min-h-14 items-center justify-between rounded-2xl border border-neutral-200 bg-white px-4 shadow-soft">
+      <div className="flex min-h-14 items-center justify-between rounded-r-lg border border-line bg-surface px-4 shadow-card">
         <div className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">Gym Tracker</p>
+          <p className="font-warm text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Gym Tracker</p>
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-accent/10 px-2 py-1 text-[11px] font-semibold uppercase text-accent">
+            <span className="rounded-full bg-[color:rgb(var(--profile-accent-rgb)/0.12)] px-2.5 py-1 text-[11px] font-semibold uppercase text-[color:rgb(var(--profile-accent-rgb))]">
               {profileId}
             </span>
             {userEmail ? (
-              <p className="max-w-[150px] truncate text-xs text-neutral-500">{userEmail}</p>
+              <p className="max-w-[150px] truncate text-xs text-muted">{userEmail}</p>
             ) : (
-              <p className="text-xs text-neutral-500">Sin sesion</p>
+              <p className="text-xs text-muted">Sin sesión</p>
             )}
           </div>
         </div>
@@ -164,15 +164,15 @@ export function AuthBar() {
           <button
             type="button"
             onClick={onLogout}
-            className="rounded-xl border border-neutral-200 px-3 py-2 text-xs font-semibold text-neutral-700"
+            className="rounded-r-sm border border-line px-3 py-2 text-xs font-semibold text-ink transition-all duration-200 ease-out hover:bg-[#F1EFEB] active:scale-[0.98]"
           >
-            Cerrar sesion
+            Cerrar sesión
           </button>
         ) : (
           <button
             type="button"
             onClick={() => setShowAuthForm((prev) => !prev)}
-            className="rounded-xl border border-neutral-200 px-3 py-2 text-xs font-semibold text-neutral-700"
+            className="rounded-r-sm border border-line px-3 py-2 text-xs font-semibold text-ink transition-all duration-200 ease-out hover:bg-[#F1EFEB] active:scale-[0.98]"
           >
             {showAuthForm ? 'Ocultar' : 'Ingresar'}
           </button>
@@ -180,7 +180,7 @@ export function AuthBar() {
       </div>
 
       {!userEmail && showAuthForm ? (
-        <div className="space-y-3 rounded-2xl border border-neutral-200 bg-white p-4 shadow-soft">
+        <div className="space-y-3 rounded-r-lg border border-line bg-surface p-4 shadow-card">
           <div className="flex gap-2">
             <button type="button" onClick={() => setMode('login')} className={modeButtonClass(mode === 'login')}>
               Entrar
@@ -195,7 +195,7 @@ export function AuthBar() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu-email@..."
-            className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-3 text-sm outline-none ring-accent/30 focus:ring"
+            className="h-11 w-full rounded-r-sm border border-line bg-surface px-3 text-sm text-ink outline-none ring-accent/25 placeholder:text-[#B8B6B1] focus:border-accent/20 focus:ring"
           />
 
           <div className="flex gap-2">
@@ -204,13 +204,13 @@ export function AuthBar() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="contrasena"
-              className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-3 text-sm outline-none ring-accent/30 focus:ring"
+              className="h-11 w-full rounded-r-sm border border-line bg-surface px-3 text-sm text-ink outline-none ring-accent/25 placeholder:text-[#B8B6B1] focus:border-accent/20 focus:ring"
             />
             <button
               type="button"
               disabled={isLoading}
               onClick={onSubmitEmailPassword}
-              className="rounded-xl bg-accent px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+              className="rounded-r-sm bg-accent px-3 py-2 text-xs font-semibold text-white shadow-soft transition-all duration-200 ease-out active:scale-[0.98] disabled:opacity-50"
             >
               {isLoading ? '...' : mode === 'signup' ? 'Crear' : 'Entrar'}
             </button>
@@ -221,7 +221,7 @@ export function AuthBar() {
               type="button"
               disabled={isLoading}
               onClick={onSendMagicLink}
-              className="text-xs font-medium text-neutral-600 underline underline-offset-2 disabled:opacity-50"
+              className="text-xs font-medium text-muted underline underline-offset-2 disabled:opacity-50"
             >
               Enviar link
             </button>
@@ -229,16 +229,16 @@ export function AuthBar() {
               type="button"
               disabled={isLoading}
               onClick={onForgotPassword}
-              className="text-xs font-medium text-neutral-600 underline underline-offset-2 disabled:opacity-50"
+              className="text-xs font-medium text-muted underline underline-offset-2 disabled:opacity-50"
             >
-              Olvide mi contrasena
+              Olvidé mi contraseña
             </button>
           </div>
         </div>
       ) : null}
 
       {status ? (
-        <div className="rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs text-neutral-600 shadow-soft">
+        <div className="rounded-r-md border border-line bg-surface px-3 py-2 text-xs text-muted shadow-soft">
           {status}
         </div>
       ) : null}

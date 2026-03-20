@@ -88,33 +88,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AuthBar />
           {children}
         </main>
-        <nav className="fixed bottom-0 left-0 right-0 border-t border-neutral-200 bg-white/95 backdrop-blur">
+        <nav className="fixed bottom-0 left-0 right-0 border-t border-line bg-[#FAF9F6]/95 backdrop-blur">
           <div className="mx-auto grid w-full max-w-md grid-cols-4 gap-2 px-4 py-3">
             <Link
               href="/"
               aria-label="Hoy"
-              className="flex h-10 items-center justify-center rounded-lg text-neutral-600 hover:bg-neutral-100"
+              className="flex h-10 items-center justify-center rounded-xl text-muted hover:bg-[#F1EFEB] hover:text-ink"
             >
               <HomeIcon />
             </Link>
             <Link
               href="/workout"
               aria-label="Entrenamiento"
-              className="flex h-10 items-center justify-center rounded-lg text-neutral-600 hover:bg-neutral-100"
+              className="flex h-10 items-center justify-center rounded-xl text-muted hover:bg-[#F1EFEB] hover:text-ink"
             >
               <DumbbellIcon />
             </Link>
             <Link
               href="/history"
               aria-label="Historial"
-              className="flex h-10 items-center justify-center rounded-lg text-neutral-600 hover:bg-neutral-100"
+              className="flex h-10 items-center justify-center rounded-xl text-muted hover:bg-[#F1EFEB] hover:text-ink"
             >
               <CalendarIcon />
             </Link>
             <Link
               href="/progress"
               aria-label="Progreso"
-              className="flex h-10 items-center justify-center rounded-lg text-neutral-600 hover:bg-neutral-100"
+              className="flex h-10 items-center justify-center rounded-xl text-muted hover:bg-[#F1EFEB] hover:text-ink"
             >
               <ChartIcon />
             </Link>
