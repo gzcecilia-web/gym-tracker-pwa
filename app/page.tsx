@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, PageContainer } from '@/components/ui';
-import { getDayExercises } from '@/lib/routine';
+import { formatPlanLabel, getDayExercises } from '@/lib/routine';
 import { formatLocalDateTime, isSameLocalDay } from '@/lib/date';
 import {
   appendWorkoutToHistory,
@@ -75,6 +75,19 @@ function deriveDayFocus(exercises: Array<{ name: string; supersetGroup?: string 
     return 'Hoy toca tren superior';
   }
   return 'Vamos a entrenar';
+}
+
+function titleFromFocus(focus: string, hasExercises: boolean): string {
+  if (!hasExercises) return 'Mover el cuerpo';
+  const normalized = focus
+    .replace(/^Hoy toca\s+/i, '')
+    .replace(/^Vamos a entrenar con foco$/i, 'Entrenamiento del día')
+    .replace(/^Vamos a entrenar$/i, 'Mover el cuerpo')
+    .replace(/^Hoy puede ser un buen comienzo$/i, 'Entrenamiento del día')
+    .trim();
+
+  if (!normalized) return 'Entrenamiento del día';
+  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
 }
 
 export default function HomePage() {
@@ -149,15 +162,15 @@ export default function HomePage() {
 
   const completedDaysThisWeek = Object.values(weekStatuses).filter((status) => status === 'done').length;
   const progressPercent = (completedDaysThisWeek / 4) * 100;
-  const heroTitle = `Hoy, ${profile?.name ?? 'vos'}`;
-  const heroSubtitle = `${plan?.name ?? 'Rutina'} · Semana ${slot.week} · Día ${slot.day}`;
   const heroFocus = deriveDayFocus(exercisesForSelectedDay);
+  const heroTitle = titleFromFocus(heroFocus, exercisesForSelectedDay.length > 0);
+  const heroSubtitle = `${formatPlanLabel(plan?.name ?? 'Rutina', profile?.name)} · Semana ${slot.week} · Día ${slot.day}`;
   const supportMessage =
     todayWorkout
       ? 'Ya existe un registro para hoy'
       : completedDaysThisWeek === 0
-      ? 'Todavía no se registraron entrenamientos esta semana'
-      : `Se completaron ${completedDaysThisWeek} entrenamientos esta semana`;
+      ? 'Todavía no se registraron entrenamientos'
+      : `Se completaron ${completedDaysThisWeek} entrenamientos`;
 
   const markSkipped = () => {
     const payload = buildSkippedWorkoutPayload({
@@ -199,7 +212,6 @@ export default function HomePage() {
     <PageContainer className="space-y-6">
       <section className="rounded-[30px] bg-[linear-gradient(180deg,#FFFEFC_0%,#F8F4EC_100%)] px-6 py-7 shadow-[0_18px_36px_rgba(0,0,0,0.06)]">
         <div className="space-y-2">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Hoy</p>
           <h1 className="font-display text-[36px] font-bold leading-[0.95] tracking-[-0.03em] text-ink">{heroTitle}</h1>
           <button
             type="button"
@@ -229,7 +241,7 @@ export default function HomePage() {
                         : 'border-line bg-surface text-ink hover:bg-[#F4F1EB]'
                     }`}
                   >
-                    <span className="line-clamp-2 leading-snug">{planOption.name}</span>
+                    <span className="line-clamp-2 leading-snug">{formatPlanLabel(planOption.name, profile?.name)}</span>
                     {slot.planId === planOption.id ? <span className="shrink-0 text-xs">Activa</span> : null}
                   </button>
                 ))}
@@ -289,7 +301,7 @@ export default function HomePage() {
         <div className="mt-6 space-y-3 text-center">
           <div className="mx-auto w-full max-w-[280px]">
             <Button className="h-14 rounded-full bg-accent text-base font-semibold shadow-float hover:brightness-[0.98]" onClick={() => router.push('/workout')}>
-              Entrenar hoy
+              Entrenar
             </Button>
           </div>
           <button

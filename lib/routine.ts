@@ -107,6 +107,18 @@ export function getLatestPlanForProfile(profile?: RoutineProfile | null): Routin
   return profile.plans[profile.plans.length - 1];
 }
 
+export function formatPlanLabel(planName: string, profileName?: string | null): string {
+  const raw = String(planName ?? '').trim();
+  if (!raw) return 'Rutina';
+  if (!profileName?.trim()) return raw;
+
+  const escapedProfile = profileName
+    .trim()
+    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  return raw.replace(new RegExp(`\\s*\\(${escapedProfile}\\)`, 'i'), '').trim();
+}
+
 export function defaultSlot(db: RoutineDB) {
   const profile = db.profiles[0];
   const plan = getLatestPlanForProfile(profile);

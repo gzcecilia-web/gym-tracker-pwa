@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { DropSetBlock, ExerciseAccordion, SetTableRow } from '@/components/workout-ui';
 import { Button, Card, Input, PageContainer, SegmentedControl, StickyFooterCTA } from '@/components/ui';
 import { findCombinedGroupLabel, getCombinedGroupsForDay } from '@/lib/combined';
-import { defaultSlot, getDayExercises } from '@/lib/routine';
+import { defaultSlot, formatPlanLabel, getDayExercises } from '@/lib/routine';
 import {
   appendWorkoutToHistory,
   clearDraft,
@@ -279,7 +279,7 @@ export default function WorkoutPage() {
           </button>
         </div>
         <p className="font-warm text-sm font-medium text-muted">
-          {profile?.name ?? '—'} · {plan?.name ?? '—'} · Semana {slot.week} · Día {slot.day}
+          {formatPlanLabel(plan?.name ?? 'Rutina', profile?.name)} · Semana {slot.week} · Día {slot.day}
         </p>
       </div>
 

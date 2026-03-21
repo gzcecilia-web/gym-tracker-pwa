@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, Card, Input, PageContainer, SegmentedControl, Select } from '@/components/ui';
 import { formatLocalDateTime } from '@/lib/date';
 import { getProfileTheme } from '@/lib/profileTheme';
-import { defaultSlot, getLatestPlanForProfile } from '@/lib/routine';
+import { defaultSlot, formatPlanLabel, getLatestPlanForProfile } from '@/lib/routine';
 import {
   loadHistory,
   loadRoutine,
@@ -190,7 +190,7 @@ export default function HistoryPage() {
           </div>
           <div className="rounded-r-md bg-white/70 px-4 py-3 shadow-soft">
             <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Plan activo</p>
-            <p className="mt-1 truncate text-sm font-semibold text-ink">{profilePlans.find((pl) => pl.id === planId)?.name ?? 'Plan'}</p>
+            <p className="mt-1 truncate text-sm font-semibold text-ink">{formatPlanLabel(profilePlans.find((pl) => pl.id === planId)?.name ?? 'Plan', profile?.name)}</p>
           </div>
         </div>
       </section>
