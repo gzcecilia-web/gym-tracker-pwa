@@ -176,6 +176,7 @@ function normalizeWorkoutShape(item: WorkoutRecord): WorkoutRecord {
     exerciseNames,
     weights,
     weightsByExercise,
+    performedReps: item.performedReps ?? {},
     checks: item.checks ?? {}
   };
 }

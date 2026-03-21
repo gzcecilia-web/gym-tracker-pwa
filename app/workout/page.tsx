@@ -77,6 +77,7 @@ export default function WorkoutPage() {
 
   const [slot, setSlot] = useState<SelectedSlot>(() => defaultSlot(routine));
   const [weights, setWeights] = useState<Record<string, string>>({});
+  const [performedReps, setPerformedReps] = useState<Record<string, string>>({});
   const [checks, setChecks] = useState<Record<string, boolean>>({});
   const [dateMode, setDateMode] = useState<'today' | 'yesterday' | 'manual'>('today');
   const [manualDate, setManualDate] = useState('');
@@ -105,6 +106,7 @@ export default function WorkoutPage() {
     const draft = loadDraft(merged.profileId, merged.planId, merged.week, merged.day);
     if (draft) {
       setWeights(Object.fromEntries(Object.entries(draft.weights ?? {}).map(([k, v]) => [k, String(v ?? '')])));
+      setPerformedReps(Object.fromEntries(Object.entries(draft.performedReps ?? {}).map(([k, v]) => [k, String(v ?? '')])));
       setChecks(draft.checks ?? {});
     }
     setHistoryRows(loadHistory(merged.profileId, merged.planId));
@@ -179,9 +181,10 @@ export default function WorkoutPage() {
       day: slot.day,
       updatedAt: new Date().toISOString(),
       weights,
+      performedReps,
       checks
     });
-  }, [checks, slot, weights]);
+  }, [checks, performedReps, slot, weights]);
 
   const exerciseStats = useMemo(() => {
     return exercises.map((exercise, exIdx) => statusByExercise(exercise, exIdx, weights, checks, defaultSets));
@@ -208,6 +211,11 @@ export default function WorkoutPage() {
 
   const setCheck = (key: string, checked: boolean) => {
     setChecks((prev) => ({ ...prev, [key]: checked }));
+  };
+
+  const setPerformedRep = (key: string, value: string) => {
+    const cleaned = value.replace(/[^0-9]/g, '');
+    setPerformedReps((prev) => ({ ...prev, [key]: cleaned }));
   };
 
   const setCombinedSeriesChecked = (members: IndexedExercise[], setIdx: number, checked: boolean) => {
@@ -247,6 +255,7 @@ export default function WorkoutPage() {
       day: slot.day,
       exercises,
       weights,
+      performedReps,
       checks,
       createdAt: makeCreatedAtISO()
     });
@@ -308,8 +317,6 @@ export default function WorkoutPage() {
             const sets = resolveSetCount(first.exercise, defaultSets);
             const reps = Array.isArray(first.exercise.reps) ? first.exercise.reps.join('-') : String(first.exercise.reps);
             const complete = block.members.every((m) => exerciseStats[m.exIdx]?.complete);
-            const showSeriesDone = block.members.some((member) => isRangeReps(member.exercise.reps));
-
             return (
               <ExerciseAccordion
                 key={block.id}
@@ -320,23 +327,6 @@ export default function WorkoutPage() {
                 complete={complete}
               >
                 <div className="space-y-2">
-                  {showSeriesDone ? (
-                    <div className="rounded-r-md border border-line bg-surfaceSoft px-3 py-2.5">
-                      <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Series hechas</p>
-                      <div className="mt-1.5 space-y-1">
-                        {block.members
-                          .filter((member) => isRangeReps(member.exercise.reps))
-                          .map((member) => (
-                            <p key={`combined-done-${member.exIdx}`} className="text-sm text-ink">
-                              <span className="font-medium">{member.exercise.name}:</span>{' '}
-                              {countCompletedSets(member.exIdx, resolveSetCount(member.exercise, defaultSets), checks)} de{' '}
-                              {resolveSetCount(member.exercise, defaultSets)} series
-                            </p>
-                          ))}
-                      </div>
-                    </div>
-                  ) : null}
-
                   <div className="space-y-2">
                     {block.members.map((member) => {
                       const latestSummary = latestByExercise[String(member.exercise.name ?? '')] ?? [];
@@ -388,7 +378,17 @@ export default function WorkoutPage() {
                                   <span>Peso</span>
                                 </div>
                                 <div className="grid grid-cols-[64px,1fr] items-center gap-2 rounded-r-sm border border-line bg-surface px-2.5 py-2">
-                                  <span className="text-sm font-medium text-ink">{String(memberReps[setIdx] ?? '?')}</span>
+                                  {isRangeReps(member.exercise.reps) ? (
+                                    <Input
+                                      inputMode="numeric"
+                                      placeholder="reps"
+                                      value={performedReps[`${member.exIdx}-${setIdx}-reps`] ?? ''}
+                                      onChange={(e) => setPerformedRep(`${member.exIdx}-${setIdx}-reps`, e.target.value)}
+                                      className="h-11 rounded-[14px] placeholder:text-[#B8B6B1]"
+                                    />
+                                  ) : (
+                                    <span className="text-sm font-medium text-ink">{String(memberReps[setIdx] ?? '?')}</span>
+                                  )}
                                   <Input
                                     inputMode="decimal"
                                     placeholder="kg"
@@ -416,8 +416,6 @@ export default function WorkoutPage() {
           const isSameWeightExercise = typeof exercise.reps === 'number' && !isDropSet;
           const complete = exerciseStats[exIdx]?.complete;
           const latestSummary = latestByExercise[String(exercise.name ?? '')] ?? [];
-          const showSeriesDone = isRangeReps(exercise.reps);
-          const completedSets = countCompletedSets(exIdx, sets, checks);
 
           return (
             <ExerciseAccordion
@@ -428,14 +426,6 @@ export default function WorkoutPage() {
               onToggle={() => setOpenBlockId(block.id)}
               complete={complete}
             >
-              {showSeriesDone ? (
-                <div className="mb-4 rounded-r-md border border-line bg-surfaceSoft p-3">
-                  <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Series hechas</p>
-                  <p className="mt-1 text-sm text-ink">
-                    {completedSets} de {sets} series
-                  </p>
-                </div>
-              ) : null}
               {latestSummary.length > 0 ? (
                 <div className="mb-4 rounded-r-md border border-line bg-surfaceSoft p-3">
                   <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Último registro</p>
@@ -491,7 +481,9 @@ export default function WorkoutPage() {
                     <SetTableRow
                       key={`${exIdx}-${setIdx}`}
                       label={`${setIdx + 1}`}
-                      reps={String(repsArr[setIdx] ?? '?')}
+                      reps={isRangeReps(exercise.reps) ? '' : String(repsArr[setIdx] ?? '?')}
+                      repsValue={isRangeReps(exercise.reps) ? performedReps[`${exIdx}-${setIdx}-reps`] ?? '' : undefined}
+                      onChangeReps={isRangeReps(exercise.reps) ? (value) => setPerformedRep(`${exIdx}-${setIdx}-reps`, value) : undefined}
                       value={weights[`${exIdx}-${setIdx}`] ?? ''}
                       onChange={(value) => setWeight(`${exIdx}-${setIdx}`, value)}
                       checked={checks[`${exIdx}-${setIdx}-done`] ?? false}

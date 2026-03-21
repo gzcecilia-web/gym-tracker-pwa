@@ -57,6 +57,7 @@ export type WorkoutRecord = {
   exerciseNames: string[];
   weights: Record<string, string | number>;
   weightsByExercise: Record<string, Record<string, string | number>>;
+  performedReps?: Record<string, string | number>;
   checks?: Record<string, boolean>;
   completed?: boolean;
 };
@@ -69,6 +70,7 @@ export type WorkoutDraft = {
   day: number;
   updatedAt: string;
   weights: Record<string, string | number>;
+  performedReps?: Record<string, string | number>;
   checks?: Record<string, boolean>;
 };
 

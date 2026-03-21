@@ -65,6 +65,8 @@ export function ExerciseAccordion({
 export function SetTableRow({
   label,
   reps,
+  repsValue,
+  onChangeReps,
   value,
   onChange,
   checked,
@@ -72,6 +74,8 @@ export function SetTableRow({
 }: {
   label: string;
   reps: string;
+  repsValue?: string;
+  onChangeReps?: (v: string) => void;
   value: string;
   onChange: (v: string) => void;
   checked?: boolean;
@@ -80,7 +84,17 @@ export function SetTableRow({
   return (
     <div className={`grid grid-cols-[56px,64px,1fr,34px] items-center gap-2 rounded-r-sm border px-2.5 py-2 ${checked ? 'border-lineStrong bg-[#F7F3EE]' : 'border-line bg-surface'}`}>
       <span className="text-xs font-medium text-muted">{label}</span>
-      <span className="text-sm font-medium text-ink">{reps}</span>
+      {onChangeReps ? (
+        <Input
+          inputMode="numeric"
+          placeholder="reps"
+          value={repsValue ?? ''}
+          onChange={(e) => onChangeReps(e.target.value)}
+          className="h-11 rounded-[14px] placeholder:text-[#B8B6B1]"
+        />
+      ) : (
+        <span className="text-sm font-medium text-ink">{reps}</span>
+      )}
       <Input inputMode="decimal" placeholder="kg" value={value} onChange={(e) => onChange(e.target.value)} className="h-11 rounded-[14px] placeholder:text-[#B8B6B1]" />
       <input
         aria-label={`${label} completada`}

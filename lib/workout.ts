@@ -8,6 +8,7 @@ type SaveWorkoutInput = {
   day: number;
   exercises: RoutineExercise[];
   weights: Record<string, string | number>;
+  performedReps?: Record<string, string | number>;
   checks?: Record<string, boolean>;
   createdAt?: string;
 };
@@ -22,7 +23,7 @@ type SkipWorkoutInput = {
 };
 
 export function buildWorkoutPayload(input: SaveWorkoutInput): WorkoutRecord {
-  const { profileId, planId, week, day, exercises, weights, checks, createdAt: createdAtInput } = input;
+  const { profileId, planId, week, day, exercises, weights, performedReps, checks, createdAt: createdAtInput } = input;
 
   const createdAt = createdAtInput ?? makeCreatedAtISO();
   const id = `${profileId}-${planId}-${week}-${day}-${Date.now()}`;
@@ -57,6 +58,7 @@ export function buildWorkoutPayload(input: SaveWorkoutInput): WorkoutRecord {
     })),
     weights,
     weightsByExercise,
+    performedReps: performedReps ?? {},
     checks: checks ?? {}
   };
 }
