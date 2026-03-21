@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadRoutine, loadSelection, saveSelection } from '@/lib/storage';
 import { getSupabaseClient } from '@/lib/supabase';
+import { createEmptyProfile } from '@/lib/routine';
+import { saveRoutine } from '@/lib/storage';
 import type { RoutineDB, SelectedSlot } from '@/lib/types';
 
 export function AuthBar() {
@@ -198,6 +200,35 @@ export function AuthBar() {
     }
   };
 
+  const onAddProfile = () => {
+    if (typeof window === 'undefined') return;
+    const nextName = window.prompt('Nombre del nuevo perfil');
+    if (!nextName?.trim()) return;
+    if (!routine) return;
+
+    const nextProfile = createEmptyProfile(
+      nextName,
+      routine.profiles.map((profile) => profile.id)
+    );
+    const nextRoutine = saveRoutine({
+      ...routine,
+      profiles: [...routine.profiles, nextProfile]
+    });
+
+    setRoutine(nextRoutine);
+    saveSelection({
+      profileId: nextProfile.id,
+      planId: nextProfile.plans[0]?.id ?? '',
+      week: 1,
+      day: 1
+    });
+    setProfileId(nextProfile.id);
+    setShowProfileMenu(false);
+    router.push('/');
+    router.refresh();
+    window.location.reload();
+  };
+
   return (
     <div className="mb-5 space-y-3">
       <div className="space-y-3 rounded-[24px] bg-white/75 px-4 py-3 shadow-[0_10px_30px_rgba(120,110,90,0.06)] backdrop-blur">
@@ -245,22 +276,35 @@ export function AuthBar() {
           </button>
 
           {showProfileMenu ? (
-            <div className="absolute left-0 top-[calc(100%+0.5rem)] z-30 min-w-[220px] space-y-2 rounded-[20px] border border-line bg-surface p-3 shadow-float">
-              {profiles.map((profile) => (
+            <div className="absolute left-0 top-[calc(100%+0.5rem)] z-30 min-w-[220px] space-y-3 rounded-[20px] border border-line bg-surface p-3 shadow-float">
+              <div className="space-y-1">
+                {profiles.map((profile) => (
+                  <button
+                    key={profile.id}
+                    type="button"
+                    onClick={() => onChangeProfile(profile.id)}
+                    className={`flex min-h-11 w-full items-center justify-between rounded-[16px] px-3 py-2 text-left text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
+                      profile.id === profileId
+                        ? 'bg-[color:rgb(var(--profile-accent-rgb)/0.12)] text-[color:rgb(var(--profile-accent-rgb))]'
+                        : 'text-ink hover:bg-[#F4F1EB]'
+                    }`}
+                  >
+                    <span>{profile.name}</span>
+                    {profile.id === profileId ? <span className="text-xs">Activo</span> : null}
+                  </button>
+                ))}
+              </div>
+
+              <div className="border-t border-line pt-2">
                 <button
-                  key={profile.id}
                   type="button"
-                  onClick={() => onChangeProfile(profile.id)}
-                  className={`flex min-h-11 w-full items-center justify-between rounded-[16px] px-3 py-2 text-left text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
-                    profile.id === profileId
-                      ? 'bg-[color:rgb(var(--profile-accent-rgb)/0.12)] text-[color:rgb(var(--profile-accent-rgb))]'
-                      : 'text-ink hover:bg-[#F4F1EB]'
-                  }`}
+                  onClick={onAddProfile}
+                  className="flex min-h-11 w-full items-center justify-between rounded-[16px] px-3 py-2 text-left text-sm font-semibold text-ink transition-all duration-200 ease-out hover:bg-[#F4F1EB] active:scale-[0.98]"
                 >
-                  <span>{profile.name}</span>
-                  {profile.id === profileId ? <span className="text-xs">Activo</span> : null}
+                  <span>Agregar perfil</span>
+                  <span className="text-base leading-none">＋</span>
                 </button>
-              ))}
+              </div>
             </div>
           ) : null}
 
