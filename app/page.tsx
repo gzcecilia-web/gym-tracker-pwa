@@ -86,6 +86,7 @@ export default function HomePage() {
   const [todayWorkout, setTodayWorkout] = useState<WorkoutRecord | null>(null);
   const [latestWorkout, setLatestWorkout] = useState<WorkoutRecord | null>(null);
   const [weekStatuses, setWeekStatuses] = useState<Record<number, 'done' | 'skipped'>>({});
+  const [showSlotPicker, setShowSlotPicker] = useState(false);
 
   useEffect(() => {
     migrateIfNeeded();
@@ -172,14 +173,83 @@ export default function HomePage() {
     setWeekStatuses((prev) => ({ ...prev, [slot.day]: 'skipped' }));
   };
 
+  const weekToneClass = (week: number, active: boolean): string => {
+    if (!active) return 'border-line bg-transparent text-muted hover:bg-[#F4F1EB]';
+    const tones: Record<number, string> = {
+      1: 'border-[#93BDB6] bg-[#E8F1EF] text-[#5C8E86]',
+      2: 'border-[#A8C686] bg-[#EEF5E6] text-[#6F8A5A]',
+      3: 'border-[#E5DDBB] bg-[#F7F4E7] text-[#988F63]',
+      4: 'border-[#E6C0A5] bg-[#F8EDE5] text-[#B97855]'
+    };
+    return tones[week] ?? tones[1];
+  };
+
+  const dayToneClass = (day: number, active: boolean): string => {
+    if (!active) return 'border border-transparent bg-[#F1EFEB] text-muted hover:bg-[#EAE5DD]';
+    const tones: Record<number, string> = {
+      1: 'border-transparent bg-[#7EB6AE] text-white',
+      2: 'border-transparent bg-[#8DAE73] text-white',
+      3: 'border-transparent bg-[#D8C278] text-[#4F4426]',
+      4: 'border-transparent bg-[#D98D62] text-white'
+    };
+    return tones[day] ?? tones[1];
+  };
+
   return (
     <PageContainer className="space-y-6">
       <section className="rounded-[30px] bg-[linear-gradient(180deg,#FFFEFC_0%,#F8F4EC_100%)] px-6 py-7 shadow-[0_18px_36px_rgba(0,0,0,0.06)]">
         <div className="space-y-2">
           <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Hoy</p>
           <h1 className="font-display text-[36px] font-bold leading-[0.95] tracking-[-0.03em] text-ink">{heroTitle}</h1>
-          <p className="font-warm text-[15px] font-medium text-muted">{heroSubtitle}</p>
+          <button
+            type="button"
+            onClick={() => setShowSlotPicker((open) => !open)}
+            className="inline-flex items-center gap-2 rounded-full px-0 text-left font-warm text-[15px] font-medium text-muted transition-colors duration-200 ease-out hover:text-ink active:scale-[0.98]"
+          >
+            <span>{heroSubtitle}</span>
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`h-4 w-4 transition-transform duration-200 ease-out ${showSlotPicker ? 'rotate-180' : ''}`}>
+              <path d="m5 7.5 5 5 5-5" />
+            </svg>
+          </button>
         </div>
+
+        {showSlotPicker ? (
+          <div className="mt-4 space-y-4 rounded-[24px] border border-line bg-white/80 p-4 shadow-[0_10px_24px_rgba(0,0,0,0.04)]">
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Semana</p>
+              <div className="grid grid-cols-4 gap-2">
+                {[1, 2, 3, 4].map((week) => (
+                  <button
+                    key={week}
+                    type="button"
+                    onClick={() => setSlot({ ...slot, week })}
+                    className={`flex h-10 items-center justify-center rounded-[16px] border text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${weekToneClass(week, slot.week === week)}`}
+                  >
+                    {`S${week}`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Día</p>
+              <div className="grid grid-cols-2 gap-2">
+                {[1, 2, 3, 4].map((day) => (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => setSlot({ ...slot, day })}
+                    className={`flex h-11 items-center justify-center gap-1 rounded-[16px] text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${dayToneClass(day, slot.day === day)}`}
+                  >
+                    <span>{`Día ${day}`}</span>
+                    {weekStatuses[day] === 'done' ? <span className="text-[11px]">✓</span> : null}
+                    {weekStatuses[day] === 'skipped' ? <span className="text-[11px]">⏸</span> : null}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         <div className="mt-5 space-y-3">
           <p className="font-warm text-base font-semibold text-accent">{heroFocus}</p>
