@@ -216,6 +216,27 @@ export default function HomePage() {
         {showSlotPicker ? (
           <div className="mt-4 space-y-4 rounded-[24px] border border-line bg-white/80 p-4 shadow-[0_10px_24px_rgba(0,0,0,0.04)]">
             <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Rutina</p>
+              <div className="space-y-2">
+                {(profile?.plans ?? []).map((planOption) => (
+                  <button
+                    key={planOption.id}
+                    type="button"
+                    onClick={() => setSlot({ ...slot, planId: planOption.id, week: 1, day: 1 })}
+                    className={`flex min-h-[48px] w-full items-center justify-between rounded-[16px] border px-4 py-3 text-left text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
+                      slot.planId === planOption.id
+                        ? 'border-transparent bg-[rgb(var(--profile-accent-rgb)/0.12)] text-[rgb(var(--profile-accent-rgb))] shadow-soft'
+                        : 'border-line bg-surface text-ink hover:bg-[#F4F1EB]'
+                    }`}
+                  >
+                    <span className="line-clamp-2 leading-snug">{planOption.name}</span>
+                    {slot.planId === planOption.id ? <span className="shrink-0 text-xs">Activa</span> : null}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
               <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Semana</p>
               <div className="grid grid-cols-4 gap-2">
                 {[1, 2, 3, 4].map((week) => (
