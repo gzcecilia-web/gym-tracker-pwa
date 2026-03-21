@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Card, Input, PageContainer, SegmentedControl, Select } from '@/components/ui';
+import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
 import { getProfileTheme } from '@/lib/profileTheme';
 import { addPlanToProfile, createEmptyPlan, createEmptyProfile, defaultSlot, duplicatePlanInProfile, getDayExercises, getLatestPlanForProfile, updateDayExercises, updatePlanName } from '@/lib/routine';
 import { isSameLocalDay, formatLocalDateTime } from '@/lib/date';
@@ -85,6 +85,49 @@ function profileToneClass(profileId: string, active: boolean): string {
   return 'border-line bg-surface text-muted hover:bg-[#F1EFEB]';
 }
 
+function ChevronIcon({ open = false }: { open?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`h-4 w-4 transition-transform duration-200 ease-out ${open ? 'rotate-180' : ''}`}
+    >
+      <path d="m5 7.5 5 5 5-5" />
+    </svg>
+  );
+}
+
+function DotsIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+      <circle cx="4" cy="10" r="1.5" />
+      <circle cx="10" cy="10" r="1.5" />
+      <circle cx="16" cy="10" r="1.5" />
+    </svg>
+  );
+}
+
+function deriveDayFocus(exercises: RoutineExercise[]): string {
+  const primary = exercises[0];
+  if (!primary) return 'One step at a time';
+  if (primary.supersetGroup) return 'Hoy toca moverte con foco';
+  const firstName = String(primary.name ?? '').toLowerCase();
+  if (firstName.includes('peso muerto') || firstName.includes('sentadilla') || firstName.includes('prensa')) {
+    return 'Hoy toca piernas';
+  }
+  if (firstName.includes('remo') || firstName.includes('dominadas') || firstName.includes('tirones')) {
+    return 'Hoy toca espalda';
+  }
+  if (firstName.includes('press') || firstName.includes('apertura') || firstName.includes('empujes')) {
+    return 'Lista para entrenar';
+  }
+  return 'Let’s move your body';
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [routine, setRoutine] = useState<RoutineDB>(() => loadRoutine());
@@ -107,6 +150,9 @@ export default function HomePage() {
   const [planNameDraft, setPlanNameDraft] = useState('');
   const [isAddingPlan, setIsAddingPlan] = useState(false);
   const [newPlanName, setNewPlanName] = useState('');
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isPlanMenuOpen, setIsPlanMenuOpen] = useState(false);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   useEffect(() => {
     migrateIfNeeded();
@@ -217,10 +263,20 @@ export default function HomePage() {
   const profile = routine.profiles.find((p) => p.id === slot.profileId) ?? routine.profiles[0];
   const plan = profile?.plans.find((p) => p.id === slot.planId) ?? profile?.plans[0];
   const profilePlans = profile?.plans ?? [];
+  const profileTheme = getProfileTheme(slot.profileId);
   const exercisesForSelectedDay = useMemo(
     () => getDayExercises(routine, slot.profileId, slot.planId, slot.week, slot.day),
     [routine, slot.day, slot.planId, slot.profileId, slot.week]
   );
+  const trackedDaysThisWeek = Object.keys(weekStatuses).length;
+  const completedDaysThisWeek = Object.values(weekStatuses).filter((status) => status === 'done').length;
+  const heroTitle = `Hoy, ${profile?.name ?? 'vos'}`;
+  const heroSubtitle = `${plan?.name ?? 'Rutina'} · Semana ${slot.week} · Día ${slot.day}`;
+  const heroMicrocopy = todayWorkout
+    ? 'You showed up today'
+    : trackedDaysThisWeek >= 3
+      ? 'Vas muy bien esta semana'
+      : deriveDayFocus(exercisesForSelectedDay);
 
   const groupedExerciseKeys = useMemo(() => {
     const seen = new Set<string>();
@@ -320,6 +376,7 @@ export default function HomePage() {
     saveSelection(nextSlot);
     setNewProfileName('');
     setIsAddingProfile(false);
+    setIsProfileMenuOpen(false);
   };
 
   const buildExercisesFromForm = (): RoutineExercise[] | null => {
@@ -490,6 +547,7 @@ export default function HomePage() {
     saveSelection(nextSlot);
     setNewPlanName('');
     setIsAddingPlan(false);
+    setIsPlanMenuOpen(false);
   };
 
   const onDuplicatePlan = () => {
@@ -511,179 +569,277 @@ export default function HomePage() {
     };
     setSlot(nextSlot);
     saveSelection(nextSlot);
+    setIsPlanMenuOpen(false);
   };
 
   return (
     <PageContainer>
-      <div>
-        <h1 className="font-display text-[36px] font-bold leading-[1.02] tracking-[-0.03em] text-ink">Hoy</h1>
-        <p className="font-warm mt-2 text-base font-medium text-muted">
-          {plan?.name ?? 'Rutina'} · Semana {slot.week} · Día {slot.day}
-        </p>
-      </div>
-
-      <Card>
-        <div className="space-y-4">
-          <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Perfil</p>
-            <div className="grid grid-cols-2 gap-3">
-              {routine.profiles.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => {
-                    const nextProfile = routine.profiles.find((item) => item.id === p.id);
-                    const latestPlan = getLatestPlanForProfile(nextProfile);
-                    setSlot({
-                      profileId: p.id,
-                      planId: latestPlan?.id ?? slot.planId,
-                      week: 1,
-                      day: 1
-                    });
-                  }}
-                  className={`flex min-h-10 items-center justify-center rounded-r-sm border px-3 py-2 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25 ${profileToneClass(
-                    p.id,
-                    slot.profileId === p.id
-                  )}`}
-                >
-                  {p.name}
-                </button>
-              ))}
-            </div>
-            <div className="mt-3">
-              {isAddingProfile ? (
-                <div className="space-y-2 rounded-r-md border border-line bg-surfaceSoft p-3">
-                  <Input
-                    placeholder="Nombre del perfil"
-                    value={newProfileName}
-                    onChange={(e) => setNewProfileName(e.target.value)}
-                  />
-                  <div className="flex gap-2">
-                    <Button className="h-11" onClick={onCreateProfile}>
-                      Guardar perfil
-                    </Button>
-                    <Button
-                      className="h-11"
-                      variant="secondary"
-                      onClick={() => {
-                        setIsAddingProfile(false);
-                        setNewProfileName('');
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setIsAddingProfile(true)}
-                  className="rounded-r-md border border-dashed border-line px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
-                >
-                  + Agregar perfil
-                </button>
-              )}
-            </div>
+      <section className="space-y-4 rounded-[28px] bg-[linear-gradient(180deg,#FFFDF9_0%,#F8F4EC_100%)] px-6 py-7 shadow-[0_18px_42px_rgba(140,120,90,0.10)]">
+        <div className="flex items-start justify-between gap-3">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Today</p>
+            <h1 className="font-display text-[34px] font-bold leading-[0.98] tracking-[-0.03em] text-ink">{heroTitle}</h1>
+            <p className="font-warm text-[15px] font-medium text-muted">{heroSubtitle}</p>
+            <p className="font-warm text-sm font-medium text-[rgb(var(--profile-accent-rgb))]">{heroMicrocopy}</p>
           </div>
-
-          <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Plan mensual</p>
-            <div className="space-y-3">
-              <Select
-                value={slot.planId}
-                onChange={(e) => {
-                  setSlot({ ...slot, planId: e.target.value, week: 1, day: 1 });
-                  setIsEditingPlanName(false);
-                }}
-              >
-                {profilePlans.map((pl) => (
-                  <option key={pl.id} value={pl.id}>
-                    {pl.name}
-                  </option>
-                ))}
-              </Select>
-              {isAddingPlan ? (
-                <div className="space-y-2 rounded-r-md border border-line bg-surfaceSoft p-3">
-                  <Input
-                    placeholder="Nombre del plan"
-                    value={newPlanName}
-                    onChange={(e) => setNewPlanName(e.target.value)}
-                  />
-                  <div className="flex gap-2">
-                    <Button className="h-11" onClick={onCreatePlan}>
-                      Guardar plan
-                    </Button>
-                    <Button
-                      className="h-11"
-                      variant="secondary"
-                      onClick={() => {
-                        setIsAddingPlan(false);
-                        setNewPlanName('');
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setIsAddingPlan(true)}
-                  className="rounded-r-md border border-dashed border-line px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
-                >
-                  + Agregar plan
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={onDuplicatePlan}
-                className="rounded-r-md border border-dashed border-line px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
-              >
-                Duplicar plan actual
-              </button>
-              {isEditingPlanName ? (
-                <div className="space-y-2 rounded-r-md border border-line bg-surfaceSoft p-3">
-                  <Input
-                    placeholder="Nombre del plan"
-                    value={planNameDraft}
-                    onChange={(e) => setPlanNameDraft(e.target.value)}
-                  />
-                  <div className="flex gap-2">
-                    <Button className="h-11" onClick={onSavePlanName}>
-                      Guardar nombre
-                    </Button>
-                    <Button
-                      className="h-11"
-                      variant="secondary"
-                      onClick={() => {
-                        setIsEditingPlanName(false);
-                        setPlanNameDraft(plan?.name ?? '');
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPlanNameDraft(plan?.name ?? '');
-                    setIsEditingPlanName(true);
-                  }}
-                  className="rounded-r-md border border-dashed border-line px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
-                >
-                  Editar nombre del plan
-                </button>
-              )}
-            </div>
+          <div className={`min-w-[74px] rounded-[22px] px-4 py-3 text-center ${profileTheme.softSurface}`}>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Semana</p>
+            <p className="mt-1 text-2xl font-semibold text-ink">{completedDaysThisWeek}/4</p>
           </div>
         </div>
-      </Card>
 
-      <Card className="space-y-4">
-        <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Semana</p>
+        <div className="space-y-2">
+          <div className="h-2 overflow-hidden rounded-full bg-[#ECE7DF]">
+            <div
+              className="h-full rounded-full bg-[rgb(var(--profile-accent-rgb))] transition-all duration-300 ease-out"
+              style={{ width: `${(trackedDaysThisWeek / 4) * 100}%` }}
+            />
+          </div>
+          <p className="text-sm text-muted">
+            {trackedDaysThisWeek === 0
+              ? 'Todavía no registraste esta semana'
+              : `${trackedDaysThisWeek} de 4 días ya tienen registro`}
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <Button className="h-14 text-[16px] font-semibold shadow-float" onClick={() => router.push('/workout')}>
+            Entrenar hoy
+          </Button>
+          <button
+            type="button"
+            onClick={markSkipped}
+            className="w-full text-sm font-medium text-muted transition-colors duration-200 ease-out hover:text-ink"
+          >
+            No entrené hoy
+          </button>
+        </div>
+      </section>
+
+      <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => {
+                setIsProfileMenuOpen((open) => !open);
+                setIsPlanMenuOpen(false);
+              }}
+              className="flex h-12 w-full items-center justify-between rounded-r-md bg-surface px-4 text-left shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-float active:scale-[0.98]"
+            >
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Perfil</p>
+                <p className={`truncate text-sm font-semibold ${profileTheme.text}`}>{profile?.name ?? 'Perfil'}</p>
+              </div>
+              <span className={profileTheme.softText}>
+                <ChevronIcon open={isProfileMenuOpen} />
+              </span>
+            </button>
+
+            {isProfileMenuOpen ? (
+              <Card className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-30 space-y-3 p-3">
+                <div className="space-y-2">
+                  {routine.profiles.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => {
+                        const nextProfile = routine.profiles.find((item) => item.id === p.id);
+                        const latestPlan = getLatestPlanForProfile(nextProfile);
+                        setSlot({
+                          profileId: p.id,
+                          planId: latestPlan?.id ?? slot.planId,
+                          week: 1,
+                          day: 1
+                        });
+                        setIsProfileMenuOpen(false);
+                      }}
+                      className={`flex min-h-11 w-full items-center justify-between rounded-r-sm border px-3 py-2 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${profileToneClass(
+                        p.id,
+                        slot.profileId === p.id
+                      )}`}
+                    >
+                      <span>{p.name}</span>
+                      {slot.profileId === p.id ? <span className="text-xs">Activo</span> : null}
+                    </button>
+                  ))}
+                </div>
+
+                <details className="group rounded-r-sm bg-[#F8F4EC] px-3 py-2">
+                  <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold text-muted">
+                    Gestionar perfiles
+                    <ChevronIcon />
+                  </summary>
+                  <div className="mt-3 space-y-2">
+                    {isAddingProfile ? (
+                      <>
+                        <Input
+                          placeholder="Nombre del perfil"
+                          value={newProfileName}
+                          onChange={(e) => setNewProfileName(e.target.value)}
+                        />
+                        <div className="flex gap-2">
+                          <Button className="h-11" onClick={onCreateProfile}>
+                            Guardar perfil
+                          </Button>
+                          <Button
+                            className="h-11"
+                            variant="secondary"
+                            onClick={() => {
+                              setIsAddingProfile(false);
+                              setNewProfileName('');
+                            }}
+                          >
+                            Cancelar
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingProfile(true)}
+                        className="text-sm font-semibold text-[rgb(var(--profile-accent-rgb))]"
+                      >
+                        + Agregar perfil
+                      </button>
+                    )}
+                  </div>
+                </details>
+              </Card>
+            ) : null}
+          </div>
+
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => {
+                setIsPlanMenuOpen((open) => !open);
+                setIsProfileMenuOpen(false);
+              }}
+              className="flex h-12 w-full items-center justify-between rounded-r-md bg-surface px-4 text-left shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-float active:scale-[0.98]"
+            >
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Plan</p>
+                <p className="truncate text-sm font-semibold text-ink">{plan?.name ?? 'Plan'}</p>
+              </div>
+              <span className="text-muted">
+                <ChevronIcon open={isPlanMenuOpen} />
+              </span>
+            </button>
+
+            {isPlanMenuOpen ? (
+              <Card className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-30 space-y-3 p-3">
+                <div className="space-y-2">
+                  {profilePlans.map((pl) => (
+                    <button
+                      key={pl.id}
+                      type="button"
+                      onClick={() => {
+                        setSlot({ ...slot, planId: pl.id, week: 1, day: 1 });
+                        setIsEditingPlanName(false);
+                        setIsPlanMenuOpen(false);
+                      }}
+                      className={`flex min-h-11 w-full items-center justify-between rounded-r-sm border px-3 py-2 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
+                        slot.planId === pl.id ? `${profileTheme.chip} shadow-soft` : 'border-line bg-surface text-muted'
+                      }`}
+                    >
+                      <span className="truncate">{pl.name}</span>
+                      {slot.planId === pl.id ? <span className="text-xs">Activo</span> : null}
+                    </button>
+                  ))}
+                </div>
+
+                <details className="group rounded-r-sm bg-[#F8F4EC] px-3 py-2">
+                  <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold text-muted">
+                    Acciones del plan
+                    <ChevronIcon />
+                  </summary>
+                  <div className="mt-3 space-y-3">
+                    {isAddingPlan ? (
+                      <div className="space-y-2">
+                        <Input
+                          placeholder="Nombre del plan"
+                          value={newPlanName}
+                          onChange={(e) => setNewPlanName(e.target.value)}
+                        />
+                        <div className="flex gap-2">
+                          <Button className="h-11" onClick={onCreatePlan}>
+                            Guardar plan
+                          </Button>
+                          <Button
+                            className="h-11"
+                            variant="secondary"
+                            onClick={() => {
+                              setIsAddingPlan(false);
+                              setNewPlanName('');
+                            }}
+                          >
+                            Cancelar
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button type="button" onClick={() => setIsAddingPlan(true)} className="text-sm font-semibold text-[rgb(var(--profile-accent-rgb))]">
+                        + Nuevo plan
+                      </button>
+                    )}
+
+                    <button type="button" onClick={onDuplicatePlan} className="flex items-center gap-2 text-sm font-medium text-muted">
+                      <DotsIcon />
+                      Duplicar plan actual
+                    </button>
+
+                    {isEditingPlanName ? (
+                      <div className="space-y-2">
+                        <Input
+                          placeholder="Nombre del plan"
+                          value={planNameDraft}
+                          onChange={(e) => setPlanNameDraft(e.target.value)}
+                        />
+                        <div className="flex gap-2">
+                          <Button className="h-11" onClick={onSavePlanName}>
+                            Guardar nombre
+                          </Button>
+                          <Button
+                            className="h-11"
+                            variant="secondary"
+                            onClick={() => {
+                              setIsEditingPlanName(false);
+                              setPlanNameDraft(plan?.name ?? '');
+                            }}
+                          >
+                            Cancelar
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPlanNameDraft(plan?.name ?? '');
+                          setIsEditingPlanName(true);
+                        }}
+                        className="text-sm font-medium text-muted"
+                      >
+                        Editar nombre
+                      </button>
+                    )}
+                  </div>
+                </details>
+              </Card>
+            ) : null}
+          </div>
+        </div>
+      </div>
+
+      <Card className="space-y-5 border-none bg-surface/70 shadow-[0_10px_30px_rgba(120,110,90,0.05)]">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Ritmo de la semana</p>
+          <h2 className="font-warm text-xl font-semibold text-ink">Elegí dónde estás hoy</h2>
+        </div>
+
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Semana</p>
           <div className="grid grid-cols-4 gap-3">
             {[1, 2, 3, 4].map((week) => {
               const active = slot.week === week;
@@ -692,7 +848,7 @@ export default function HomePage() {
                   key={week}
                   type="button"
                   onClick={() => setSlot({ ...slot, week })}
-                  className={`flex h-10 items-center justify-center gap-1 rounded-r-sm border px-3 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${weekToneClass(week, active)}`}
+                  className={`flex h-11 items-center justify-center gap-1 rounded-r-md border px-3 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-profile/25 ${weekToneClass(week, active)}`}
                 >
                   <span>{`S${week}`}</span>
                   {weekCompleted[week] ? <span className="text-[11px]">✓</span> : null}
@@ -702,9 +858,9 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Día</p>
-          <div className="grid grid-cols-4 gap-3">
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Día</p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[1, 2, 3, 4].map((day) => {
               const active = slot.day === day;
               return (
@@ -712,7 +868,7 @@ export default function HomePage() {
                   key={day}
                   type="button"
                   onClick={() => setSlot({ ...slot, day })}
-                  className={`flex h-11 items-center justify-center gap-1 rounded-r-sm px-3 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${dayToneClass(day, active)}`}
+                  className={`flex h-12 items-center justify-center gap-1 rounded-r-md px-3 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-profile/25 ${dayToneClass(day, active)}`}
                 >
                   <span>{`Día ${day}`}</span>
                   {weekStatuses[day] === 'done' ? (
@@ -725,121 +881,133 @@ export default function HomePage() {
             })}
           </div>
         </div>
-        <Button className="h-14 text-[16px] font-semibold shadow-float" onClick={() => router.push('/workout')}>
-          Entrenar hoy
-        </Button>
-        <button
-          type="button"
-          onClick={markSkipped}
-          className="h-14 w-full rounded-r-md border border-line bg-surface px-4 py-3 text-sm font-semibold text-ink transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
-        >
-          No entrené hoy
-        </button>
       </Card>
 
-      <Card className="space-y-4">
-        <div>
-          <p className="font-warm text-lg font-semibold text-ink">Editar plan del día</p>
-          <p className="mt-1 text-sm text-muted">
-            {profile?.name ?? 'Perfil'} · {plan?.name ?? 'Plan'} · Semana {slot.week} · Día {slot.day}
-          </p>
+      <Card className="space-y-4 border-none bg-transparent p-0 shadow-none">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Plan del día</p>
+            <h3 className="font-warm mt-1 text-lg font-semibold text-ink">
+              {exercisesForSelectedDay.length > 0 ? `${exercisesForSelectedDay.length} ejercicios cargados` : 'Día todavía vacío'}
+            </h3>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsEditorOpen((open) => !open)}
+            className="inline-flex min-h-10 items-center gap-2 rounded-full bg-surface px-4 text-sm font-semibold text-ink shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-float active:scale-[0.98]"
+          >
+            {isEditorOpen ? 'Ocultar edición' : 'Editar plan'}
+            <ChevronIcon open={isEditorOpen} />
+          </button>
         </div>
 
-        <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Ejercicios actuales</p>
-          {exercisesForSelectedDay.length === 0 ? (
-            <div className="rounded-r-md border border-dashed border-line bg-surfaceSoft p-3 text-sm text-muted">
-              Este día todavía no tiene ejercicios.
-            </div>
-          ) : (
+        {isEditorOpen ? (
+          <Card className="space-y-5 bg-surfaceSoft p-4">
             <div className="space-y-2">
-              {exercisesForSelectedDay.map((exercise, index) => (
-                groupedExerciseKeys.has(index) ? (
-                <div key={`${exercise.name}-${index}`} className="flex items-center justify-between gap-3 rounded-r-md border border-line bg-surface px-3 py-3 shadow-soft">
-                  <div className="min-w-0">
-                    <p className="font-warm text-sm font-semibold text-ink">{exercise.name}</p>
-                    <p className="text-xs text-muted">
-                      Reps:{' '}
-                      {Array.isArray(exercise.reps)
-                        ? exercise.reps.join('-')
-                        : String(exercise.reps)}
-                      {' · '}
-                      Series: {exercise.sets ?? routine.defaultSetsIfMissing}
-                      {exercise.supersetGroup ? ' · Superserie' : ''}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onStartEditExercise(index)}
-                      className="rounded-r-md border border-line px-3 py-2 text-xs font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onDeleteExercise(index)}
-                      className="rounded-r-md border border-line px-3 py-2 text-xs font-semibold text-muted transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F1EFEB] hover:shadow-soft active:scale-[0.98]"
-                    >
-                      Eliminar
-                    </button>
-                  </div>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Ejercicios actuales</p>
+              {exercisesForSelectedDay.length === 0 ? (
+                <div className="rounded-r-md bg-surface px-4 py-4 text-sm text-muted shadow-soft">
+                  Este día todavía no tiene ejercicios.
                 </div>
-                ) : null
-              ))}
+              ) : (
+                <div className="space-y-2">
+                  {exercisesForSelectedDay.map((exercise, index) =>
+                    groupedExerciseKeys.has(index) ? (
+                      <div
+                        key={`${exercise.name}-${index}`}
+                        className="flex items-start justify-between gap-3 rounded-r-md bg-surface px-4 py-3 shadow-soft"
+                      >
+                        <div className="min-w-0">
+                          <p className="font-warm text-base font-semibold text-ink">{exercise.name}</p>
+                          <p className="mt-1 text-xs text-muted">
+                            {Array.isArray(exercise.reps) ? exercise.reps.join('-') : String(exercise.reps)} · {exercise.sets ?? routine.defaultSetsIfMissing} series
+                            {exercise.supersetGroup ? ' · Superserie' : ''}
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => onStartEditExercise(index)}
+                            className="text-xs font-semibold text-muted transition-colors duration-200 ease-out hover:text-ink"
+                          >
+                            Editar
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => onDeleteExercise(index)}
+                            className="text-xs font-semibold text-muted transition-colors duration-200 ease-out hover:text-[rgb(var(--profile-accent-rgb))]"
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+                      </div>
+                    ) : null
+                  )}
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <div className="space-y-3 rounded-r-md border border-line bg-surfaceSoft p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Agregar ejercicio</p>
-          <Input
-            placeholder="Nombre del ejercicio"
-            value={exerciseName}
-            onChange={(e) => setExerciseName(e.target.value)}
-          />
-          <div className="grid grid-cols-2 gap-2">
-            <Input
-              placeholder="Reps (15 o 15-12-10-8)"
-              value={exerciseReps}
-              onChange={(e) => setExerciseReps(e.target.value)}
-            />
-            <Input
-              inputMode="numeric"
-              placeholder="Series (vacío = 4)"
-              value={exerciseSets}
-              onChange={(e) => setExerciseSets(e.target.value.replace(/[^0-9]/g, ''))}
-            />
-          </div>
-          <SegmentedControl
-            className="grid-cols-3"
-            variant="compact"
-            value={exerciseType}
-            onChange={(value) => setExerciseType(value)}
-            items={[
-              { value: 'normal', label: 'Normal' },
-              { value: 'dropset', label: 'Dropset' },
-              { value: 'superset', label: 'Superserie' }
-            ]}
-          />
-          {exerciseType === 'superset' ? (
-            <Input
-              placeholder="Segundo ejercicio de la superserie"
-              value={exerciseNameB}
-              onChange={(e) => setExerciseNameB(e.target.value)}
-            />
-          ) : null}
-          <div className="flex gap-2">
-            <Button className="h-11" onClick={editingIndexes ? onSaveExerciseEdits : onAddExercise}>
-              {editingIndexes ? 'Guardar cambios' : 'Agregar al día'}
-            </Button>
-            {editingIndexes ? (
-              <Button className="h-11" variant="secondary" onClick={resetExerciseForm}>
-                Cancelar edición
-              </Button>
-            ) : null}
-          </div>
-        </div>
+            <div className="space-y-4 rounded-r-md bg-surface px-4 py-4 shadow-soft">
+              <div className="space-y-1">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
+                  {editingIndexes ? 'Editar ejercicio' : 'Agregar ejercicio'}
+                </p>
+                <p className="text-sm text-muted">Mantené el día ordenado y sumá solo lo necesario.</p>
+              </div>
+
+              <SegmentedControl
+                className="grid-cols-3"
+                variant="compact"
+                value={exerciseType}
+                onChange={(value) => setExerciseType(value)}
+                items={[
+                  { value: 'normal', label: 'Normal' },
+                  { value: 'dropset', label: 'Dropset' },
+                  { value: 'superset', label: 'Superserie' }
+                ]}
+              />
+
+              <div className="space-y-3">
+                <Input
+                  placeholder="Nombre del ejercicio"
+                  value={exerciseName}
+                  onChange={(e) => setExerciseName(e.target.value)}
+                />
+                {exerciseType === 'superset' ? (
+                  <Input
+                    placeholder="Segundo ejercicio de la superserie"
+                    value={exerciseNameB}
+                    onChange={(e) => setExerciseNameB(e.target.value)}
+                  />
+                ) : null}
+                <div className="grid grid-cols-2 gap-3">
+                  <Input
+                    placeholder="Reps (15 o 15-12-10-8)"
+                    value={exerciseReps}
+                    onChange={(e) => setExerciseReps(e.target.value)}
+                  />
+                  <Input
+                    inputMode="numeric"
+                    placeholder="Series (vacío = 4)"
+                    value={exerciseSets}
+                    onChange={(e) => setExerciseSets(e.target.value.replace(/[^0-9]/g, ''))}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button className="h-11" onClick={editingIndexes ? onSaveExerciseEdits : onAddExercise}>
+                  {editingIndexes ? 'Guardar cambios' : 'Agregar al día'}
+                </Button>
+                {editingIndexes ? (
+                  <Button className="h-11" variant="secondary" onClick={resetExerciseForm}>
+                    Cancelar
+                  </Button>
+                ) : null}
+              </div>
+            </div>
+          </Card>
+        ) : null}
       </Card>
 
       {todayWorkout ? (
