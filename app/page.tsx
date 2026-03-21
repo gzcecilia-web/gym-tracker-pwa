@@ -91,6 +91,26 @@ function titleFromFocus(focus: string, hasExercises: boolean): string {
   return normalized.charAt(0).toUpperCase() + normalized.slice(1);
 }
 
+function getRecommendedSlot(slot: SelectedSlot, latestByWeekDay: Record<string, 'done' | 'skipped'>): SelectedSlot {
+  let targetWeek = slot.week;
+
+  for (let week = 1; week <= 4; week += 1) {
+    const resolvedDays = [1, 2, 3, 4].filter((day) => latestByWeekDay[`${week}-${day}`]).length;
+    if (resolvedDays < 4) {
+      targetWeek = week;
+      break;
+    }
+  }
+
+  const firstPendingDay = [1, 2, 3, 4].find((day) => !latestByWeekDay[`${targetWeek}-${day}`]);
+
+  return {
+    ...slot,
+    week: targetWeek,
+    day: firstPendingDay ?? slot.day
+  };
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [routine, setRoutine] = useState<RoutineDB>(() => loadRoutine());
@@ -141,6 +161,14 @@ export default function HomePage() {
         }
       }
       if (cancelled) return;
+
+      const recommendedSlot = getRecommendedSlot(slot, latestByWeekDay);
+      if (recommendedSlot.week !== slot.week || recommendedSlot.day !== slot.day) {
+        saveSelection(recommendedSlot);
+        setSlot(recommendedSlot);
+        setLatestWorkout(list[0] ?? null);
+        return;
+      }
 
       const thisWeekStatuses: Record<number, 'done' | 'skipped'> = {};
       for (let d = 1; d <= 4; d += 1) {
