@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
 import { getProfileTheme } from '@/lib/profileTheme';
@@ -130,6 +130,8 @@ function deriveDayFocus(exercises: RoutineExercise[]): string {
 
 export default function HomePage() {
   const router = useRouter();
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
+  const planMenuRef = useRef<HTMLDivElement | null>(null);
   const [routine, setRoutine] = useState<RoutineDB>(() => loadRoutine());
   const fallback = useMemo(() => defaultSlot(routine), [routine]);
 
@@ -259,6 +261,25 @@ export default function HomePage() {
       cancelled = true;
     };
   }, [slot, isLoadedSelection]);
+
+  useEffect(() => {
+    const onPointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null;
+      if (profileMenuRef.current && target && !profileMenuRef.current.contains(target)) {
+        setIsProfileMenuOpen(false);
+      }
+      if (planMenuRef.current && target && !planMenuRef.current.contains(target)) {
+        setIsPlanMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('touchstart', onPointerDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('touchstart', onPointerDown);
+    };
+  }, []);
 
   const profile = routine.profiles.find((p) => p.id === slot.profileId) ?? routine.profiles[0];
   const plan = profile?.plans.find((p) => p.id === slot.planId) ?? profile?.plans[0];
@@ -618,7 +639,7 @@ export default function HomePage() {
 
       <div className="space-y-3">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="relative">
+          <div ref={profileMenuRef} className="relative">
             <button
               type="button"
               onClick={() => {
@@ -709,7 +730,7 @@ export default function HomePage() {
             ) : null}
           </div>
 
-          <div className="relative">
+          <div ref={planMenuRef} className="relative">
             <button
               type="button"
               onClick={() => {
