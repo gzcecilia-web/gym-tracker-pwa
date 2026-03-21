@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Card, PageContainer } from '@/components/ui';
-import { formatPlanLabel, getDayExercises } from '@/lib/routine';
+import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
+import { formatPlanLabel, getDayExercises, updateDayExercises } from '@/lib/routine';
 import { formatLocalDateTime, isSameLocalDay } from '@/lib/date';
 import {
   appendWorkoutToHistory,
@@ -11,11 +11,12 @@ import {
   loadRoutine,
   loadSelection,
   migrateIfNeeded,
+  saveRoutine,
   saveSelection,
   syncHistoryFromCloud
 } from '@/lib/storage';
 import { buildSkippedWorkoutPayload } from '@/lib/workout';
-import type { RoutineDB, SelectedSlot, WorkoutRecord } from '@/lib/types';
+import type { RoutineDB, RoutineExercise, SelectedSlot, WorkoutRecord } from '@/lib/types';
 
 function clampWeekDay(value: number): number {
   if (!Number.isFinite(value)) return 1;
@@ -100,6 +101,12 @@ export default function HomePage() {
   const [latestWorkout, setLatestWorkout] = useState<WorkoutRecord | null>(null);
   const [weekStatuses, setWeekStatuses] = useState<Record<number, 'done' | 'skipped'>>({});
   const [showSlotPicker, setShowSlotPicker] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
+  const [exerciseMode, setExerciseMode] = useState<'normal' | 'dropset' | 'superset'>('normal');
+  const [exerciseName, setExerciseName] = useState('');
+  const [exercisePairName, setExercisePairName] = useState('');
+  const [exerciseReps, setExerciseReps] = useState('');
+  const [exerciseSets, setExerciseSets] = useState('');
 
   useEffect(() => {
     migrateIfNeeded();
@@ -184,6 +191,73 @@ export default function HomePage() {
     setTodayWorkout(payload);
     setLatestWorkout(payload);
     setWeekStatuses((prev) => ({ ...prev, [slot.day]: 'skipped' }));
+  };
+
+  const resetExerciseForm = () => {
+    setExerciseMode('normal');
+    setExerciseName('');
+    setExercisePairName('');
+    setExerciseReps('');
+    setExerciseSets('');
+  };
+
+  const persistRoutine = (nextRoutine: RoutineDB) => {
+    const saved = saveRoutine(nextRoutine);
+    setRoutine(saved);
+  };
+
+  const addExercise = () => {
+    const name = exerciseName.trim();
+    const reps = exerciseReps.trim();
+    const setsValue = exerciseSets.trim();
+    const parsedSets = setsValue ? Number(setsValue) : undefined;
+
+    if (!name || !reps) return;
+    if (setsValue && (parsedSets === undefined || !Number.isFinite(parsedSets) || parsedSets <= 0)) return;
+
+    const baseExercise: RoutineExercise = {
+      name,
+      reps,
+      sets: parsedSets ?? null,
+      type: exerciseMode === 'dropset' ? 'dropset' : 'normal',
+      notes: ''
+    };
+
+    const nextRoutine = updateDayExercises(routine, slot.profileId, slot.planId, slot.week, slot.day, (exercises) => {
+      if (exerciseMode !== 'superset') {
+        return [...exercises, baseExercise];
+      }
+
+      const pairName = exercisePairName.trim();
+      if (!pairName) return exercises;
+      const supersetGroup = `${name} + ${pairName}`;
+      return [
+        ...exercises,
+        { ...baseExercise, supersetGroup },
+        {
+          ...baseExercise,
+          name: pairName,
+          supersetGroup
+        }
+      ];
+    });
+
+    persistRoutine(nextRoutine);
+    resetExerciseForm();
+  };
+
+  const removeExercise = (target: RoutineExercise) => {
+    const nextRoutine = updateDayExercises(routine, slot.profileId, slot.planId, slot.week, slot.day, (exercises) => {
+      if (!target.supersetGroup) {
+        const index = exercises.findIndex((exercise) => exercise.name === target.name && exercise.supersetGroup === target.supersetGroup);
+        if (index < 0) return exercises;
+        return exercises.filter((_, itemIndex) => itemIndex !== index);
+      }
+
+      return exercises.filter((exercise) => exercise.supersetGroup !== target.supersetGroup);
+    });
+
+    persistRoutine(nextRoutine);
   };
 
   const weekToneClass = (week: number, active: boolean): string => {
@@ -350,6 +424,94 @@ export default function HomePage() {
         ) : (
           <p className="text-sm text-muted">Todavía no se registraron entrenamientos.</p>
         )}
+      </Card>
+
+      <Card className="space-y-4 border-none bg-white/80 shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+        <div className="flex items-center justify-between gap-3">
+          <div className="space-y-1">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Plan del día</p>
+            <h2 className="font-warm text-lg font-semibold text-ink">Editar plan</h2>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowEditor((open) => !open)}
+            className="rounded-full px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:bg-[#F1EFEB] hover:text-ink active:scale-[0.98]"
+          >
+            {showEditor ? 'Ocultar' : 'Abrir'}
+          </button>
+        </div>
+
+        {showEditor ? (
+          <div className="space-y-5">
+            <div className="space-y-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Ejercicios actuales</p>
+              {exercisesForSelectedDay.length ? (
+                <div className="space-y-2">
+                  {exercisesForSelectedDay.map((exercise, index) => (
+                    <div key={`${exercise.name}-${exercise.supersetGroup ?? 'single'}-${index}`} className="flex items-start justify-between gap-3 rounded-[18px] bg-surface px-4 py-3 shadow-soft">
+                      <div className="min-w-0 space-y-1">
+                        <p className="text-sm font-semibold text-ink">{exercise.name}</p>
+                        <p className="text-xs text-muted">
+                          {exercise.supersetGroup ? 'Superserie' : exercise.type === 'dropset' ? 'Dropset' : 'Normal'} · {exercise.sets ?? '4'} series · {Array.isArray(exercise.reps) ? exercise.reps.join('-') : String(exercise.reps)}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeExercise(exercise)}
+                        className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold text-muted transition-all duration-200 ease-out hover:bg-[#F1EFEB] hover:text-ink active:scale-[0.98]"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted">Todavía no hay ejercicios cargados para este día.</p>
+              )}
+            </div>
+
+            <div className="space-y-4 rounded-[20px] bg-surface px-4 py-4 shadow-soft">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Agregar ejercicio</p>
+
+              <SegmentedControl
+                className="grid-cols-3"
+                variant="compact"
+                value={exerciseMode}
+                onChange={(value) => setExerciseMode(value)}
+                items={[
+                  { value: 'normal', label: 'Normal' },
+                  { value: 'dropset', label: 'Dropset' },
+                  { value: 'superset', label: 'Superserie' }
+                ]}
+              />
+
+              <div className="space-y-3">
+                <Input
+                  placeholder={exerciseMode === 'superset' ? 'Primer ejercicio' : 'Nombre del ejercicio'}
+                  value={exerciseName}
+                  onChange={(event) => setExerciseName(event.target.value)}
+                />
+
+                {exerciseMode === 'superset' ? (
+                  <Input
+                    placeholder="Segundo ejercicio"
+                    value={exercisePairName}
+                    onChange={(event) => setExercisePairName(event.target.value)}
+                  />
+                ) : null}
+
+                <div className="grid grid-cols-2 gap-3">
+                  <Input placeholder="Reps (ej: 15-12-10-8)" value={exerciseReps} onChange={(event) => setExerciseReps(event.target.value)} />
+                  <Input placeholder="Series" value={exerciseSets} onChange={(event) => setExerciseSets(event.target.value)} />
+                </div>
+              </div>
+
+              <Button variant="secondary" onClick={addExercise}>
+                Agregar ejercicio
+              </Button>
+            </div>
+          </div>
+        ) : null}
       </Card>
     </PageContainer>
   );
