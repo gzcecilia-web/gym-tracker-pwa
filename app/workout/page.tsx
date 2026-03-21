@@ -36,6 +36,14 @@ type RenderBlock =
   | { id: string; type: 'single'; item: IndexedExercise }
   | { id: string; type: 'combined'; label: string; members: IndexedExercise[] };
 
+function isRangeReps(value: RoutineExercise['reps']) {
+  return typeof value === 'string' && /^\s*\d+\s*a\s*\d+\s*$/i.test(value.trim());
+}
+
+function countCompletedSets(exIdx: number, sets: number, checks: Record<string, boolean>) {
+  return Array.from({ length: sets }).filter((_, setIdx) => checks[`${exIdx}-${setIdx}-done`]).length;
+}
+
 function statusByExercise(
   exercise: RoutineExercise,
   exIdx: number,
@@ -300,6 +308,7 @@ export default function WorkoutPage() {
             const sets = resolveSetCount(first.exercise, defaultSets);
             const reps = Array.isArray(first.exercise.reps) ? first.exercise.reps.join('-') : String(first.exercise.reps);
             const complete = block.members.every((m) => exerciseStats[m.exIdx]?.complete);
+            const showSeriesDone = block.members.some((member) => isRangeReps(member.exercise.reps));
 
             return (
               <ExerciseAccordion
@@ -311,6 +320,23 @@ export default function WorkoutPage() {
                 complete={complete}
               >
                 <div className="space-y-2">
+                  {showSeriesDone ? (
+                    <div className="rounded-r-md border border-line bg-surfaceSoft px-3 py-2.5">
+                      <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Series hechas</p>
+                      <div className="mt-1.5 space-y-1">
+                        {block.members
+                          .filter((member) => isRangeReps(member.exercise.reps))
+                          .map((member) => (
+                            <p key={`combined-done-${member.exIdx}`} className="text-sm text-ink">
+                              <span className="font-medium">{member.exercise.name}:</span>{' '}
+                              {countCompletedSets(member.exIdx, resolveSetCount(member.exercise, defaultSets), checks)} de{' '}
+                              {resolveSetCount(member.exercise, defaultSets)} series
+                            </p>
+                          ))}
+                      </div>
+                    </div>
+                  ) : null}
+
                   <div className="space-y-2">
                     {block.members.map((member) => {
                       const latestSummary = latestByExercise[String(member.exercise.name ?? '')] ?? [];
@@ -390,6 +416,8 @@ export default function WorkoutPage() {
           const isSameWeightExercise = typeof exercise.reps === 'number' && !isDropSet;
           const complete = exerciseStats[exIdx]?.complete;
           const latestSummary = latestByExercise[String(exercise.name ?? '')] ?? [];
+          const showSeriesDone = isRangeReps(exercise.reps);
+          const completedSets = countCompletedSets(exIdx, sets, checks);
 
           return (
             <ExerciseAccordion
@@ -400,6 +428,14 @@ export default function WorkoutPage() {
               onToggle={() => setOpenBlockId(block.id)}
               complete={complete}
             >
+              {showSeriesDone ? (
+                <div className="mb-4 rounded-r-md border border-line bg-surfaceSoft p-3">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Series hechas</p>
+                  <p className="mt-1 text-sm text-ink">
+                    {completedSets} de {sets} series
+                  </p>
+                </div>
+              ) : null}
               {latestSummary.length > 0 ? (
                 <div className="mb-4 rounded-r-md border border-line bg-surfaceSoft p-3">
                   <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">Último registro</p>
