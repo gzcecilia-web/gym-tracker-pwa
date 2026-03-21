@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { loadRoutine, loadSelection, saveSelection } from '@/lib/storage';
 import { getSupabaseClient } from '@/lib/supabase';
+import type { RoutineDB, SelectedSlot } from '@/lib/types';
 
 export function AuthBar() {
   const router = useRouter();
@@ -15,6 +17,9 @@ export function AuthBar() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [profileId, setProfileId] = useState('cecilia');
   const [showAuthForm, setShowAuthForm] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [routine, setRoutine] = useState<RoutineDB | null>(null);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!supabase) return;
@@ -46,6 +51,7 @@ export function AuthBar() {
     };
 
     readSelection();
+    setRoutine(loadRoutine());
 
     if (typeof window !== 'undefined') {
       window.addEventListener('storage', readSelection);
@@ -53,6 +59,22 @@ export function AuthBar() {
     }
 
     return undefined;
+  }, []);
+
+  useEffect(() => {
+    const onPointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null;
+      if (profileMenuRef.current && target && !profileMenuRef.current.contains(target)) {
+        setShowProfileMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('touchstart', onPointerDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('touchstart', onPointerDown);
+    };
   }, []);
 
   if (!supabase) {
@@ -147,6 +169,34 @@ export function AuthBar() {
 
   const displayName = profileId ? profileId.charAt(0).toUpperCase() + profileId.slice(1) : 'Perfil';
   const avatarLetter = displayName.charAt(0).toUpperCase();
+  const profiles = routine?.profiles ?? [];
+
+  const onChangeProfile = (nextProfileId: string) => {
+    if (!routine) return;
+    const nextProfile = routine.profiles.find((profile) => profile.id === nextProfileId);
+    if (!nextProfile) return;
+    const nextPlan = nextProfile.plans.at(-1) ?? nextProfile.plans[0];
+    const currentSelection = loadSelection({
+      profileId: nextProfile.id,
+      planId: nextPlan?.id ?? '',
+      week: 1,
+      day: 1
+    } satisfies SelectedSlot);
+
+    saveSelection({
+      profileId: nextProfile.id,
+      planId: nextPlan?.id ?? currentSelection.planId,
+      week: 1,
+      day: 1
+    });
+    setProfileId(nextProfile.id);
+    setShowProfileMenu(false);
+    router.push('/');
+    router.refresh();
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
+  };
 
   return (
     <div className="mb-5 space-y-3">
@@ -177,10 +227,42 @@ export function AuthBar() {
           )}
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[color:rgb(var(--profile-accent-rgb)/0.12)] text-sm font-semibold text-[color:rgb(var(--profile-accent-rgb))]">
-            {avatarLetter}
-          </div>
+        <div ref={profileMenuRef} className="relative flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setShowProfileMenu((open) => !open)}
+            className="flex items-center gap-3 rounded-full pr-2 transition-all duration-200 ease-out hover:bg-[#F4F1EB] active:scale-[0.98]"
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[color:rgb(var(--profile-accent-rgb)/0.12)] text-sm font-semibold text-[color:rgb(var(--profile-accent-rgb))]">
+              {avatarLetter}
+            </div>
+            <div className="flex items-center gap-1 text-xs font-semibold text-muted">
+              <span>Cambiar perfil</span>
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`h-4 w-4 transition-transform duration-200 ease-out ${showProfileMenu ? 'rotate-180' : ''}`}>
+                <path d="m5 7.5 5 5 5-5" />
+              </svg>
+            </div>
+          </button>
+
+          {showProfileMenu ? (
+            <div className="absolute left-0 top-[calc(100%+0.5rem)] z-30 min-w-[220px] space-y-2 rounded-[20px] border border-line bg-surface p-3 shadow-float">
+              {profiles.map((profile) => (
+                <button
+                  key={profile.id}
+                  type="button"
+                  onClick={() => onChangeProfile(profile.id)}
+                  className={`flex min-h-11 w-full items-center justify-between rounded-[16px] px-3 py-2 text-left text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
+                    profile.id === profileId
+                      ? 'bg-[color:rgb(var(--profile-accent-rgb)/0.12)] text-[color:rgb(var(--profile-accent-rgb))]'
+                      : 'text-ink hover:bg-[#F4F1EB]'
+                  }`}
+                >
+                  <span>{profile.name}</span>
+                  {profile.id === profileId ? <span className="text-xs">Activo</span> : null}
+                </button>
+              ))}
+            </div>
+          ) : null}
 
           <div className="flex items-center gap-2">
             <button
