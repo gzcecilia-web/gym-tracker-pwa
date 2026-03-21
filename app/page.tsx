@@ -617,7 +617,7 @@ export default function HomePage() {
       </section>
 
       <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="relative">
             <button
               type="button"
@@ -625,7 +625,7 @@ export default function HomePage() {
                 setIsProfileMenuOpen((open) => !open);
                 setIsPlanMenuOpen(false);
               }}
-              className="flex h-12 w-full items-center justify-between rounded-r-md bg-surface px-4 text-left shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-float active:scale-[0.98]"
+              className="flex min-h-[56px] w-full items-center justify-between rounded-r-md bg-surface px-4 text-left shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-float active:scale-[0.98]"
             >
               <div className="min-w-0">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Perfil</p>
@@ -659,8 +659,8 @@ export default function HomePage() {
                         slot.profileId === p.id
                       )}`}
                     >
-                      <span>{p.name}</span>
-                      {slot.profileId === p.id ? <span className="text-xs">Activo</span> : null}
+                      <span className="truncate">{p.name}</span>
+                      {slot.profileId === p.id ? <span className="shrink-0 text-xs">Activo</span> : null}
                     </button>
                   ))}
                 </div>
@@ -716,19 +716,25 @@ export default function HomePage() {
                 setIsPlanMenuOpen((open) => !open);
                 setIsProfileMenuOpen(false);
               }}
-              className="flex h-12 w-full items-center justify-between rounded-r-md bg-surface px-4 text-left shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-float active:scale-[0.98]"
+              className="flex min-h-[64px] w-full items-center justify-between rounded-r-md bg-surface px-4 text-left shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-float active:scale-[0.98]"
             >
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1 pr-3">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Plan</p>
-                <p className="truncate text-sm font-semibold text-ink">{plan?.name ?? 'Plan'}</p>
+                <p className="mt-0.5 line-clamp-2 text-sm font-semibold leading-tight text-ink">
+                  {plan?.name ?? 'Plan'}
+                </p>
               </div>
-              <span className="text-muted">
+              <span className="shrink-0 text-muted">
                 <ChevronIcon open={isPlanMenuOpen} />
               </span>
             </button>
 
             {isPlanMenuOpen ? (
               <Card className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-30 space-y-3 p-3">
+                <div className="rounded-r-sm bg-[#F8F4EC] px-3 py-2">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Plan actual</p>
+                  <p className="mt-1 text-sm font-semibold leading-snug text-ink">{plan?.name ?? 'Plan'}</p>
+                </div>
                 <div className="space-y-2">
                   {profilePlans.map((pl) => (
                     <button
@@ -739,12 +745,12 @@ export default function HomePage() {
                         setIsEditingPlanName(false);
                         setIsPlanMenuOpen(false);
                       }}
-                      className={`flex min-h-11 w-full items-center justify-between rounded-r-sm border px-3 py-2 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
+                      className={`flex min-h-[52px] w-full items-start justify-between gap-3 rounded-r-sm border px-3 py-3 text-left text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
                         slot.planId === pl.id ? `${profileTheme.chip} shadow-soft` : 'border-line bg-surface text-muted'
                       }`}
                     >
-                      <span className="truncate">{pl.name}</span>
-                      {slot.planId === pl.id ? <span className="text-xs">Activo</span> : null}
+                      <span className="line-clamp-2 leading-snug">{pl.name}</span>
+                      {slot.planId === pl.id ? <span className="shrink-0 text-xs">Activo</span> : null}
                     </button>
                   ))}
                 </div>
