@@ -145,7 +145,7 @@ export function AuthBar() {
 
   return (
     <div className="mb-5 space-y-3">
-      <div className="flex min-h-14 items-center justify-between rounded-r-lg border border-line bg-surface px-4 shadow-card">
+      <div className="flex min-h-14 items-center justify-between rounded-[24px] bg-white/75 px-4 shadow-[0_10px_30px_rgba(120,110,90,0.06)] backdrop-blur">
         <div className="space-y-1">
           <p className="font-warm text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Gym Tracker</p>
           <div className="flex items-center gap-2">
@@ -164,7 +164,7 @@ export function AuthBar() {
           <button
             type="button"
             onClick={onLogout}
-            className="rounded-r-sm border border-line px-3 py-2 text-xs font-semibold text-ink transition-all duration-200 ease-out hover:bg-[#F1EFEB] active:scale-[0.98]"
+            className="rounded-full px-3 py-2 text-xs font-semibold text-ink transition-all duration-200 ease-out hover:bg-[#F1EFEB] active:scale-[0.98]"
           >
             Cerrar sesión
           </button>
@@ -172,7 +172,7 @@ export function AuthBar() {
           <button
             type="button"
             onClick={() => setShowAuthForm((prev) => !prev)}
-            className="rounded-r-sm border border-line px-3 py-2 text-xs font-semibold text-ink transition-all duration-200 ease-out hover:bg-[#F1EFEB] active:scale-[0.98]"
+            className="rounded-full px-3 py-2 text-xs font-semibold text-ink transition-all duration-200 ease-out hover:bg-[#F1EFEB] active:scale-[0.98]"
           >
             {showAuthForm ? 'Ocultar' : 'Ingresar'}
           </button>
@@ -180,7 +180,7 @@ export function AuthBar() {
       </div>
 
       {!userEmail && showAuthForm ? (
-        <div className="space-y-3 rounded-r-lg border border-line bg-surface p-4 shadow-card">
+        <div className="space-y-3 rounded-[24px] bg-white/80 p-4 shadow-[0_10px_30px_rgba(120,110,90,0.06)] backdrop-blur">
           <div className="flex gap-2">
             <button type="button" onClick={() => setMode('login')} className={modeButtonClass(mode === 'login')}>
               Entrar

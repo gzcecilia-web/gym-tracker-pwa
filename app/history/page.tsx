@@ -177,12 +177,25 @@ export default function HistoryPage() {
 
   return (
     <PageContainer>
-      <div>
-        <h1 className="font-display text-[36px] font-bold leading-[1.02] tracking-[-0.03em] text-ink">Historial</h1>
-        <p className="font-warm mt-2 text-base font-medium text-muted">Tus registros, constancia y cargas con una lectura más clara</p>
-      </div>
+      <section className="space-y-4 rounded-[28px] bg-[linear-gradient(180deg,#FFFDF9_0%,#F8F4EC_100%)] px-6 py-7 shadow-[0_18px_42px_rgba(140,120,90,0.10)]">
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Records</p>
+          <h1 className="font-display text-[34px] font-bold leading-[0.98] tracking-[-0.03em] text-ink">Historial</h1>
+          <p className="font-warm text-[15px] font-medium text-muted">Tus registros, constancia y cargas con una lectura más amable</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-r-md bg-white/70 px-4 py-3 shadow-soft">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Perfil activo</p>
+            <p className={`mt-1 text-sm font-semibold ${getProfileTheme(profileId).text}`}>{profile?.name ?? 'Perfil'}</p>
+          </div>
+          <div className="rounded-r-md bg-white/70 px-4 py-3 shadow-soft">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Plan activo</p>
+            <p className="mt-1 truncate text-sm font-semibold text-ink">{profilePlans.find((pl) => pl.id === planId)?.name ?? 'Plan'}</p>
+          </div>
+        </div>
+      </section>
 
-      <Card className="space-y-5">
+      <Card className="space-y-5 border-none bg-surface/70 shadow-[0_10px_30px_rgba(120,110,90,0.05)]">
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Perfil</p>
           <div className="grid grid-cols-2 gap-3">
@@ -229,8 +242,11 @@ export default function HistoryPage() {
         </div>
       </Card>
 
-      <Card className="space-y-4">
-        <p className="font-warm text-lg font-semibold text-ink">Semana / Día</p>
+      <Card className="space-y-4 border-none bg-surface/70 shadow-[0_10px_30px_rgba(120,110,90,0.05)]">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Calendario</p>
+          <p className="font-warm text-lg font-semibold text-ink">Semana / Día</p>
+        </div>
         {[1, 2, 3, 4].map((week) => (
           <div key={week} className="flex items-center gap-3">
             <p className="w-20 text-xs font-medium uppercase tracking-[0.08em] text-muted">Semana {week}</p>
@@ -270,18 +286,21 @@ export default function HistoryPage() {
         <p className="text-xs text-muted">✓ entrenado · ⏸ no entrené · vacío pendiente</p>
       </Card>
 
-      <Card className="space-y-3">
-        <p className="font-warm text-lg font-semibold text-ink">Detalle del día</p>
+      <Card className="space-y-3 border-none bg-surface/70 shadow-[0_10px_30px_rgba(120,110,90,0.05)]">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Selección</p>
+          <p className="font-warm text-lg font-semibold text-ink">Detalle del día</p>
+        </div>
         {!selectedDay ? (
-          <div className="rounded-r-md border border-dashed border-lineStrong bg-surfaceSoft p-4">
+          <div className="rounded-r-md bg-surfaceSoft p-4 shadow-soft">
             <p className="text-sm font-medium text-muted">Elegí un día para ver el último registro.</p>
           </div>
         ) : !selectedLatest ? (
-          <p className="text-sm text-neutral-500">
-            Semana {selectedDay.week} · Día {selectedDay.day}: sin registros.
-          </p>
+          <div className="rounded-r-md bg-surfaceSoft p-4 shadow-soft">
+            <p className="text-sm text-muted">Semana {selectedDay.week} · Día {selectedDay.day}: sin registros.</p>
+          </div>
         ) : (
-          <div className="space-y-3 rounded-r-md border border-line bg-surfaceSoft p-4">
+          <div className="space-y-3 rounded-r-md bg-surface p-4 shadow-soft">
             <h2 className="font-warm text-lg font-semibold text-ink">{formatLocalDateTime(selectedLatest.createdAt)}</h2>
             <p className="text-sm text-muted">
               Semana {selectedLatest.week} · Día {selectedLatest.day} · {selectedLatest.planId}
@@ -297,7 +316,7 @@ export default function HistoryPage() {
               ))}
             </div>
 
-            <div className="space-y-2 rounded-r-sm border border-line bg-surface p-3">
+            <div className="space-y-2 rounded-r-sm bg-[#FBF8F2] p-3">
               <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Pesos del entrenamiento</p>
               {Object.keys(selectedLatest.weightsByExercise ?? {}).length === 0 ? (
                 <p className="text-sm text-muted">Este registro no tiene pesos guardados.</p>
@@ -307,7 +326,7 @@ export default function HistoryPage() {
                   .map(([exerciseName, weightMap]) => {
                     const lines = summarizeExerciseWeights(weightMap);
                     return (
-                      <div key={exerciseName} className="rounded-r-md border border-[#F1EFEB] bg-surface p-3">
+                      <div key={exerciseName} className="rounded-r-md bg-surface p-3 shadow-soft">
                         <p className="font-warm text-sm font-semibold text-ink">{exerciseName}</p>
                         <div className="mt-1 space-y-1">
                           {lines.length > 0 ? (
@@ -326,7 +345,7 @@ export default function HistoryPage() {
               )}
             </div>
 
-            <div className="space-y-2 rounded-r-sm border border-line bg-surface p-3">
+            <div className="space-y-2 rounded-r-sm bg-[#FBF8F2] p-3">
               <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Corregir fecha</p>
               <SegmentedControl
                 className="grid-cols-3"
@@ -357,8 +376,11 @@ export default function HistoryPage() {
         )}
       </Card>
 
-      <Card className="space-y-2">
-        <p className="font-warm text-lg font-semibold text-ink">Progreso por ejercicio</p>
+      <Card className="space-y-2 border-none bg-surface/70 shadow-[0_10px_30px_rgba(120,110,90,0.05)]">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Lectura rápida</p>
+          <p className="font-warm text-lg font-semibold text-ink">Progreso por ejercicio</p>
+        </div>
         {exerciseSummary.length === 0 ? (
           <p className="text-sm text-muted">Todavía no hay registros de pesos guardados.</p>
         ) : (
@@ -373,8 +395,11 @@ export default function HistoryPage() {
         )}
       </Card>
 
-      <Card className="space-y-2">
-        <p className="font-warm text-lg font-semibold text-ink">Timeline</p>
+      <Card className="space-y-2 border-none bg-surface/70 shadow-[0_10px_30px_rgba(120,110,90,0.05)]">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Semana a semana</p>
+          <p className="font-warm text-lg font-semibold text-ink">Timeline</p>
+        </div>
         {Object.keys(groupedByDate).length === 0 ? (
           <p className="text-sm text-neutral-500">No hay sesiones todavía.</p>
         ) : (

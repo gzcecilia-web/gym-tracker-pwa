@@ -94,16 +94,24 @@ export default function ProgressPage() {
 
   return (
     <PageContainer>
-      <Card>
-        <h1 className="font-display text-[36px] font-bold leading-[1.02] tracking-[-0.03em] text-ink">Progreso</h1>
-        <p className="font-warm mt-2 text-base font-medium text-muted">Una lectura simple de tu fuerza y tu constancia</p>
+      <section className="space-y-4 rounded-[28px] bg-[linear-gradient(180deg,#FFFDF9_0%,#F8F4EC_100%)] px-6 py-7 shadow-[0_18px_42px_rgba(140,120,90,0.10)]">
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Progress</p>
+          <h1 className="font-display text-[34px] font-bold leading-[0.98] tracking-[-0.03em] text-ink">Progreso</h1>
+          <p className="font-warm text-[15px] font-medium text-muted">Una lectura simple de tu fuerza y tu constancia</p>
+        </div>
         {slot ? (
-          <p className="mt-1 text-xs font-medium uppercase tracking-[0.08em] text-muted">Perfil actual: {slot.profileId}</p>
+          <div className={`inline-flex rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] ${theme.chip}`}>
+            {slot.profileId}
+          </div>
         ) : null}
-      </Card>
+      </section>
 
-      <Card className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Ejercicios</p>
+      <Card className="space-y-3 border-none bg-surface/70 shadow-[0_10px_30px_rgba(120,110,90,0.05)]">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Explorar</p>
+          <p className="font-warm text-lg font-semibold text-ink">Ejercicios</p>
+        </div>
         <div className="flex flex-wrap gap-2">
           {exerciseList.map((ex) => (
             <button
@@ -123,7 +131,7 @@ export default function ProgressPage() {
       </Card>
 
       {selectedExercise ? (
-        <Card className="space-y-2">
+        <Card className="space-y-2 border-none bg-surface/70 shadow-[0_10px_30px_rgba(120,110,90,0.05)]">
           <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted">Mejor marca</p>
           <div className="flex items-end gap-2">
             <p className="font-warm text-[56px] font-extrabold leading-none text-ink">{bestWeight > 0 ? bestWeight : '—'}</p>
@@ -139,10 +147,13 @@ export default function ProgressPage() {
       ) : null}
 
       {selectedExercise ? (
-        <Card className="space-y-3">
-          <p className="font-warm text-lg font-semibold text-ink">Timeline</p>
+        <Card className="space-y-3 border-none bg-surface/70 shadow-[0_10px_30px_rgba(120,110,90,0.05)]">
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">Evolución</p>
+            <p className="font-warm text-lg font-semibold text-ink">Timeline</p>
+          </div>
           {history.length === 0 ? (
-            <div className="rounded-r-sm border border-line bg-surfaceSoft p-4 text-sm text-muted">
+            <div className="rounded-r-sm bg-surfaceSoft p-4 text-sm text-muted shadow-soft">
               No hay marcas para este ejercicio todavía.
             </div>
           ) : (
@@ -158,7 +169,7 @@ export default function ProgressPage() {
           )}
         </Card>
       ) : (
-        <Card>
+        <Card className="border-none bg-surface/70 shadow-[0_10px_30px_rgba(120,110,90,0.05)]">
           <p className="text-sm text-muted">Elegí un ejercicio para ver tu progreso.</p>
         </Card>
       )}
