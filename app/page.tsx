@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
 import { formatPlanLabel, getDayExercises, updateDayExercises } from '@/lib/routine';
@@ -127,6 +127,7 @@ export default function HomePage() {
   const [exercisePairName, setExercisePairName] = useState('');
   const [exerciseReps, setExerciseReps] = useState('');
   const [exerciseSets, setExerciseSets] = useState('');
+  const slotPickerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     migrateIfNeeded();
@@ -187,6 +188,22 @@ export default function HomePage() {
       cancelled = true;
     };
   }, [isLoadedSelection, slot]);
+
+  useEffect(() => {
+    const onPointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null;
+      if (slotPickerRef.current && target && !slotPickerRef.current.contains(target)) {
+        setShowSlotPicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('touchstart', onPointerDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('touchstart', onPointerDown);
+    };
+  }, []);
 
   const profile = routine.profiles.find((p) => p.id === slot.profileId) ?? routine.profiles[0];
   const plan = profile?.plans.find((p) => p.id === slot.planId) ?? getLatestPlanForProfile(routine, slot.profileId);
@@ -312,7 +329,7 @@ export default function HomePage() {
 
   return (
     <PageContainer className="space-y-6">
-      <section className="rounded-[30px] bg-[linear-gradient(180deg,#FFFEFC_0%,#F8F4EC_100%)] px-6 py-7 shadow-[0_18px_36px_rgba(0,0,0,0.06)]">
+      <section ref={slotPickerRef} className="rounded-[30px] bg-[linear-gradient(180deg,#FFFEFC_0%,#F8F4EC_100%)] px-6 py-7 shadow-[0_18px_36px_rgba(0,0,0,0.06)]">
         <div className="space-y-2">
           <h1 className="font-display text-[36px] font-bold leading-[0.95] tracking-[-0.03em] text-ink">{heroTitle}</h1>
           <button
@@ -387,11 +404,11 @@ export default function HomePage() {
         ) : null}
 
         <div className="mt-5 space-y-3">
-          <p className="font-warm text-base font-semibold text-accent">{heroFocus}</p>
+          <p className="font-warm text-base font-semibold text-profile">{heroFocus}</p>
           <p className="text-sm text-muted">{completedDaysThisWeek} de 4 entrenamientos esta semana</p>
           <div className="h-2 overflow-hidden rounded-full bg-[#ECE7DF]">
             <div
-              className="h-full rounded-full bg-accent transition-all duration-300 ease-out"
+              className="h-full rounded-full bg-profile transition-all duration-300 ease-out"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -402,7 +419,7 @@ export default function HomePage() {
 
         <div className="mt-6 space-y-3 text-center">
           <div className="mx-auto w-full max-w-[280px]">
-            <Button className="h-14 rounded-full bg-accent text-base font-semibold shadow-float hover:brightness-[0.98]" onClick={() => router.push('/workout')}>
+            <Button className="h-14 rounded-full text-base font-semibold shadow-float hover:brightness-[0.98]" onClick={() => router.push('/workout')}>
               Entrenar
             </Button>
           </div>
@@ -444,7 +461,7 @@ export default function HomePage() {
             <button
               type="button"
               onClick={() => router.push(`/history${latestWorkout.id ? `?id=${latestWorkout.id}` : ''}`)}
-              className="text-sm font-semibold text-accent transition-colors duration-200 ease-out hover:opacity-80"
+              className="text-sm font-semibold text-profile transition-colors duration-200 ease-out hover:opacity-80"
             >
               Ver detalle
             </button>

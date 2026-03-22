@@ -166,7 +166,7 @@ export function AuthBar() {
 
   const modeButtonClass = (active: boolean) =>
     `rounded-full border px-3 py-1 text-xs font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
-      active ? 'border-transparent bg-accent/12 text-accent shadow-soft' : 'border-line text-muted'
+      active ? 'border-transparent bg-profile/12 text-profile shadow-soft' : 'border-line text-muted'
     }`;
 
   const displayName = profileId ? profileId.charAt(0).toUpperCase() + profileId.slice(1) : 'Perfil';
@@ -230,13 +230,15 @@ export function AuthBar() {
   };
 
   return (
-    <div className="mb-5 space-y-3">
-      <div className="space-y-3 rounded-[24px] bg-white/75 px-4 py-3 shadow-[0_10px_30px_rgba(120,110,90,0.06)] backdrop-blur">
+    <div className="mb-4 space-y-3">
+      <div className="space-y-3 rounded-[24px] bg-white/72 px-4 py-3 shadow-[0_8px_24px_rgba(120,110,90,0.05)] backdrop-blur">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0 space-y-1">
-            <p className="font-warm text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">Gym Tracker</p>
-            <p className="text-sm font-semibold text-ink">{displayName}</p>
-            <p className="max-w-[180px] truncate text-xs text-muted">{userEmail ?? 'Sin sesión'}</p>
+            <p className="font-warm text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">GYM TRACKER</p>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="font-semibold text-ink">{displayName}</span>
+              <span className="max-w-[150px] truncate text-xs text-muted">{userEmail ?? 'Sin sesión'}</span>
+            </div>
           </div>
 
           {userEmail ? (
@@ -262,13 +264,13 @@ export function AuthBar() {
           <button
             type="button"
             onClick={() => setShowProfileMenu((open) => !open)}
-            className="flex items-center gap-3 rounded-full pr-2 transition-all duration-200 ease-out hover:bg-[#F4F1EB] active:scale-[0.98]"
+            className="flex items-center gap-3 rounded-full px-1 py-1 transition-all duration-200 ease-out hover:bg-[#F4F1EB] active:scale-[0.98]"
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[color:rgb(var(--profile-accent-rgb)/0.12)] text-sm font-semibold text-[color:rgb(var(--profile-accent-rgb))]">
               {avatarLetter}
             </div>
             <div className="flex items-center gap-1 text-xs font-semibold text-muted">
-              <span>Cambiar perfil</span>
+              <span>Perfil</span>
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`h-4 w-4 transition-transform duration-200 ease-out ${showProfileMenu ? 'rotate-180' : ''}`}>
                 <path d="m5 7.5 5 5 5-5" />
               </svg>
@@ -333,6 +335,17 @@ export function AuthBar() {
                 <path d="M13.5 14.5V5.5" />
               </svg>
             </button>
+            <button
+              type="button"
+              aria-label="Configuración"
+              onClick={() => router.push('/settings')}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F4F1EB] text-muted transition-all duration-200 ease-out hover:bg-[#ECE7DF] hover:text-ink active:scale-[0.98]"
+            >
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                <path d="M8.7 2.8h2.6l.4 1.8a5.7 5.7 0 0 1 1.3.6l1.7-.9 1.8 1.8-.9 1.7c.24.4.44.85.58 1.3l1.86.4v2.6l-1.86.4a5.7 5.7 0 0 1-.58 1.3l.9 1.7-1.8 1.8-1.7-.9c-.41.24-.85.44-1.3.58l-.4 1.86H8.7l-.4-1.86a5.7 5.7 0 0 1-1.3-.58l-1.7.9-1.8-1.8.9-1.7a5.7 5.7 0 0 1-.58-1.3L2 11.3V8.7l1.86-.4c.14-.45.34-.9.58-1.3l-.9-1.7 1.8-1.8 1.7.9c.4-.24.85-.44 1.3-.58z" />
+                <circle cx="10" cy="10" r="2.2" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -353,7 +366,7 @@ export function AuthBar() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu-email@..."
-            className="h-11 w-full rounded-r-sm border border-line bg-surface px-3 text-sm text-ink outline-none ring-accent/25 placeholder:text-[#B8B6B1] focus:border-accent/20 focus:ring"
+            className="h-11 w-full rounded-r-sm border border-line bg-surface px-3 text-sm text-ink outline-none ring-profile/25 placeholder:text-[#B8B6B1] focus:border-profile/20 focus:ring"
           />
 
           <div className="flex gap-2">
@@ -362,13 +375,13 @@ export function AuthBar() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="contrasena"
-              className="h-11 w-full rounded-r-sm border border-line bg-surface px-3 text-sm text-ink outline-none ring-accent/25 placeholder:text-[#B8B6B1] focus:border-accent/20 focus:ring"
+              className="h-11 w-full rounded-r-sm border border-line bg-surface px-3 text-sm text-ink outline-none ring-profile/25 placeholder:text-[#B8B6B1] focus:border-profile/20 focus:ring"
             />
             <button
               type="button"
               disabled={isLoading}
               onClick={onSubmitEmailPassword}
-              className="rounded-r-sm bg-accent px-3 py-2 text-xs font-semibold text-white shadow-soft transition-all duration-200 ease-out active:scale-[0.98] disabled:opacity-50"
+              className="rounded-r-sm bg-profile px-3 py-2 text-xs font-semibold text-white shadow-soft transition-all duration-200 ease-out active:scale-[0.98] disabled:opacity-50"
             >
               {isLoading ? '...' : mode === 'signup' ? 'Crear' : 'Entrar'}
             </button>
