@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
-import { formatPlanLabel, getDayExercises, updateDayExercises } from '@/lib/routine';
+import { addPlanToProfile, createEmptyPlan, formatPlanLabel, getDayExercises, updateDayExercises } from '@/lib/routine';
 import { formatLocalDateTime, isSameLocalDay } from '@/lib/date';
 import {
   appendWorkoutToHistory,
@@ -251,6 +251,29 @@ export default function HomePage() {
     setRoutine(saved);
   };
 
+  const addPlan = () => {
+    if (typeof window === 'undefined' || !profile) return;
+    const nextName = window.prompt('Nombre del nuevo plan');
+    if (!nextName?.trim()) return;
+
+    const nextPlan = createEmptyPlan(
+      nextName,
+      profile.plans.map((item) => item.id)
+    );
+
+    const nextRoutine = addPlanToProfile(routine, profile.id, nextPlan);
+    persistRoutine(nextRoutine);
+    const nextSlot = {
+      ...slot,
+      planId: nextPlan.id,
+      week: 1,
+      day: 1
+    };
+    setSlot(nextSlot);
+    saveSelection(nextSlot);
+    setShowSlotPicker(false);
+  };
+
   const addExercise = () => {
     const name = exerciseName.trim();
     const reps = exerciseReps.trim();
@@ -365,6 +388,14 @@ export default function HomePage() {
                   </button>
                 ))}
               </div>
+              <button
+                type="button"
+                onClick={addPlan}
+                className="flex min-h-11 w-full items-center justify-between rounded-[16px] border border-dashed border-line px-4 py-3 text-left text-sm font-semibold text-muted transition-all duration-200 ease-out hover:bg-[#F4F1EB] hover:text-ink active:scale-[0.98]"
+              >
+                <span>Agregar plan</span>
+                <span className="text-base leading-none">＋</span>
+              </button>
             </div>
 
             <div className="space-y-2">
