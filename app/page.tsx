@@ -317,12 +317,17 @@ export default function HomePage() {
 
   const addExercise = () => {
     const name = exerciseName.trim();
-    const reps = exerciseReps.trim();
+    const rawReps = exerciseReps.trim();
     const setsValue = exerciseSets.trim();
     const parsedSets = setsValue ? Number(setsValue) : undefined;
 
-    if (!name || !reps) return;
+    if (!name || !rawReps) return;
     if (setsValue && (parsedSets === undefined || !Number.isFinite(parsedSets) || parsedSets <= 0)) return;
+
+    const reps =
+      exerciseMode === 'dropset' && /^\d+$/.test(rawReps)
+        ? `${rawReps}+${rawReps}+${rawReps}`
+        : rawReps;
 
     const baseExercise: RoutineExercise = {
       name,
@@ -655,9 +660,18 @@ export default function HomePage() {
                 ) : null}
 
                 <div className="grid grid-cols-2 gap-3">
-                  <Input placeholder="Reps (ej: 15-12-10-8)" value={exerciseReps} onChange={(event) => setExerciseReps(event.target.value)} />
+                  <Input
+                    placeholder={exerciseMode === 'dropset' ? 'Reps por caída (ej: 8)' : 'Reps (ej: 15-12-10-8)'}
+                    value={exerciseReps}
+                    onChange={(event) => setExerciseReps(event.target.value)}
+                  />
                   <Input placeholder="Series" value={exerciseSets} onChange={(event) => setExerciseSets(event.target.value)} />
                 </div>
+                {exerciseMode === 'dropset' ? (
+                  <p className="text-xs text-muted">
+                    Se guarda como dropset real: por ejemplo, <span className="font-medium text-ink">8</span> pasa a <span className="font-medium text-ink">8+8+8</span> dentro de cada serie.
+                  </p>
+                ) : null}
               </div>
 
               <Button variant="secondary" onClick={addExercise}>
