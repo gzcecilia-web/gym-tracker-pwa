@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
-import { addPlanToProfile, createEmptyPlan, formatPlanLabel, getDayExercises, updateDayExercises } from '@/lib/routine';
+import { addPlanToProfile, createEmptyPlan, formatPlanLabel, getDayExercises, updateDayExercises, updatePlanName } from '@/lib/routine';
 import { formatLocalDateTime, isSameLocalDay } from '@/lib/date';
 import {
   appendWorkoutToHistory,
@@ -127,6 +127,7 @@ export default function HomePage() {
   const [exercisePairName, setExercisePairName] = useState('');
   const [exerciseReps, setExerciseReps] = useState('');
   const [exerciseSets, setExerciseSets] = useState('');
+  const [showPlanList, setShowPlanList] = useState(false);
   const slotPickerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -194,6 +195,7 @@ export default function HomePage() {
       const target = event.target as Node | null;
       if (slotPickerRef.current && target && !slotPickerRef.current.contains(target)) {
         setShowSlotPicker(false);
+        setShowPlanList(false);
       }
     };
 
@@ -272,6 +274,17 @@ export default function HomePage() {
     setSlot(nextSlot);
     saveSelection(nextSlot);
     setShowSlotPicker(false);
+    setShowPlanList(false);
+  };
+
+  const renamePlan = () => {
+    if (typeof window === 'undefined' || !plan) return;
+    const nextName = window.prompt('Nuevo nombre del plan', formatPlanLabel(plan.name, profile?.name));
+    if (!nextName?.trim()) return;
+
+    const nextRoutine = updatePlanName(routine, slot.profileId, plan.id, nextName);
+    persistRoutine(nextRoutine);
+    setShowPlanList(false);
   };
 
   const addExercise = () => {
@@ -357,7 +370,10 @@ export default function HomePage() {
           <h1 className="font-display text-[36px] font-bold leading-[0.95] tracking-[-0.03em] text-ink">{heroTitle}</h1>
           <button
             type="button"
-            onClick={() => setShowSlotPicker((open) => !open)}
+            onClick={() => {
+              setShowSlotPicker((open) => !open);
+              setShowPlanList(false);
+            }}
             className="inline-flex items-center gap-2 rounded-full px-0 text-left font-warm text-[15px] font-medium text-muted transition-colors duration-200 ease-out hover:text-ink active:scale-[0.98]"
           >
             <span>{heroSubtitle}</span>
@@ -372,30 +388,57 @@ export default function HomePage() {
             <div className="space-y-2">
               <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted">Rutina</p>
               <div className="space-y-2">
-                {(profile?.plans ?? []).map((planOption) => (
-                  <button
-                    key={planOption.id}
-                    type="button"
-                    onClick={() => setSlot({ ...slot, planId: planOption.id, week: 1, day: 1 })}
-                    className={`flex min-h-[48px] w-full items-center justify-between rounded-[16px] border px-4 py-3 text-left text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
-                      slot.planId === planOption.id
-                        ? 'border-transparent bg-[rgb(var(--profile-accent-rgb)/0.12)] text-[rgb(var(--profile-accent-rgb))] shadow-soft'
-                        : 'border-line bg-surface text-ink hover:bg-[#F4F1EB]'
-                    }`}
-                  >
-                    <span className="line-clamp-2 leading-snug">{formatPlanLabel(planOption.name, profile?.name)}</span>
-                    {slot.planId === planOption.id ? <span className="shrink-0 text-xs">Activa</span> : null}
-                  </button>
-                ))}
+                <button
+                  type="button"
+                  onClick={() => setShowPlanList((open) => !open)}
+                  className="flex min-h-[48px] w-full items-center justify-between rounded-[16px] border border-transparent bg-[rgb(var(--profile-accent-rgb)/0.12)] px-4 py-3 text-left text-sm font-semibold text-[rgb(var(--profile-accent-rgb))] shadow-soft transition-all duration-200 ease-out active:scale-[0.98]"
+                >
+                  <span className="line-clamp-2 leading-snug">{formatPlanLabel(plan?.name ?? 'Rutina', profile?.name)}</span>
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`h-4 w-4 transition-transform duration-200 ease-out ${showPlanList ? 'rotate-180' : ''}`}>
+                    <path d="m5 7.5 5 5 5-5" />
+                  </svg>
+                </button>
+
+                {showPlanList ? (
+                  <div className="space-y-2 rounded-[18px] bg-[#FBF8F2] p-3">
+                    {(profile?.plans ?? []).map((planOption) => (
+                      <button
+                        key={planOption.id}
+                        type="button"
+                        onClick={() => {
+                          setSlot({ ...slot, planId: planOption.id, week: 1, day: 1 });
+                          setShowPlanList(false);
+                        }}
+                        className={`flex min-h-[46px] w-full items-center justify-between rounded-[14px] border px-4 py-3 text-left text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${
+                          slot.planId === planOption.id
+                            ? 'border-transparent bg-[rgb(var(--profile-accent-rgb)/0.12)] text-[rgb(var(--profile-accent-rgb))]'
+                            : 'border-line bg-surface text-ink hover:bg-[#F4F1EB]'
+                        }`}
+                      >
+                        <span className="line-clamp-2 leading-snug">{formatPlanLabel(planOption.name, profile?.name)}</span>
+                        {slot.planId === planOption.id ? <span className="shrink-0 text-xs">Activa</span> : null}
+                      </button>
+                    ))}
+
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={addPlan}
+                        className="flex min-h-10 items-center justify-center rounded-[14px] border border-dashed border-line px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:bg-[#F4F1EB] hover:text-ink active:scale-[0.98]"
+                      >
+                        Agregar plan
+                      </button>
+                      <button
+                        type="button"
+                        onClick={renamePlan}
+                        className="flex min-h-10 items-center justify-center rounded-[14px] border border-line bg-surface px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:bg-[#F4F1EB] hover:text-ink active:scale-[0.98]"
+                      >
+                        Editar nombre
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
               </div>
-              <button
-                type="button"
-                onClick={addPlan}
-                className="flex min-h-11 w-full items-center justify-between rounded-[16px] border border-dashed border-line px-4 py-3 text-left text-sm font-semibold text-muted transition-all duration-200 ease-out hover:bg-[#F4F1EB] hover:text-ink active:scale-[0.98]"
-              >
-                <span>Agregar plan</span>
-                <span className="text-base leading-none">＋</span>
-              </button>
             </div>
 
             <div className="space-y-2">
