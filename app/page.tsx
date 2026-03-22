@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Input, PageContainer, SegmentedControl } from '@/components/ui';
-import { addPlanToProfile, createEmptyPlan, formatPlanLabel, getDayExercises, updateDayExercises, updatePlanName } from '@/lib/routine';
+import { addPlanToProfile, createEmptyPlan, formatPlanLabel, getDayExercises, removePlanFromProfile, updateDayExercises, updatePlanName } from '@/lib/routine';
 import { formatLocalDateTime, isSameLocalDay } from '@/lib/date';
 import {
   appendWorkoutToHistory,
@@ -287,6 +287,34 @@ export default function HomePage() {
     setShowPlanList(false);
   };
 
+  const removePlan = () => {
+    if (typeof window === 'undefined' || !profile || !plan) return;
+    if (profile.plans.length <= 1) {
+      window.alert('Este perfil necesita al menos una rutina.');
+      return;
+    }
+
+    const confirmed = window.confirm(`Se va a borrar "${formatPlanLabel(plan.name, profile.name)}". Esta acción no se puede deshacer.`);
+    if (!confirmed) return;
+
+    const nextRoutine = removePlanFromProfile(routine, profile.id, plan.id);
+    persistRoutine(nextRoutine);
+
+    const nextProfile = nextRoutine.profiles.find((item) => item.id === profile.id) ?? nextRoutine.profiles[0];
+    const nextPlan = nextProfile?.plans.at(-1) ?? nextProfile?.plans[0];
+    const nextSlot = {
+      profileId: nextProfile?.id ?? slot.profileId,
+      planId: nextPlan?.id ?? '',
+      week: 1,
+      day: 1
+    };
+
+    setSlot(nextSlot);
+    saveSelection(nextSlot);
+    setShowSlotPicker(false);
+    setShowPlanList(false);
+  };
+
   const addExercise = () => {
     const name = exerciseName.trim();
     const reps = exerciseReps.trim();
@@ -420,7 +448,7 @@ export default function HomePage() {
                       </button>
                     ))}
 
-                    <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div className="grid grid-cols-1 gap-2 pt-1 sm:grid-cols-3">
                       <button
                         type="button"
                         onClick={addPlan}
@@ -434,6 +462,13 @@ export default function HomePage() {
                         className="flex min-h-10 items-center justify-center rounded-[14px] border border-line bg-surface px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:bg-[#F4F1EB] hover:text-ink active:scale-[0.98]"
                       >
                         Editar nombre
+                      </button>
+                      <button
+                        type="button"
+                        onClick={removePlan}
+                        className="flex min-h-10 items-center justify-center rounded-[14px] border border-line bg-surface px-3 py-2 text-sm font-semibold text-muted transition-all duration-200 ease-out hover:bg-[#F4F1EB] hover:text-ink active:scale-[0.98]"
+                      >
+                        Borrar rutina
                       </button>
                     </div>
                   </div>

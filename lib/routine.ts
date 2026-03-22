@@ -306,6 +306,23 @@ export function addPlanToProfile(
   };
 }
 
+export function removePlanFromProfile(
+  db: RoutineDB,
+  profileId: string,
+  planId: string
+): RoutineDB {
+  return {
+    ...db,
+    profiles: db.profiles.map((profile) => {
+      if (profile.id !== profileId) return profile;
+      return {
+        ...profile,
+        plans: profile.plans.filter((plan) => plan.id !== planId)
+      };
+    })
+  };
+}
+
 export function duplicatePlanInProfile(
   db: RoutineDB,
   profileId: string,
