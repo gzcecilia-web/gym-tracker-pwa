@@ -95,6 +95,13 @@ export function saveProfileColor(profileId: string, colorId: ProfileColorId): vo
   writeStoredProfileColors(stored);
 }
 
+export function removeProfileColor(profileId: string): void {
+  const stored = readStoredProfileColors();
+  if (!(profileId in stored)) return;
+  delete stored[profileId];
+  writeStoredProfileColors(stored);
+}
+
 export function resolveProfileAccentRgb(profileId: string): string {
   const colorId = resolveProfileColorId(profileId);
   return PROFILE_PRESETS[colorId].rgb;

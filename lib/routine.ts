@@ -171,6 +171,33 @@ export function createEmptyProfile(name: string, existingIds: string[] = []): Ro
   };
 }
 
+export function updateProfileName(
+  db: RoutineDB,
+  profileId: string,
+  nextName: string
+): RoutineDB {
+  return {
+    ...db,
+    profiles: db.profiles.map((profile) => {
+      if (profile.id !== profileId) return profile;
+      return {
+        ...profile,
+        name: nextName.trim()
+      };
+    })
+  };
+}
+
+export function removeProfile(
+  db: RoutineDB,
+  profileId: string
+): RoutineDB {
+  return {
+    ...db,
+    profiles: db.profiles.filter((profile) => profile.id !== profileId)
+  };
+}
+
 function uniqueId(baseId: string, existingIds: string[]): string {
   let nextId = baseId;
   let counter = 2;
