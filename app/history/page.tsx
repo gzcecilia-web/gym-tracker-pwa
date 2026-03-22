@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, Card, Input, PageContainer, SegmentedControl, Select } from '@/components/ui';
 import { formatLocalDateTime } from '@/lib/date';
 import { getProfileTheme } from '@/lib/profileTheme';
-import { defaultSlot, formatPlanLabel, getLatestPlanForProfile } from '@/lib/routine';
+import { defaultSlot, formatPlanLabel } from '@/lib/routine';
 import {
   loadHistory,
   loadRoutine,
@@ -34,12 +34,6 @@ function statusPill(status?: 'done' | 'skipped') {
   if (status === 'done') return '✓';
   if (status === 'skipped') return '⏸';
   return '';
-}
-
-function profileToneClass(profileId: string, active: boolean): string {
-  const theme = getProfileTheme(profileId);
-  if (active) return `${theme.chip} shadow-soft`;
-  return 'border-line bg-surface text-muted hover:bg-[#F1EFEB]';
 }
 
 export default function HistoryPage() {
@@ -197,35 +191,7 @@ export default function HistoryPage() {
 
       <Card className="space-y-5 border-none bg-surface/70 shadow-[0_10px_30px_rgba(120,110,90,0.05)]">
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Perfil</p>
-          <div className="grid grid-cols-2 gap-3">
-            {routine.profiles.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => {
-                  const nextProfile = routine.profiles.find((item) => item.id === p.id);
-                  const latestPlan = getLatestPlanForProfile(nextProfile);
-                  setSlot({
-                    profileId: p.id,
-                    planId: latestPlan?.id ?? slot.planId,
-                    week: slot.week,
-                    day: slot.day
-                  });
-                  setSelectedDay(null);
-                }}
-                className={`flex min-h-10 items-center justify-center rounded-r-sm border px-3 py-2 text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/25 ${profileToneClass(
-                  p.id,
-                  profileId === p.id
-                )}`}
-              >
-                {p.name}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Plan mensual</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Rutina del perfil actual</p>
           <Select
             value={planId}
             onChange={(e) => {
