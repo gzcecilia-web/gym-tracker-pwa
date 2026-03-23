@@ -128,6 +128,7 @@ export default function HomePage() {
   const [exerciseReps, setExerciseReps] = useState('');
   const [exerciseSets, setExerciseSets] = useState('');
   const [showPlanList, setShowPlanList] = useState(false);
+  const [allowAutoRecommend, setAllowAutoRecommend] = useState(true);
   const slotPickerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -138,6 +139,7 @@ export default function HomePage() {
     const selected = normalizeSlot(loadSelection(loadedFallback), loadedRoutine, loadedFallback);
     setSlot(selected);
     saveSelection(selected);
+    setAllowAutoRecommend(true);
     setIsLoadedSelection(true);
   }, []);
 
@@ -165,7 +167,7 @@ export default function HomePage() {
       if (cancelled) return;
 
       const recommendedSlot = getRecommendedSlot(slot, latestByWeekDay);
-      if (recommendedSlot.week !== slot.week || recommendedSlot.day !== slot.day) {
+      if (allowAutoRecommend && (recommendedSlot.week !== slot.week || recommendedSlot.day !== slot.day)) {
         saveSelection(recommendedSlot);
         setSlot(recommendedSlot);
         setLatestWorkout(list[0] ?? null);
@@ -188,7 +190,7 @@ export default function HomePage() {
     return () => {
       cancelled = true;
     };
-  }, [isLoadedSelection, slot]);
+  }, [allowAutoRecommend, isLoadedSelection, slot]);
 
   useEffect(() => {
     const onPointerDown = (event: MouseEvent | TouchEvent) => {
@@ -273,6 +275,7 @@ export default function HomePage() {
     };
     setSlot(nextSlot);
     saveSelection(nextSlot);
+    setAllowAutoRecommend(false);
     setShowSlotPicker(false);
     setShowPlanList(false);
   };
@@ -311,6 +314,7 @@ export default function HomePage() {
 
     setSlot(nextSlot);
     saveSelection(nextSlot);
+    setAllowAutoRecommend(false);
     setShowSlotPicker(false);
     setShowPlanList(false);
   };
@@ -439,6 +443,7 @@ export default function HomePage() {
                         key={planOption.id}
                         type="button"
                         onClick={() => {
+                          setAllowAutoRecommend(true);
                           setSlot({ ...slot, planId: planOption.id, week: 1, day: 1 });
                           setShowPlanList(false);
                         }}
@@ -488,7 +493,10 @@ export default function HomePage() {
                   <button
                     key={week}
                     type="button"
-                    onClick={() => setSlot({ ...slot, week })}
+                    onClick={() => {
+                      setAllowAutoRecommend(false);
+                      setSlot({ ...slot, week });
+                    }}
                     className={`flex h-10 items-center justify-center rounded-[16px] border text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${weekToneClass(week, slot.week === week)}`}
                   >
                     {`S${week}`}
@@ -504,7 +512,10 @@ export default function HomePage() {
                   <button
                     key={day}
                     type="button"
-                    onClick={() => setSlot({ ...slot, day })}
+                    onClick={() => {
+                      setAllowAutoRecommend(false);
+                      setSlot({ ...slot, day });
+                    }}
                     className={`flex h-11 items-center justify-center gap-1 rounded-[16px] text-sm font-semibold transition-all duration-200 ease-out active:scale-[0.98] ${dayToneClass(day, slot.day === day)}`}
                   >
                     <span>{`Día ${day}`}</span>
