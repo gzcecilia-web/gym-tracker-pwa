@@ -37,7 +37,13 @@ function statusPill(status?: 'done' | 'skipped') {
 }
 
 function getRecordPriority(record: WorkoutRecord): number {
-  return record.completed === false ? 0 : 1;
+  const hasWeights = Object.keys(record.weights ?? {}).length > 0;
+  const hasWeightsByExercise = Object.values(record.weightsByExercise ?? {}).some((bySet) => Object.keys(bySet ?? {}).length > 0);
+  const hasChecks = Object.values(record.checks ?? {}).some(Boolean);
+
+  if (hasWeights || hasWeightsByExercise || hasChecks) return 2;
+  if (record.completed === false) return 0;
+  return 1;
 }
 
 function pickPreferredRecord(current: WorkoutRecord | undefined, candidate: WorkoutRecord): WorkoutRecord {
@@ -178,11 +184,21 @@ export default function HistoryPage() {
   };
 
   const onDeleteWorkout = async () => {
-    if (!selectedLatest) return;
-    const ok = window.confirm('¿Querés eliminar este entrenamiento? Esta acción no se puede deshacer.');
+    if (!selectedDay) return;
+    const matches = rows.filter((row) => row.week === selectedDay.week && row.day === selectedDay.day);
+    if (!matches.length) return;
+
+    const ok = window.confirm(
+      matches.length > 1
+        ? 'Se van a eliminar todos los registros de este día. Esta acción no se puede deshacer.'
+        : '¿Querés eliminar este entrenamiento? Esta acción no se puede deshacer.'
+    );
     if (!ok) return;
+
     try {
-      await removeWorkoutFromHistory(profileId, planId, selectedLatest.id);
+      for (const item of matches) {
+        await removeWorkoutFromHistory(profileId, planId, item.id);
+      }
     } catch {
       window.alert('No se pudo eliminar el entrenamiento en la nube. Reintentá con conexión.');
       return;
