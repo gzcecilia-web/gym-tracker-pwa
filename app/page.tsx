@@ -61,6 +61,16 @@ function getWorkoutStatus(item: WorkoutRecord): 'done' | 'skipped' | 'ignore' {
   return hasWeights || hasWeightsByExercise || hasChecks ? 'done' : 'ignore';
 }
 
+function pickPreferredStatus(
+  current: 'done' | 'skipped' | undefined,
+  candidate: 'done' | 'skipped' | 'ignore'
+): 'done' | 'skipped' | undefined {
+  if (candidate === 'ignore') return current;
+  if (!current) return candidate;
+  if (current === 'done') return current;
+  return candidate === 'done' ? 'done' : current;
+}
+
 function deriveDayFocus(exercises: Array<{ name: string; supersetGroup?: string }>): string {
   const primary = exercises[0];
   if (!primary) return 'Hoy puede ser un buen comienzo';
@@ -159,10 +169,7 @@ export default function HomePage() {
       const latestByWeekDay: Record<string, 'done' | 'skipped'> = {};
       for (const item of list) {
         const key = `${item.week}-${item.day}`;
-        if (!latestByWeekDay[key]) {
-          const status = getWorkoutStatus(item);
-          if (status !== 'ignore') latestByWeekDay[key] = status;
-        }
+        latestByWeekDay[key] = pickPreferredStatus(latestByWeekDay[key], getWorkoutStatus(item)) ?? latestByWeekDay[key];
       }
       if (cancelled) return;
 

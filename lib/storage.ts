@@ -187,12 +187,12 @@ export function loadWorkoutById(id: string): WorkoutRecord | null {
   return normalizeWorkoutShape(raw);
 }
 
-export function removeWorkoutFromHistory(
+export async function removeWorkoutFromHistory(
   profileId: string,
   planId: string,
   workoutId: string,
   options?: { syncCloud?: boolean }
-): void {
+): Promise<void> {
   if (typeof window === 'undefined') return;
   const normalizedPlanId = normalizePlanId(planId);
   const allPlanIds = [normalizedPlanId, ...getLegacyPlanIds(normalizedPlanId)];
@@ -207,9 +207,7 @@ export function removeWorkoutFromHistory(
   window.localStorage.removeItem(getWorkoutItemKey(workoutId));
 
   if (options?.syncCloud !== false && isCloudEnabled()) {
-    cloudDeleteWorkout(workoutId).catch(() => {
-      // Keep local-first behavior if cloud deletion fails.
-    });
+    await cloudDeleteWorkout(workoutId);
   }
 }
 

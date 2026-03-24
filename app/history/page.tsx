@@ -36,6 +36,23 @@ function statusPill(status?: 'done' | 'skipped') {
   return '';
 }
 
+function getRecordPriority(record: WorkoutRecord): number {
+  return record.completed === false ? 0 : 1;
+}
+
+function pickPreferredRecord(current: WorkoutRecord | undefined, candidate: WorkoutRecord): WorkoutRecord {
+  if (!current) return candidate;
+
+  const currentPriority = getRecordPriority(current);
+  const candidatePriority = getRecordPriority(candidate);
+
+  if (candidatePriority !== currentPriority) {
+    return candidatePriority > currentPriority ? candidate : current;
+  }
+
+  return new Date(candidate.createdAt).getTime() > new Date(current.createdAt).getTime() ? candidate : current;
+}
+
 export default function HistoryPage() {
   const [routine, setRoutine] = useState(() => loadRoutine());
   const fallback = useMemo(() => defaultSlot(routine), [routine]);
@@ -100,7 +117,7 @@ export default function HistoryPage() {
 
     for (const r of rows) {
       const key = `${r.week}-${r.day}`;
-      if (!latest[key]) latest[key] = r;
+      latest[key] = pickPreferredRecord(latest[key], r);
 
       const ymd = isoToYYYYMMDD(r.createdAt);
       if (!grouped[ymd]) grouped[ymd] = [];
@@ -160,13 +177,18 @@ export default function HistoryPage() {
     void load();
   };
 
-  const onDeleteWorkout = () => {
+  const onDeleteWorkout = async () => {
     if (!selectedLatest) return;
     const ok = window.confirm('¿Querés eliminar este entrenamiento? Esta acción no se puede deshacer.');
     if (!ok) return;
-    removeWorkoutFromHistory(profileId, planId, selectedLatest.id);
+    try {
+      await removeWorkoutFromHistory(profileId, planId, selectedLatest.id);
+    } catch {
+      window.alert('No se pudo eliminar el entrenamiento en la nube. Reintentá con conexión.');
+      return;
+    }
     setSelectedDay(null);
-    void load();
+    await load();
   };
 
   return (
