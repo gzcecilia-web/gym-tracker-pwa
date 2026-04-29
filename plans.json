@@ -4085,6 +4085,878 @@
               ]
             }
           ]
+        },
+        {
+          "id": "gabriel-rutina-3",
+          "name": "Rutina 3 (Gabriel)",
+          "month": 3,
+          "year": 2026,
+          "weeks": [
+            {
+              "week": 1,
+              "days": [
+                {
+                  "day": 1,
+                  "exercises": [
+                    {
+                      "name": "PRESS INCLINADO",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "CHEST PRESS + APERTURA PLANA",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "VUELOS LAT POLEA + VUELOS LAT MANC",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "EMPUJES",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "FRANCÉS POLEA ALTA",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 2,
+                  "exercises": [
+                    {
+                      "name": "REMO CON BARRA",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "TIRONES",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "REMO HAMMER CERRADO + PULLOVER",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "BÍCEPS POLEA BAJA",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "BÍCEPS MÁQUINA",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 3,
+                  "exercises": [
+                    {
+                      "name": "SENTADILLAS",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        10
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PESO MUERTO",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        10
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "TIJERAS + SILLÓN DE CUÁDRICEPS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "SUMO + ADUCTORES",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "GEMELOS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    }
+                  ]
+                },
+                {
+                  "day": 4,
+                  "exercises": [
+                    {
+                      "name": "PRESS DE HOMBROS MILITAR",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        10
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PRESS ARNOLD",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        10
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "VUELOS LAT BANCO",
+                      "reps": "8 A 10",
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "CRUCES POLEA",
+                      "reps": 15,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "ROMPECRÁNEOS",
+                      "reps": 15,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "FRANCÉS MANCUERNAS",
+                      "reps": 15,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "week": 2,
+              "days": [
+                {
+                  "day": 1,
+                  "exercises": [
+                    {
+                      "name": "PRESS INCLINADO",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "CHEST PRESS + APERTURA PLANA",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "VUELOS LAT POLEA + VUELOS LAT MANC",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "EMPUJES",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "FRANCÉS POLEA ALTA",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 2,
+                  "exercises": [
+                    {
+                      "name": "REMO CON BARRA",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "TIRONES",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "REMO HAMMER CERRADO + PULLOVER",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "BÍCEPS POLEA BAJA",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "BÍCEPS MÁQUINA",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 3,
+                  "exercises": [
+                    {
+                      "name": "SENTADILLAS",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PESO MUERTO",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "TIJERAS + SILLÓN DE CUÁDRICEPS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "SUMO + ADUCTORES",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "GEMELOS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    }
+                  ]
+                },
+                {
+                  "day": 4,
+                  "exercises": [
+                    {
+                      "name": "PRESS DE HOMBROS MILITAR",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PRESS ARNOLD",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "VUELOS LAT BANCO",
+                      "reps": "8 A 10",
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "CRUCES POLEA",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "ROMPECRÁNEOS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "FRANCÉS MANCUERNAS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "week": 3,
+              "days": [
+                {
+                  "day": 1,
+                  "exercises": [
+                    {
+                      "name": "PRESS INCLINADO",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "CHEST PRESS + APERTURA PLANA",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "VUELOS LAT POLEA + VUELOS LAT MANC",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "EMPUJES",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "FRANCÉS POLEA ALTA",
+                      "reps": [
+                        10,
+                        8,
+                        8,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 2,
+                  "exercises": [
+                    {
+                      "name": "REMO CON BARRA",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "TIRONES",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "REMO HAMMER CERRADO + PULLOVER",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "BÍCEPS POLEA BAJA",
+                      "reps": [
+                        10,
+                        8,
+                        8,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "BÍCEPS MÁQUINA",
+                      "reps": [
+                        10,
+                        8,
+                        8,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 3,
+                  "exercises": [
+                    {
+                      "name": "SENTADILLAS",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PESO MUERTO",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "TIJERAS + SILLÓN DE CUÁDRICEPS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "SUMO + ADUCTORES",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "GEMELOS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    }
+                  ]
+                },
+                {
+                  "day": 4,
+                  "exercises": [
+                    {
+                      "name": "PRESS DE HOMBROS MILITAR",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PRESS ARNOLD",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "VUELOS LAT BANCO",
+                      "reps": "8 A 10",
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "CRUCES POLEA",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "ROMPECRÁNEOS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "FRANCÉS MANCUERNAS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "week": 4,
+              "days": [
+                {
+                  "day": 1,
+                  "exercises": [
+                    {
+                      "name": "PRESS INCLINADO",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "CHEST PRESS + APERTURA PLANA",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "VUELOS LAT POLEA + VUELOS LAT MANC",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "EMPUJES",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "FRANCÉS POLEA ALTA",
+                      "reps": [
+                        10,
+                        8,
+                        8,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 2,
+                  "exercises": [
+                    {
+                      "name": "REMO CON BARRA",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "TIRONES",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "REMO HAMMER CERRADO + PULLOVER",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "BÍCEPS POLEA BAJA",
+                      "reps": [
+                        10,
+                        8,
+                        8,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "BÍCEPS MÁQUINA",
+                      "reps": [
+                        10,
+                        8,
+                        8,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 3,
+                  "exercises": [
+                    {
+                      "name": "SENTADILLAS",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PESO MUERTO",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "TIJERAS + SILLÓN DE CUÁDRICEPS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "SUMO + ADUCTORES",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "GEMELOS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    }
+                  ]
+                },
+                {
+                  "day": 4,
+                  "exercises": [
+                    {
+                      "name": "PRESS DE HOMBROS MILITAR",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PRESS ARNOLD",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "VUELOS LAT BANCO",
+                      "reps": "8 A 10",
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "CRUCES POLEA",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "ROMPECRÁNEOS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "FRANCÉS MANCUERNAS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }
