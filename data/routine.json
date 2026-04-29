@@ -1904,6 +1904,935 @@
               ]
             }
           ]
+        },
+        {
+          "id": "cecilia-rutina-8",
+          "name": "Rutina 8 (Cecilia)",
+          "month": 8,
+          "year": 2026,
+          "weeks": [
+            {
+              "week": 1,
+              "days": [
+                {
+                  "day": 1,
+                  "exercises": [
+                    {
+                      "name": "SENTADILLAS",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "BÚLGARAS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "PRENSA",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "TIJERAS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "GEMELOS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    }
+                  ]
+                },
+                {
+                  "day": 2,
+                  "exercises": [
+                    {
+                      "name": "PRESS INCLINADO BARRA",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PRESS DE HOMBROS",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "CRUCES POLEA",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "VUELOS LAT POLEA",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "VUELOS LAT MANC",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "EXTENSIÓN TRÍCEPS BARRA",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 3,
+                  "exercises": [
+                    {
+                      "name": "PESO MUERTO",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        10
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "SUBIDAS AL CAJÓN",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "SILLÓN DE ISQUIOS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "PATADA DE GLÚTEOS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "PUENTES",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "ESTOCADAS CAMINADAS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    }
+                  ]
+                },
+                {
+                  "day": 4,
+                  "exercises": [
+                    {
+                      "name": "CHINUPS",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        10
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "REMO CON BARRA",
+                      "reps": [
+                        15,
+                        12,
+                        10,
+                        10
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "DORSALERA ALTA",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "PULLOVER",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "REMO BAJO",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "ESPINALES",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    },
+                    {
+                      "name": "BÍCEPS DE PIE",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "week": 2,
+              "days": [
+                {
+                  "day": 1,
+                  "exercises": [
+                    {
+                      "name": "SENTADILLAS",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "BÚLGARAS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "PRENSA",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "TIJERAS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "GEMELOS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    }
+                  ]
+                },
+                {
+                  "day": 2,
+                  "exercises": [
+                    {
+                      "name": "PRESS INCLINADO BARRA",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PRESS DE HOMBROS",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "CRUCES POLEA",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "VUELOS LAT POLEA",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "VUELOS LAT MANC",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "EXTENSIÓN TRÍCEPS BARRA",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 3,
+                  "exercises": [
+                    {
+                      "name": "PESO MUERTO",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "SUBIDAS AL CAJÓN",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "SILLÓN DE ISQUIOS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "PATADA DE GLÚTEOS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "PUENTES",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "ESTOCADAS CAMINADAS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    }
+                  ]
+                },
+                {
+                  "day": 4,
+                  "exercises": [
+                    {
+                      "name": "CHINUPS",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "REMO CON BARRA",
+                      "reps": [
+                        12,
+                        10,
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "DORSALERA ALTA",
+                      "reps": [
+                        10,
+                        10
+                      ],
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "PULLOVER",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "REMO BAJO",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "ESPINALES",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    },
+                    {
+                      "name": "BÍCEPS DE PIE",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "week": 3,
+              "days": [
+                {
+                  "day": 1,
+                  "exercises": [
+                    {
+                      "name": "SENTADILLAS",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "BÚLGARAS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "PRENSA",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "TIJERAS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "GEMELOS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    }
+                  ]
+                },
+                {
+                  "day": 2,
+                  "exercises": [
+                    {
+                      "name": "PRESS INCLINADO BARRA",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PRESS DE HOMBROS",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "CRUCES POLEA",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "VUELOS LAT POLEA",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "VUELOS LAT MANC",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "EXTENSIÓN TRÍCEPS BARRA",
+                      "reps": [
+                        10,
+                        8,
+                        8,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 3,
+                  "exercises": [
+                    {
+                      "name": "PESO MUERTO",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "SUBIDAS AL CAJÓN",
+                      "reps": 15,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "SILLÓN DE ISQUIOS",
+                      "reps": 15,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "PATADA DE GLÚTEOS",
+                      "reps": 15,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "PUENTES",
+                      "reps": 15,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "ESTOCADAS CAMINADAS",
+                      "reps": 15,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    }
+                  ]
+                },
+                {
+                  "day": 4,
+                  "exercises": [
+                    {
+                      "name": "CHINUPS",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "REMO CON BARRA",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "DORSALERA ALTA",
+                      "reps": [
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "PULLOVER",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "REMO BAJO",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "ESPINALES",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    },
+                    {
+                      "name": "BÍCEPS DE PIE",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "week": 4,
+              "days": [
+                {
+                  "day": 1,
+                  "exercises": [
+                    {
+                      "name": "SENTADILLAS",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "BÚLGARAS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "PRENSA",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "TIJERAS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "GEMELOS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    }
+                  ]
+                },
+                {
+                  "day": 2,
+                  "exercises": [
+                    {
+                      "name": "PRESS INCLINADO BARRA",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "PRESS DE HOMBROS",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "CRUCES POLEA",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "VUELOS LAT POLEA",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "VUELOS LAT MANC",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "EXTENSIÓN TRÍCEPS BARRA",
+                      "reps": [
+                        10,
+                        8,
+                        8,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    }
+                  ]
+                },
+                {
+                  "day": 3,
+                  "exercises": [
+                    {
+                      "name": "PESO MUERTO",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "SUBIDAS AL CAJÓN",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "SILLÓN DE ISQUIOS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "PATADA DE GLÚTEOS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "PUENTES",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "ESTOCADAS CAMINADAS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    }
+                  ]
+                },
+                {
+                  "day": 4,
+                  "exercises": [
+                    {
+                      "name": "CHINUPS",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "REMO CON BARRA",
+                      "reps": [
+                        10,
+                        8,
+                        6,
+                        6
+                      ],
+                      "type": "normal",
+                      "notes": ""
+                    },
+                    {
+                      "name": "DORSALERA ALTA",
+                      "reps": [
+                        8,
+                        8
+                      ],
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "PULLOVER",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "REMO BAJO",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "ESPINALES",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    },
+                    {
+                      "name": "BÍCEPS DE PIE",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
