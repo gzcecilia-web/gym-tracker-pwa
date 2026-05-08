@@ -8,6 +8,27 @@ import { createEmptyProfile } from '@/lib/routine';
 import { saveRoutine } from '@/lib/storage';
 import type { RoutineDB, SelectedSlot } from '@/lib/types';
 
+function formatAuthError(error: unknown, prefix = 'Error') {
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof error === 'string'
+        ? error
+        : 'Ocurrió un problema inesperado.';
+
+  const normalized = message.toLowerCase();
+
+  if (
+    normalized.includes('failed to fetch') ||
+    normalized.includes('networkerror') ||
+    normalized.includes('network request failed')
+  ) {
+    return `${prefix}: No se pudo conectar con el servicio de acceso. Revisá tu conexión y la configuración de Supabase.`;
+  }
+
+  return `${prefix}: ${message}`;
+}
+
 export function AuthBar() {
   const router = useRouter();
   const supabase = getSupabaseClient();
@@ -93,24 +114,28 @@ export function AuthBar() {
     setIsLoading(true);
     setStatus('');
 
-    const result =
-      mode === 'signup'
-        ? await supabase.auth.signUp({ email: email.trim(), password: password.trim() })
-        : await supabase.auth.signInWithPassword({ email: email.trim(), password: password.trim() });
+    try {
+      const result =
+        mode === 'signup'
+          ? await supabase.auth.signUp({ email: email.trim(), password: password.trim() })
+          : await supabase.auth.signInWithPassword({ email: email.trim(), password: password.trim() });
 
-    setIsLoading(false);
+      if (result.error) {
+        setStatus(formatAuthError(result.error));
+        return;
+      }
 
-    if (result.error) {
-      setStatus(`Error: ${result.error.message}`);
-      return;
+      if (mode === 'signup') {
+        setStatus('Cuenta creada. Si pide confirmación por mail, revisá tu inbox.');
+        return;
+      }
+
+      setStatus('Sesión iniciada.');
+    } catch (error) {
+      setStatus(formatAuthError(error));
+    } finally {
+      setIsLoading(false);
     }
-
-    if (mode === 'signup') {
-      setStatus('Cuenta creada. Si pide confirmacion por mail, revisa tu inbox.');
-      return;
-    }
-
-    setStatus('Sesion iniciada.');
   };
 
   const onSendMagicLink = async () => {
@@ -119,49 +144,61 @@ export function AuthBar() {
     setIsLoading(true);
     setStatus('');
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: {
-        emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: {
+          emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
+        }
+      });
+
+      if (error) {
+        setStatus(formatAuthError(error, 'Error link'));
+        return;
       }
-    });
 
-    setIsLoading(false);
-
-    if (error) {
-      setStatus(`Error link: ${error.message}`);
-      return;
+      setStatus('Te enviamos un link al mail.');
+    } catch (error) {
+      setStatus(formatAuthError(error, 'Error link'));
+    } finally {
+      setIsLoading(false);
     }
-
-    setStatus('Te enviamos un link al mail.');
   };
 
   const onForgotPassword = async () => {
     if (!email.trim()) {
-      setStatus('Ingresa tu email para recuperar contrasena.');
+      setStatus('Ingresá tu email para recuperar la contraseña.');
       return;
     }
 
     setIsLoading(true);
     setStatus('');
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
-    });
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
+      });
 
-    setIsLoading(false);
+      if (error) {
+        setStatus(formatAuthError(error, 'Error recovery'));
+        return;
+      }
 
-    if (error) {
-      setStatus(`Error recovery: ${error.message}`);
-      return;
+      setStatus('Te enviamos un email para restablecer tu contraseña.');
+    } catch (error) {
+      setStatus(formatAuthError(error, 'Error recovery'));
+    } finally {
+      setIsLoading(false);
     }
-
-    setStatus('Te enviamos un email para restablecer tu contrasena.');
   };
 
   const onLogout = async () => {
-    await supabase.auth.signOut();
-    setStatus('Sesion cerrada.');
+    try {
+      await supabase.auth.signOut();
+      setStatus('Sesión cerrada.');
+    } catch (error) {
+      setStatus(formatAuthError(error));
+    }
   };
 
   const modeButtonClass = (active: boolean) =>
