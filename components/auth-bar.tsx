@@ -20,10 +20,11 @@ function formatAuthError(error: unknown, prefix = 'Error') {
 
   if (
     normalized.includes('failed to fetch') ||
+    normalized.includes('load failed') ||
     normalized.includes('networkerror') ||
     normalized.includes('network request failed')
   ) {
-    return `${prefix}: No se pudo conectar con el servicio de acceso. Revisá tu conexión y la configuración de Supabase.`;
+    return `${prefix}: No se pudo conectar con el servicio de acceso. Revisá tu conexión, la configuración de Supabase y que este dominio esté permitido para iniciar sesión.`;
   }
 
   return `${prefix}: ${message}`;
