@@ -1430,35 +1430,35 @@
                       "type": "normal",
                       "notes": ""
                     },
-                        {
-                          "name": "BÚLGARAS",
-                          "reps": 12,
-                          "supersetGroup": "BÚLGARAS + PRENSA",
-                          "type": "normal",
-                          "notes": "",
-                          "sets": 3
-                        },
-                        {
-                          "name": "PRENSA",
-                          "reps": 12,
-                          "supersetGroup": "BÚLGARAS + PRENSA",
-                          "type": "normal",
-                          "notes": "",
-                          "sets": 3
-                        },
                     {
-                      "name": "TIJERAS",
+                      "name": "BÚLGARAS",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 3
                     },
                     {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "PRENSA",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 3
+                    },
+                    {
+                      "name": "TIJERAS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3,
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS"
+                    },
+                    {
+                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 3,
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS"
                     },
                     {
                       "name": "GEMELOS",
@@ -1660,35 +1660,35 @@
                       "type": "normal",
                       "notes": ""
                     },
-                        {
-                          "name": "BÚLGARAS",
-                          "reps": 12,
-                          "supersetGroup": "BÚLGARAS + PRENSA",
-                          "type": "normal",
-                          "notes": "",
-                          "sets": 4
-                        },
-                        {
-                          "name": "PRENSA",
-                          "reps": 12,
-                          "supersetGroup": "BÚLGARAS + PRENSA",
-                          "type": "normal",
-                          "notes": "",
-                          "sets": 4
-                        },
                     {
-                      "name": "TIJERAS",
+                      "name": "BÚLGARAS",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 4
                     },
                     {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "PRENSA",
                       "reps": 12,
                       "type": "normal",
                       "notes": "",
                       "sets": 4
+                    },
+                    {
+                      "name": "TIJERAS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4,
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS"
+                    },
+                    {
+                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "reps": 12,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 4,
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS"
                     },
                     {
                       "name": "GEMELOS",
@@ -1893,35 +1893,35 @@
                       "type": "normal",
                       "notes": ""
                     },
-                        {
-                          "name": "BÚLGARAS",
-                          "reps": 10,
-                          "supersetGroup": "BÚLGARAS + PRENSA",
-                          "type": "normal",
-                          "notes": "",
-                          "sets": 5
-                        },
-                        {
-                          "name": "PRENSA",
-                          "reps": 10,
-                          "supersetGroup": "BÚLGARAS + PRENSA",
-                          "type": "normal",
-                          "notes": "",
-                          "sets": 5
-                        },
                     {
-                      "name": "TIJERAS",
+                      "name": "BÚLGARAS",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 5
                     },
                     {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "PRENSA",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 5
+                    },
+                    {
+                      "name": "TIJERAS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5,
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS"
+                    },
+                    {
+                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 5,
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS"
                     },
                     {
                       "name": "GEMELOS",
@@ -2126,35 +2126,35 @@
                       "type": "normal",
                       "notes": ""
                     },
-                        {
-                          "name": "BÚLGARAS",
-                          "reps": 10,
-                          "supersetGroup": "BÚLGARAS + PRENSA",
-                          "type": "normal",
-                          "notes": "",
-                          "sets": 2
-                        },
-                        {
-                          "name": "PRENSA",
-                          "reps": 10,
-                          "supersetGroup": "BÚLGARAS + PRENSA",
-                          "type": "normal",
-                          "notes": "",
-                          "sets": 2
-                        },
                     {
-                      "name": "TIJERAS",
+                      "name": "BÚLGARAS",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 2
                     },
                     {
-                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "name": "PRENSA",
                       "reps": 10,
                       "type": "normal",
                       "notes": "",
                       "sets": 2
+                    },
+                    {
+                      "name": "TIJERAS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2,
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS"
+                    },
+                    {
+                      "name": "SILLÓN DE CUÁDRICEPS",
+                      "reps": 10,
+                      "type": "normal",
+                      "notes": "",
+                      "sets": 2,
+                      "supersetGroup": "TIJERAS + SILLÓN DE CUÁDRICEPS"
                     },
                     {
                       "name": "GEMELOS",
