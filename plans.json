@@ -1430,20 +1430,22 @@
                       "type": "normal",
                       "notes": ""
                     },
-                    {
-                      "name": "BÚLGARAS",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
-                    {
-                      "name": "PRENSA",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 3
-                    },
+                        {
+                          "name": "BÚLGARAS",
+                          "reps": 12,
+                          "supersetGroup": "BÚLGARAS + PRENSA",
+                          "type": "normal",
+                          "notes": "",
+                          "sets": 3
+                        },
+                        {
+                          "name": "PRENSA",
+                          "reps": 12,
+                          "supersetGroup": "BÚLGARAS + PRENSA",
+                          "type": "normal",
+                          "notes": "",
+                          "sets": 3
+                        },
                     {
                       "name": "TIJERAS",
                       "reps": 12,
@@ -1658,20 +1660,22 @@
                       "type": "normal",
                       "notes": ""
                     },
-                    {
-                      "name": "BÚLGARAS",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
-                    {
-                      "name": "PRENSA",
-                      "reps": 12,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 4
-                    },
+                        {
+                          "name": "BÚLGARAS",
+                          "reps": 12,
+                          "supersetGroup": "BÚLGARAS + PRENSA",
+                          "type": "normal",
+                          "notes": "",
+                          "sets": 4
+                        },
+                        {
+                          "name": "PRENSA",
+                          "reps": 12,
+                          "supersetGroup": "BÚLGARAS + PRENSA",
+                          "type": "normal",
+                          "notes": "",
+                          "sets": 4
+                        },
                     {
                       "name": "TIJERAS",
                       "reps": 12,
@@ -1889,20 +1893,22 @@
                       "type": "normal",
                       "notes": ""
                     },
-                    {
-                      "name": "BÚLGARAS",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
-                    {
-                      "name": "PRENSA",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 5
-                    },
+                        {
+                          "name": "BÚLGARAS",
+                          "reps": 10,
+                          "supersetGroup": "BÚLGARAS + PRENSA",
+                          "type": "normal",
+                          "notes": "",
+                          "sets": 5
+                        },
+                        {
+                          "name": "PRENSA",
+                          "reps": 10,
+                          "supersetGroup": "BÚLGARAS + PRENSA",
+                          "type": "normal",
+                          "notes": "",
+                          "sets": 5
+                        },
                     {
                       "name": "TIJERAS",
                       "reps": 10,
@@ -2120,20 +2126,22 @@
                       "type": "normal",
                       "notes": ""
                     },
-                    {
-                      "name": "BÚLGARAS",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
-                    {
-                      "name": "PRENSA",
-                      "reps": 10,
-                      "type": "normal",
-                      "notes": "",
-                      "sets": 2
-                    },
+                        {
+                          "name": "BÚLGARAS",
+                          "reps": 10,
+                          "supersetGroup": "BÚLGARAS + PRENSA",
+                          "type": "normal",
+                          "notes": "",
+                          "sets": 2
+                        },
+                        {
+                          "name": "PRENSA",
+                          "reps": 10,
+                          "supersetGroup": "BÚLGARAS + PRENSA",
+                          "type": "normal",
+                          "notes": "",
+                          "sets": 2
+                        },
                     {
                       "name": "TIJERAS",
                       "reps": 10,
